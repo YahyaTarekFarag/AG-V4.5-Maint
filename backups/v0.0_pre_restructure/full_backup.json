@@ -1,0 +1,742 @@
+{
+  "profiles": [
+    {
+      "id": "89a81bac-acb1-485a-afd5-72c7b273c1f5",
+      "employee_code": "123",
+      "full_name": "مدير النظام المركزي",
+      "role": "admin",
+      "created_at": "2026-02-21T10:13:55.791738+00:00",
+      "is_deleted": false,
+      "branch_id": null
+    },
+    {
+      "id": "2f09fee4-3864-4d33-8511-1cb8000f410e",
+      "employee_code": "1234",
+      "full_name": "1234",
+      "role": "manager",
+      "created_at": "2026-02-21T10:30:31.094159+00:00",
+      "is_deleted": false,
+      "branch_id": null
+    },
+    {
+      "id": "f12fc508-e791-42c2-b8cc-be15331089b7",
+      "employee_code": "12345",
+      "full_name": "12345",
+      "role": "technician",
+      "created_at": "2026-02-21T14:58:28.17091+00:00",
+      "is_deleted": false,
+      "branch_id": null
+    },
+    {
+      "id": "5896e092-45b4-468d-a618-f493a1556806",
+      "employee_code": "1111",
+      "full_name": "1111",
+      "role": "manager",
+      "created_at": "2026-02-21T17:18:34.850643+00:00",
+      "is_deleted": false,
+      "branch_id": null
+    }
+  ],
+  "branches": [
+    {
+      "id": "11111111-1111-1111-1111-111111111111",
+      "name": "فرع القاهرة الرئيسي",
+      "branch_lat": 30.0444,
+      "branch_lng": 31.2357,
+      "manager_id": null,
+      "created_at": "2026-02-21T04:20:13.532253+00:00",
+      "br_tel": "01099246336",
+      "sector": "القاهرة",
+      "latitude": null,
+      "longitude": null,
+      "is_deleted": false
+    },
+    {
+      "id": "33333333-3333-3333-3333-333333333333",
+      "name": "فرع المنصورة",
+      "branch_lat": 31.0379,
+      "branch_lng": 31.3815,
+      "manager_id": null,
+      "created_at": "2026-02-21T04:20:13.532253+00:00",
+      "br_tel": "01022220000",
+      "sector": "الاقاليم",
+      "latitude": null,
+      "longitude": null,
+      "is_deleted": false
+    },
+    {
+      "id": "22222222-2222-2222-2222-222222222222",
+      "name": "فرع الإسكندرية الفرعي",
+      "branch_lat": 31.2001,
+      "branch_lng": 29.9187,
+      "manager_id": null,
+      "created_at": "2026-02-21T04:20:13.532253+00:00",
+      "br_tel": "0109924633",
+      "sector": "الاسكندرية",
+      "latitude": null,
+      "longitude": null,
+      "is_deleted": false
+    },
+    {
+      "id": "c9dbc90b-94ad-4801-987f-0f68da9520ca",
+      "name": "عباس العقاد",
+      "branch_lat": 30.06288,
+      "branch_lng": 31.33704,
+      "manager_id": null,
+      "created_at": "2026-02-21T11:18:33.760944+00:00",
+      "br_tel": "010000000",
+      "sector": "القاهرة",
+      "latitude": null,
+      "longitude": null,
+      "is_deleted": false
+    },
+    {
+      "id": "549d7573-038a-4d66-9047-992a4c8642ac",
+      "name": "حدائق القبة",
+      "branch_lat": 30.0864741073999,
+      "branch_lng": 31.2831531610575,
+      "manager_id": null,
+      "created_at": "2026-02-21T11:54:14.284852+00:00",
+      "br_tel": "01066666666",
+      "sector": "القاهرة",
+      "latitude": null,
+      "longitude": null,
+      "is_deleted": false
+    }
+  ],
+  "inventory": [
+    {
+      "id": "a1111111-a111-a111-a111-a11111111111",
+      "name": "موتور ثلاجة عرض 1.5 حصان",
+      "part_number": "MTR-150-CW",
+      "quantity": 12,
+      "unit": "قطعة",
+      "created_at": "2026-02-21T04:20:13.532253+00:00",
+      "is_deleted": false
+    },
+    {
+      "id": "a2222222-a222-a222-a222-a22222222222",
+      "name": "سير ماكينة تغليف مقاس 45",
+      "part_number": "BLT-45X",
+      "quantity": 50,
+      "unit": "قطعة",
+      "created_at": "2026-02-21T04:20:13.532253+00:00",
+      "is_deleted": false
+    },
+    {
+      "id": "a3333333-a333-a333-a333-a33333333333",
+      "name": "فلاتر مياه 3 مراحل",
+      "part_number": "FLT-W3",
+      "quantity": 200,
+      "unit": "علبة",
+      "created_at": "2026-02-21T04:20:13.532253+00:00",
+      "is_deleted": false
+    },
+    {
+      "id": "a4444444-a444-a444-a444-a44444444444",
+      "name": "مقياس حرارة رقمي (ترموستات)",
+      "part_number": "THR-DIGI",
+      "quantity": 35,
+      "unit": "قطعة",
+      "created_at": "2026-02-21T04:20:13.532253+00:00",
+      "is_deleted": false
+    }
+  ],
+  "tickets": [
+    {
+      "id": "a319d5ae-5c9b-4c76-a9cf-6cabf05a7960",
+      "branch_id": "11111111-1111-1111-1111-111111111111",
+      "asset_name": "ثلاجة عرض اللحوم",
+      "technician_id": null,
+      "status": "open",
+      "description": "الثلاجة لا تبرد وصوت الموتور غريب ومستمر دون توقف",
+      "priority": "high",
+      "reported_lat": 30.0441,
+      "reported_lng": 31.2355,
+      "started_lat": null,
+      "started_lng": null,
+      "resolved_lat": null,
+      "resolved_lng": null,
+      "rating_score": null,
+      "rating_comment": null,
+      "created_at": "2026-02-21T04:20:13.532253+00:00",
+      "updated_at": "2026-02-21T04:20:13.532253+00:00",
+      "reported_at": "2026-02-21T10:42:46.182073+00:00",
+      "manager_id": null,
+      "resolved_at": null,
+      "title": null,
+      "assigned_to": null,
+      "is_deleted": false,
+      "reported_image_url": null,
+      "resolved_image_url": null
+    },
+    {
+      "id": "6cfb9abf-8a1a-4470-99bb-10b4a45bc51d",
+      "branch_id": "22222222-2222-2222-2222-222222222222",
+      "asset_name": "ماكينة الفاكيوم للصناعي",
+      "technician_id": null,
+      "status": "assigned",
+      "description": "الماكينة تقطع الكيس ولا تسحب الهواء كاملاً",
+      "priority": "normal",
+      "reported_lat": 31.2003,
+      "reported_lng": 29.9189,
+      "started_lat": null,
+      "started_lng": null,
+      "resolved_lat": null,
+      "resolved_lng": null,
+      "rating_score": null,
+      "rating_comment": null,
+      "created_at": "2026-02-21T04:20:13.532253+00:00",
+      "updated_at": "2026-02-21T04:20:13.532253+00:00",
+      "reported_at": "2026-02-21T10:42:46.182073+00:00",
+      "manager_id": null,
+      "resolved_at": null,
+      "title": null,
+      "assigned_to": null,
+      "is_deleted": false,
+      "reported_image_url": null,
+      "resolved_image_url": null
+    },
+    {
+      "id": "265ce94d-e674-4fef-915e-0555039f4b08",
+      "branch_id": "11111111-1111-1111-1111-111111111111",
+      "asset_name": "مكيف كونسيلد صالة العرض",
+      "technician_id": null,
+      "status": "in_progress",
+      "description": "تسريب مياه من الجريل الخاص بالمكيف وتوقف التبريد كلياً",
+      "priority": "urgent",
+      "reported_lat": 30.045,
+      "reported_lng": 31.235,
+      "started_lat": null,
+      "started_lng": null,
+      "resolved_lat": null,
+      "resolved_lng": null,
+      "rating_score": null,
+      "rating_comment": null,
+      "created_at": "2026-02-21T04:20:13.532253+00:00",
+      "updated_at": "2026-02-21T04:20:13.532253+00:00",
+      "reported_at": "2026-02-21T10:42:46.182073+00:00",
+      "manager_id": null,
+      "resolved_at": null,
+      "title": null,
+      "assigned_to": null,
+      "is_deleted": false,
+      "reported_image_url": null,
+      "resolved_image_url": null
+    },
+    {
+      "id": "1e4f85dc-810a-4ea3-9e15-e743a440fc36",
+      "branch_id": "11111111-1111-1111-1111-111111111111",
+      "asset_name": "ثلاجة",
+      "technician_id": null,
+      "status": "open",
+      "description": "لا تعمل",
+      "priority": "طارئ",
+      "reported_lat": null,
+      "reported_lng": null,
+      "started_lat": null,
+      "started_lng": null,
+      "resolved_lat": null,
+      "resolved_lng": null,
+      "rating_score": null,
+      "rating_comment": null,
+      "created_at": "2026-02-21T10:31:22.807466+00:00",
+      "updated_at": "2026-02-21T10:31:22.807466+00:00",
+      "reported_at": "2026-02-21T10:42:46.182073+00:00",
+      "manager_id": null,
+      "resolved_at": null,
+      "title": null,
+      "assigned_to": null,
+      "is_deleted": false,
+      "reported_image_url": null,
+      "resolved_image_url": null
+    }
+  ],
+  "inventory_transactions": [],
+  "shifts": [
+    {
+      "id": "25115867-f9ab-47c6-b907-2a657a92e7d0",
+      "technician_id": "f12fc508-e791-42c2-b8cc-be15331089b7",
+      "start_at": "2026-02-21T21:01:56.863+00:00",
+      "start_lat": 30.117646018112477,
+      "start_lng": 31.28609645149864,
+      "end_at": null,
+      "end_lat": null,
+      "end_lng": null,
+      "created_at": "2026-02-21T21:01:59.248492+00:00"
+    }
+  ],
+  "ui_schemas": [
+    {
+      "id": "315e56c1-33bf-4d74-be6c-b97e1f3d3e8e",
+      "table_name": "inventory",
+      "list_config": {
+        "title": "إدارة المخزون وقطع الغيار",
+        "columns": [
+          {
+            "key": "name",
+            "type": "text",
+            "label": "اسم القطعة"
+          },
+          {
+            "key": "part_number",
+            "type": "badge",
+            "label": "الرقم المرجعي"
+          },
+          {
+            "key": "quantity",
+            "type": "number",
+            "label": "الكمية المتاحة"
+          },
+          {
+            "key": "unit",
+            "type": "text",
+            "label": "الوحدة"
+          }
+        ],
+        "searchable": true,
+        "searchPlaceholder": "ابحث عن اسم القطعة أو الرقم المرجعي"
+      },
+      "form_config": {
+        "title": "إضافة / تعديل قطعة غيار",
+        "fields": [
+          {
+            "key": "name",
+            "type": "text",
+            "label": "اسم القطعة",
+            "required": true,
+            "placeholder": "مثال: موتور تبريد"
+          },
+          {
+            "key": "part_number",
+            "type": "text",
+            "label": "الرقم المرجعي (SKU)"
+          },
+          {
+            "key": "quantity",
+            "type": "number",
+            "label": "الكمية الابتدائية",
+            "required": true
+          },
+          {
+            "key": "unit",
+            "type": "text",
+            "label": "وحدة القياس",
+            "required": true,
+            "placeholder": "مثال: قطعة، لتر، علبة"
+          }
+        ]
+      },
+      "created_at": "2026-02-21T04:20:13.532253+00:00",
+      "page_config": null
+    },
+    {
+      "id": "c3afc422-7f9e-454f-8c83-6923c4035441",
+      "table_name": "ui_schemas",
+      "list_config": {
+        "title": "إعدادات محرك الواجهات السيادي (للمطورين)",
+        "columns": [
+          {
+            "key": "table_name",
+            "type": "badge",
+            "label": "مفتاح الجدول المربوط"
+          },
+          {
+            "key": "created_at",
+            "type": "date",
+            "label": "تاريخ الإنشاء"
+          }
+        ],
+        "searchable": true
+      },
+      "form_config": {
+        "title": "تعديل إعدادات بنية الشاشة",
+        "fields": [
+          {
+            "key": "table_name",
+            "type": "text",
+            "label": "اسم الجدول في قاعدة البيانات",
+            "required": true
+          },
+          {
+            "key": "list_config",
+            "type": "textarea",
+            "label": "هيكل بيانات الجدول (JSON)",
+            "required": true
+          },
+          {
+            "key": "form_config",
+            "type": "textarea",
+            "label": "هيكل شكل النموذج (JSON)",
+            "required": true
+          }
+        ]
+      },
+      "created_at": "2026-02-21T04:24:27.720761+00:00",
+      "page_config": null
+    },
+    {
+      "id": "5170b3b9-8487-4cb2-84fd-df97edd4dbeb",
+      "table_name": "shifts",
+      "list_config": {
+        "title": "سجل المناوبات",
+        "columns": [
+          {
+            "key": "technician_id",
+            "type": "text",
+            "label": "الفني",
+            "sortable": true
+          },
+          {
+            "key": "start_at",
+            "type": "date",
+            "label": "بداية المناوبة",
+            "sortable": true
+          },
+          {
+            "key": "end_at",
+            "type": "date",
+            "label": "نهاية المناوبة",
+            "sortable": true
+          }
+        ]
+      },
+      "form_config": {
+        "title": "مناوبة الفني",
+        "fields": [
+          {
+            "key": "technician_id",
+            "type": "select",
+            "label": "الفني",
+            "required": true,
+            "dataLabel": "full_name",
+            "dataValue": "id",
+            "dataSource": "profiles"
+          },
+          {
+            "key": "start_at",
+            "type": "date",
+            "label": "وقت البدء"
+          },
+          {
+            "key": "end_at",
+            "type": "date",
+            "label": "وقت الانتهاء"
+          }
+        ]
+      },
+      "created_at": "2026-02-21T11:02:25.207277+00:00",
+      "page_config": null
+    },
+    {
+      "id": "daf0873d-fa05-41d8-9c75-420f71bf3bcb",
+      "table_name": "branches",
+      "list_config": {
+        "title": "دليل الفروع",
+        "columns": [
+          {
+            "key": "name",
+            "type": "text",
+            "label": "اسم الفرع"
+          },
+          {
+            "key": "br_tel",
+            "type": "text",
+            "label": "رقم الهاتف",
+            "sortable": true
+          },
+          {
+            "key": "sector",
+            "type": "text",
+            "label": "القطاع",
+            "sortable": true
+          },
+          {
+            "key": "branch_lat",
+            "type": "number",
+            "label": "خط العرض (Latitude)",
+            "sortable": true
+          },
+          {
+            "key": "branch_lng",
+            "type": "number",
+            "label": "خط الطول (Longitude)",
+            "sortable": true
+          }
+        ],
+        "searchable": true
+      },
+      "form_config": {
+        "title": "إضافة / تعديل فرع",
+        "fields": [
+          {
+            "key": "name",
+            "type": "text",
+            "label": "اسم الفرع",
+            "required": true
+          },
+          {
+            "key": "br_tel",
+            "type": "number",
+            "label": "رقم الهاتف",
+            "required": false,
+            "placeholder": ""
+          },
+          {
+            "key": "sector",
+            "type": "text",
+            "label": "القطاع",
+            "required": false,
+            "placeholder": ""
+          },
+          {
+            "key": "branch_lat",
+            "type": "number",
+            "label": "خط العرض (Latitude)",
+            "required": true
+          },
+          {
+            "key": "branch_lng",
+            "type": "number",
+            "label": "خط الطول (Longitude)",
+            "required": true
+          }
+        ]
+      },
+      "created_at": "2026-02-21T04:20:13.532253+00:00",
+      "page_config": {
+        "kpi_cards": [
+          {
+            "icon": "BarChart3",
+            "color": "blue",
+            "label": "Branches",
+            "table": "branchesbranches",
+            "aggregate": "count"
+          }
+        ]
+      }
+    },
+    {
+      "id": "63de8dd8-3607-4cf6-8d3d-4ae22c43f5ac",
+      "table_name": "inventory_transactions",
+      "list_config": {
+        "title": "inventory_transactions",
+        "columns": []
+      },
+      "form_config": {
+        "title": "inventory_transactions",
+        "fields": []
+      },
+      "created_at": "2026-02-21T12:35:32.897426+00:00",
+      "page_config": null
+    },
+    {
+      "id": "d840067a-cc36-4d4c-93d0-da90d402aca3",
+      "table_name": "profiles",
+      "list_config": {
+        "title": "إدارة الموظفين (المستخدمين)",
+        "columns": [
+          {
+            "key": "full_name",
+            "type": "text",
+            "label": "اسم الموظف"
+          },
+          {
+            "key": "employee_code",
+            "type": "badge",
+            "label": "كود الدخول"
+          },
+          {
+            "key": "role",
+            "type": "status",
+            "label": "الصلاحية"
+          },
+          {
+            "key": "created_at",
+            "type": "date",
+            "label": "تاريخ الانضمام"
+          }
+        ],
+        "searchable": true,
+        "searchPlaceholder": "ابحث عن اسم موظف أو كود..."
+      },
+      "form_config": {
+        "title": "إضافة / تعديل بيانات موظف",
+        "fields": [
+          {
+            "key": "full_name",
+            "type": "text",
+            "label": "الاسم الرباعي",
+            "required": true
+          },
+          {
+            "key": "employee_code",
+            "type": "text",
+            "label": "كود الدخول التعريفي",
+            "required": true
+          },
+          {
+            "key": "password",
+            "type": "text",
+            "label": "كلمة المرور",
+            "required": true
+          },
+          {
+            "key": "role",
+            "type": "select",
+            "label": "صلاحية النظام",
+            "options": [
+              {
+                "label": "مدير فرع",
+                "value": "manager"
+              },
+              {
+                "label": "فني صيانة",
+                "value": "technician"
+              },
+              {
+                "label": "مسؤول نظام (أدمن)",
+                "value": "admin"
+              }
+            ],
+            "required": true
+          },
+          {
+            "key": "branch_id",
+            "type": "select",
+            "label": "الفرع التابع له (لمديري الفروع)",
+            "dataSource": "branches"
+          }
+        ]
+      },
+      "created_at": "2026-02-21T04:24:27.720761+00:00",
+      "page_config": null
+    },
+    {
+      "id": "13ca7d6f-61d2-48ef-beeb-960ef4a47c08",
+      "table_name": "tickets",
+      "list_config": {
+        "title": "سجل البلاغات",
+        "columns": [
+          {
+            "key": "asset_name",
+            "type": "text",
+            "label": "عنوان البلاغ"
+          },
+          {
+            "key": "status",
+            "type": "status",
+            "label": "الحالة"
+          },
+          {
+            "key": "reported_at",
+            "type": "date",
+            "label": "تاريخ البلاغ"
+          },
+          {
+            "key": "rating_score",
+            "type": "badge",
+            "label": "التقييم"
+          }
+        ],
+        "searchable": true
+      },
+      "form_config": {
+        "title": "تفاصيل بلاغ الصيانة",
+        "fields": [
+          {
+            "key": "branch_id",
+            "type": "select",
+            "label": "الفرع",
+            "required": true,
+            "dataSource": "branches"
+          },
+          {
+            "key": "asset_name",
+            "type": "text",
+            "label": "المعدة المعطلة",
+            "required": true
+          },
+          {
+            "key": "description",
+            "type": "textarea",
+            "label": "وصف العطل",
+            "required": true
+          },
+          {
+            "key": "reported_image_url",
+            "type": "image",
+            "label": "صورة العطل (قبل)"
+          }
+        ]
+      },
+      "created_at": "2026-02-21T04:20:13.532253+00:00",
+      "page_config": {
+        "kpi_cards": [
+          {
+            "icon": "Wrench",
+            "color": "blue",
+            "label": "إجمالي البلاغات",
+            "table": "tickets",
+            "link_to": "/tickets",
+            "aggregate": "count"
+          },
+          {
+            "icon": "Activity",
+            "color": "amber",
+            "label": "قيد المعالجة",
+            "table": "tickets",
+            "filter": {
+              "status": "in_progress"
+            },
+            "link_to": "/tickets",
+            "aggregate": "count"
+          },
+          {
+            "icon": "AlertTriangle",
+            "color": "red",
+            "label": "تنتظر الاستلام",
+            "table": "tickets",
+            "filter": {
+              "status": "resolved"
+            },
+            "link_to": "/tickets",
+            "aggregate": "count"
+          },
+          {
+            "icon": "CheckCircle",
+            "color": "green",
+            "label": "مُغلَقة",
+            "table": "tickets",
+            "filter": {
+              "status": "closed"
+            },
+            "link_to": "/tickets",
+            "aggregate": "count"
+          }
+        ]
+      }
+    },
+    {
+      "id": "fe3fa111-8978-4e2f-a77d-de6ed74edeb2",
+      "table_name": "system_settings",
+      "list_config": {
+        "title": "system_settings",
+        "columns": []
+      },
+      "form_config": {
+        "title": "system_settings",
+        "fields": []
+      },
+      "created_at": "2026-02-21T17:24:09.263142+00:00",
+      "page_config": null
+    }
+  ],
+  "system_settings": [
+    {
+      "key": "restrict_branch_submission",
+      "value": "true",
+      "updated_at": "2026-02-21T17:06:16.200431+00:00"
+    }
+  ]
+}
