@@ -108,8 +108,8 @@ export default function TechnicianTicketsPage() {
         <DashboardLayout>
             {/* Shift Banner */}
             <div className={`rounded-2xl p-5 mb-6 border flex items-center justify-between flex-wrap gap-4 ${activeShift
-                    ? 'bg-teal-50 border-teal-200'
-                    : 'bg-surface-50 border-surface-200'
+                ? 'bg-teal-50 border-teal-200'
+                : 'bg-surface-50 border-surface-200'
                 }`}>
                 <div>
                     <h3 className={`font-bold text-lg ${activeShift ? 'text-teal-800' : 'text-surface-700'}`}>
@@ -148,8 +148,8 @@ export default function TechnicianTicketsPage() {
                         onClick={handleShiftToggle}
                         disabled={shiftLoading}
                         className={`flex items-center gap-2 px-6 py-3 text-white font-bold rounded-xl shadow-md transition-all disabled:opacity-70 ${activeShift
-                                ? 'bg-red-500 hover:bg-red-400 shadow-red-500/20'
-                                : 'bg-teal-600 hover:bg-teal-500 shadow-teal-500/20'
+                            ? 'bg-red-500 hover:bg-red-400 shadow-red-500/20'
+                            : 'bg-teal-600 hover:bg-teal-500 shadow-teal-500/20'
                             }`}
                     >
                         {shiftLoading
@@ -194,7 +194,7 @@ export default function TechnicianTicketsPage() {
                                     <div className="flex items-center gap-4">
                                         <span className={`px-3 py-1 rounded-full text-xs font-semibold ${st.color}`}>{st.label}</span>
                                         <div className="text-right">
-                                            <p className="font-semibold text-surface-900">{ticket.title || ticket.description || 'بلاغ صيانة'}</p>
+                                            <p className="font-semibold text-surface-900">{ticket.asset_name || ticket.description || 'بلاغ صيانة'}</p>
                                             <p className="text-xs text-surface-400 mt-0.5 flex items-center gap-1">
                                                 <Clock className="w-3 h-3" />
                                                 {format(new Date(ticket.created_at), 'PPP - hh:mm a', { locale: ar })}

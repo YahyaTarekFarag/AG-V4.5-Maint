@@ -7,14 +7,33 @@ import clsx from 'clsx';
 export default function Sidebar() {
     const { profile, signOut } = useAuth();
 
+    const ROLE_LABELS: Record<string, string> = {
+        admin: 'مسؤول نظام',
+        brand_ops_manager: 'مدير تشغيل البراند',
+        sector_manager: 'مدير قطاع',
+        area_manager: 'مدير منطقة',
+        manager: 'مدير فرع',
+        maint_manager: 'مدير صيانة',
+        maint_supervisor: 'مشرف صيانة',
+        technician: 'فني صيانة',
+    };
+
+    const ALL_ROLES = Object.keys(ROLE_LABELS);
+    const MAINT_ROLES = ['maint_manager', 'maint_supervisor'];
+    const OPS_ROLES = ['admin', 'brand_ops_manager', 'sector_manager', 'area_manager'];
+
     const navItems = [
-        { label: 'الرئيسية', path: '/', icon: LayoutDashboard, roles: ['admin', 'manager', 'technician'] },
+        { label: 'الرئيسية', path: '/', icon: LayoutDashboard, roles: ALL_ROLES },
         { label: 'بلاغاتي', path: '/my-tickets', icon: ClipboardList, roles: ['manager'] },
         { label: 'مهامي', path: '/tech-tickets', icon: Timer, roles: ['technician'] },
-        { label: 'البلاغات', path: '/tickets', icon: Wrench, roles: ['admin'] },
-        { label: 'الخريطة التشغيلية', path: '/map', icon: Map, roles: ['admin', 'manager'] },
-        { label: 'إدارة المخزون', path: '/inventory', icon: Package, roles: ['admin', 'technician'] },
-        { label: 'الفروع', path: '/branches', icon: Building2, roles: ['admin'] },
+        { label: 'لوحة الصيانة', path: '/maint-dashboard', icon: Wrench, roles: MAINT_ROLES },
+        { label: 'كل البلاغات', path: '/tickets', icon: Wrench, roles: ['admin', ...MAINT_ROLES] },
+        { label: 'الخريطة التشغيلية', path: '/map', icon: Map, roles: ['admin', 'manager', ...MAINT_ROLES, ...OPS_ROLES] },
+        { label: 'إدارة المخزون', path: '/inventory', icon: Package, roles: ['admin', 'technician', ...MAINT_ROLES] },
+        { label: 'البراندات', path: '/brands', icon: Building2, roles: ['admin'] },
+        { label: 'القطاعات', path: '/sectors', icon: Building2, roles: ['admin', 'brand_ops_manager'] },
+        { label: 'المناطق', path: '/areas', icon: Building2, roles: ['admin', 'brand_ops_manager', 'sector_manager'] },
+        { label: 'الفروع', path: '/branches', icon: Building2, roles: ['admin', ...OPS_ROLES] },
         { label: 'الموظفين', path: '/users', icon: Users, roles: ['admin'] },
         { label: 'إعدادات الواجهات', path: '/settings', icon: Settings, roles: ['admin'] },
         { label: 'إعدادات النظام', path: '/admin/settings', icon: ShieldCheck, roles: ['admin'] },
@@ -42,7 +61,7 @@ export default function Sidebar() {
                     <div className="overflow-hidden">
                         <p className="font-semibold text-sm truncate">{profile?.full_name}</p>
                         <p className="text-xs text-primary-400 capitalize mt-0.5">
-                            {profile?.role === 'admin' ? 'مدير نظام' : profile?.role === 'manager' ? 'مدير فرع' : 'فني صيانة'}
+                            {ROLE_LABELS[profile?.role || ''] || profile?.role}
                         </p>
                     </div>
                 </div>

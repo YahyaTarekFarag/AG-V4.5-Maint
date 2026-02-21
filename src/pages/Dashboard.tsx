@@ -24,6 +24,17 @@ const DEFAULT_TECH_KPIS: (userId: string) => KPICardConfig[] = (uid) => [
     { label: 'قيد إصلاحي', table: 'tickets', aggregate: 'count', filter: { assigned_to: uid, status: 'in_progress' }, color: 'amber', icon: 'Activity', link_to: '/tech-tickets' },
     { label: 'أنجزتها اليوم', table: 'tickets', aggregate: 'count', filter: { assigned_to: uid, status: 'resolved' }, color: 'green', icon: 'CheckCircle', link_to: '/tech-tickets' },
 ];
+const DEFAULT_MAINT_KPIS: KPICardConfig[] = [
+    { label: 'بلاغات مفتوحة', table: 'tickets', aggregate: 'count', filter: { status: 'open' }, color: 'blue', icon: 'Wrench', link_to: '/maint-dashboard' },
+    { label: 'بانتظار إسناد', table: 'tickets', aggregate: 'count', filter: { status: 'open' }, color: 'amber', icon: 'AlertTriangle', link_to: '/maint-dashboard' },
+    { label: 'قيد الإصلاح', table: 'tickets', aggregate: 'count', filter: { status: 'in_progress' }, color: 'purple', icon: 'Activity', link_to: '/maint-dashboard' },
+    { label: 'مُغلَقة', table: 'tickets', aggregate: 'count', filter: { status: 'closed' }, color: 'green', icon: 'CheckCircle', link_to: '/maint-dashboard' },
+];
+const DEFAULT_OPS_KPIS: KPICardConfig[] = [
+    { label: 'إجمالي البلاغات', table: 'tickets', aggregate: 'count', color: 'blue', icon: 'Wrench', link_to: '/tickets' },
+    { label: 'قيد المعالجة', table: 'tickets', aggregate: 'count', filter: { status: 'in_progress' }, color: 'amber', icon: 'Activity', link_to: '/tickets' },
+    { label: 'إجمالي الفروع', table: 'branches', aggregate: 'count', color: 'purple', icon: 'Building', link_to: '/branches' },
+];
 
 export default function Dashboard() {
     const { profile } = useAuth();
@@ -55,6 +66,8 @@ export default function Dashboard() {
             if (profile?.role === 'admin') setKpiCards(DEFAULT_ADMIN_KPIS);
             else if (profile?.role === 'manager') setKpiCards(DEFAULT_MANAGER_KPIS(profile.id));
             else if (profile?.role === 'technician') setKpiCards(DEFAULT_TECH_KPIS(profile.id));
+            else if (profile?.role === 'maint_manager' || profile?.role === 'maint_supervisor') setKpiCards(DEFAULT_MAINT_KPIS);
+            else if (['brand_ops_manager', 'sector_manager', 'area_manager'].includes(profile?.role || '')) setKpiCards(DEFAULT_OPS_KPIS);
         }
     };
 
@@ -74,11 +87,19 @@ export default function Dashboard() {
             profile?.role === 'technician' ? [
                 { icon: Timer, label: 'بلاغاتي المفتوحة', desc: 'ابدأ مناوبتك وعالج البلاغات المسنَدة إليك', path: '/tech-tickets', color: 'bg-primary-600' },
                 { icon: Wrench, label: 'إدارة المخزون', desc: 'تحقق من القطع المتاحة', path: '/inventory', color: 'bg-amber-600' },
-            ] : [
-                { icon: Wrench, label: 'كل البلاغات', desc: 'عرض وإدارة جميع البلاغات', path: '/tickets', color: 'bg-blue-600' },
-                { icon: Map, label: 'الخريطة التشغيلية', desc: 'مواقع الفروع والفنيين المتاحين', path: '/map', color: 'bg-teal-600' },
-                { icon: Users, label: 'إدارة الموظفين', desc: 'إضافة وتعديل الحسابات', path: '/users', color: 'bg-purple-600' },
-            ];
+            ] :
+                (profile?.role === 'maint_manager' || profile?.role === 'maint_supervisor') ? [
+                    { icon: Wrench, label: 'لوحة الصيانة', desc: 'إدارة البلاغات وتعيين الفنيين', path: '/maint-dashboard', color: 'bg-primary-600' },
+                    { icon: Map, label: 'الخريطة التشغيلية', desc: 'مواقع الفروع والفنيين', path: '/map', color: 'bg-teal-600' },
+                ] :
+                    ['brand_ops_manager', 'sector_manager', 'area_manager'].includes(profile?.role || '') ? [
+                        { icon: Wrench, label: 'متابعة البلاغات', desc: 'عرض جميع البلاغات', path: '/tickets', color: 'bg-blue-600' },
+                        { icon: Map, label: 'الخريطة التشغيلية', desc: 'مواقع الفروع', path: '/map', color: 'bg-teal-600' },
+                    ] : [
+                        { icon: Wrench, label: 'كل البلاغات', desc: 'عرض وإدارة جميع البلاغات', path: '/tickets', color: 'bg-blue-600' },
+                        { icon: Map, label: 'الخريطة التشغيلية', desc: 'مواقع الفروع والفنيين المتاحين', path: '/map', color: 'bg-teal-600' },
+                        { icon: Users, label: 'إدارة الموظفين', desc: 'إضافة وتعديل الحسابات', path: '/users', color: 'bg-purple-600' },
+                    ];
 
     return (
         <DashboardLayout>
@@ -91,6 +112,9 @@ export default function Dashboard() {
                     {profile?.role === 'admin' && 'نظرة عامة على النظام — كل شيء تحت السيطرة'}
                     {profile?.role === 'manager' && 'تابع بلاغات فرعك وتأكد من إغلاقها'}
                     {profile?.role === 'technician' && 'تحقق من بلاغاتك المفتوحة وابدأ مناوبتك'}
+                    {profile?.role === 'maint_manager' && 'مراقبة شاملة للصيانة — التقييمات والأولويات والمخزون'}
+                    {profile?.role === 'maint_supervisor' && 'وزّع البلاغات على الفنيين وتابع التنفيذ'}
+                    {['brand_ops_manager', 'sector_manager', 'area_manager'].includes(profile?.role || '') && 'نظرة إدارية على العمليات والفروع'}
                 </p>
             </div>
 

@@ -9,6 +9,7 @@ import ManagerTicketsPage from './pages/ManagerTicketsPage';
 import TechnicianTicketsPage from './pages/TechnicianTicketsPage';
 import MapPage from './pages/MapPage';
 import AdminSettingsPage from './pages/AdminSettingsPage';
+import MaintDashboardPage from './pages/MaintDashboardPage';
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
     const { user, isLoading } = useAuth();
@@ -32,8 +33,12 @@ function App() {
             <Route path="/tickets" element={<PrivateRoute><MasterDataPage tableName="tickets" /></PrivateRoute>} />
             <Route path="/my-tickets" element={<PrivateRoute><ManagerTicketsPage /></PrivateRoute>} />
             <Route path="/tech-tickets" element={<PrivateRoute><TechnicianTicketsPage /></PrivateRoute>} />
+            <Route path="/maint-dashboard" element={<PrivateRoute><MaintDashboardPage /></PrivateRoute>} />
             <Route path="/map" element={<PrivateRoute><MapPage /></PrivateRoute>} />
             <Route path="/inventory" element={<PrivateRoute><MasterDataPage tableName="inventory" /></PrivateRoute>} />
+            <Route path="/brands" element={<PrivateRoute><MasterDataPage tableName="brands" /></PrivateRoute>} />
+            <Route path="/sectors" element={<PrivateRoute><MasterDataPage tableName="sectors" /></PrivateRoute>} />
+            <Route path="/areas" element={<PrivateRoute><MasterDataPage tableName="areas" /></PrivateRoute>} />
             <Route path="/branches" element={<PrivateRoute><MasterDataPage tableName="branches" /></PrivateRoute>} />
             <Route path="/users" element={<PrivateRoute><MasterDataPage tableName="profiles" /></PrivateRoute>} />
             <Route path="/settings" element={<PrivateRoute><SchemaBuilderPage /></PrivateRoute>} />

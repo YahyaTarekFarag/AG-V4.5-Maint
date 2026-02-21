@@ -34,7 +34,7 @@ export default function TicketFlow({ ticket, onUpdate }: TicketFlowProps) {
     const [uploading, setUploading] = useState(false);
 
     useEffect(() => {
-        if (ticket.status === 'in_progress' && profile?.role === 'technician') {
+        if (ticket.status === 'in_progress' && (profile?.role === 'technician' || profile?.role === 'maint_supervisor')) {
             fetchInventory();
         }
     }, [ticket.status, profile]);
@@ -188,7 +188,7 @@ export default function TicketFlow({ ticket, onUpdate }: TicketFlowProps) {
             )}
 
             {/* Technician Action: Start Work */}
-            {ticket.status === 'assigned' && profile?.role === 'technician' && (
+            {ticket.status === 'assigned' && (profile?.role === 'technician' || profile?.role === 'maint_supervisor') && (
                 <div className="bg-primary-50 rounded-xl p-5 border border-primary-100">
                     <h4 className="font-semibold text-primary-900 mb-2">تسجيل الوصول الأمني للفرع</h4>
                     <p className="text-sm text-primary-700 mb-4">يجب أن تكون متواجداً داخل الفرع. سيقوم النظام بمطابقة إحداثياتك الحالية مع إحداثيات الفرع عبر الـ GPS.</p>
@@ -204,7 +204,7 @@ export default function TicketFlow({ ticket, onUpdate }: TicketFlowProps) {
             )}
 
             {/* Technician Action: Resolve and Parts */}
-            {ticket.status === 'in_progress' && profile?.role === 'technician' && (
+            {ticket.status === 'in_progress' && (profile?.role === 'technician' || profile?.role === 'maint_supervisor') && (
                 <div className="bg-surface-50 rounded-xl p-5 border border-surface-200 space-y-5">
                     <div className="flex items-center gap-2 text-surface-900 border-b border-surface-200 pb-3">
                         <Package className="w-5 h-5 text-surface-500" />
@@ -285,7 +285,7 @@ export default function TicketFlow({ ticket, onUpdate }: TicketFlowProps) {
             )}
 
             {/* Manager Action: Rate & Close */}
-            {ticket.status === 'resolved' && profile?.role === 'manager' && (
+            {ticket.status === 'resolved' && (profile?.role === 'manager' || profile?.role === 'maint_manager') && (
                 <div className="bg-blue-50 rounded-xl p-5 border border-blue-100 space-y-5">
                     <h4 className="font-bold text-blue-900 border-b border-blue-200 pb-2 flex items-center gap-2">
                         <CheckCircle className="w-5 h-5 text-teal-600" />

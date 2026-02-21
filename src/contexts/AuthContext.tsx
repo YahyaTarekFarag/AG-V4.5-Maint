@@ -9,8 +9,11 @@ interface Profile {
     id: string;
     employee_code: string;
     full_name: string;
-    role: 'admin' | 'manager' | 'technician';
+    role: 'admin' | 'brand_ops_manager' | 'sector_manager' | 'area_manager' | 'manager' | 'maint_manager' | 'maint_supervisor' | 'technician';
     branch_id?: string | null;
+    brand_id?: string | null;
+    sector_id?: string | null;
+    area_id?: string | null;
 }
 
 interface AuthContextType {
