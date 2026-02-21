@@ -1,12 +1,13 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { supabase } from '../../lib/supabase';
 import { ColumnConfig } from '../../types/schema';
-import { Plus, Search, Edit2, Trash2, Loader2, AlertCircle } from 'lucide-react';
+import { Plus, Search, Edit2, Trash2, Loader2, AlertCircle, Download, Upload } from 'lucide-react';
 import SovereignActionModal from './SovereignActionModal';
 import { useSovereign } from '../../hooks/useSovereign';
 import clsx from 'clsx';
 import { format } from 'date-fns';
 import { ar } from 'date-fns/locale';
+import * as XLSX from 'xlsx';
 
 interface SovereignTableProps {
     tableName: string;
@@ -17,6 +18,9 @@ export default function SovereignTable({ tableName }: SovereignTableProps) {
     const [searchTerm, setSearchTerm] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedRecord, setSelectedRecord] = useState<any | null>(null);
+    const [importing, setImporting] = useState(false);
+    const [importResult, setImportResult] = useState<{ success: number; errors: number; message?: string } | null>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleCreate = () => {
         setSelectedRecord(null);
@@ -48,6 +52,122 @@ export default function SovereignTable({ tableName }: SovereignTableProps) {
             refetch();
         } catch (e: any) {
             alert(`خطأ في الحذف: ${e.message}`);
+        }
+    };
+
+    // ─── Excel Export ───
+    const handleExport = () => {
+        if (!data || data.length === 0) {
+            alert('لا توجد بيانات للتصدير.');
+            return;
+        }
+        // Use column labels as headers if schema available
+        const columns = schema?.list_config?.columns;
+        let exportData: any[];
+
+        if (columns && columns.length > 0) {
+            // Map to nice headers + include all raw keys
+            const allKeys = Object.keys(data[0]);
+            exportData = data.map(row => {
+                const obj: any = {};
+                allKeys.forEach(key => {
+                    const col = columns.find(c => c.key === key);
+                    const label = col ? col.label : key;
+                    const val = row[key];
+                    obj[label] = (val !== null && typeof val === 'object') ? JSON.stringify(val) : val;
+                });
+                return obj;
+            });
+        } else {
+            exportData = data.map(row => {
+                const obj: any = {};
+                Object.entries(row).forEach(([k, v]) => {
+                    obj[k] = (v !== null && typeof v === 'object') ? JSON.stringify(v) : v;
+                });
+                return obj;
+            });
+        }
+
+        const ws = XLSX.utils.json_to_sheet(exportData);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, tableName);
+
+        // Auto-size columns
+        const colWidths = Object.keys(exportData[0]).map(key => ({
+            wch: Math.max(key.length, ...exportData.map(r => String(r[key] || '').length).slice(0, 100)) + 2
+        }));
+        ws['!cols'] = colWidths;
+
+        XLSX.writeFile(wb, `${tableName}_${new Date().toISOString().slice(0, 10)}.xlsx`);
+    };
+
+    // ─── Excel Import ───
+    const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        setImporting(true);
+        setImportResult(null);
+
+        try {
+            const buffer = await file.arrayBuffer();
+            const wb = XLSX.read(buffer, { type: 'array' });
+            const ws = wb.Sheets[wb.SheetNames[0]];
+            const jsonData: any[] = XLSX.utils.sheet_to_json(ws);
+
+            if (jsonData.length === 0) {
+                setImportResult({ success: 0, errors: 0, message: 'الملف فارغ — لا توجد بيانات.' });
+                return;
+            }
+
+            // Reverse-map labels to keys if form schema exists
+            const formFields = schema?.form_config?.fields;
+            const labelToKey: Record<string, string> = {};
+            const listCols = schema?.list_config?.columns;
+            if (listCols) {
+                listCols.forEach(c => { labelToKey[c.label] = c.key; });
+            }
+            if (formFields) {
+                formFields.forEach((f: any) => { labelToKey[f.label] = f.key; });
+            }
+
+            // Map rows: try label→key mapping first, then use raw key
+            const mappedRows = jsonData.map(row => {
+                const mapped: any = {};
+                Object.entries(row).forEach(([header, value]) => {
+                    const key = labelToKey[header] || header;
+                    // Skip system fields that shouldn't be imported
+                    if (['id', 'created_at', 'updated_at', 'is_deleted'].includes(key)) return;
+                    mapped[key] = value;
+                });
+                return mapped;
+            });
+
+            let successCount = 0;
+            let errorCount = 0;
+
+            // Insert in batches of 50
+            for (let i = 0; i < mappedRows.length; i += 50) {
+                const batch = mappedRows.slice(i, i + 50);
+                const { error: insertError } = await supabase
+                    .from(tableName as any)
+                    .insert(batch as any);
+
+                if (insertError) {
+                    console.error('Import batch error:', insertError);
+                    errorCount += batch.length;
+                } else {
+                    successCount += batch.length;
+                }
+            }
+
+            setImportResult({ success: successCount, errors: errorCount });
+            if (successCount > 0) refetch();
+        } catch (err: any) {
+            setImportResult({ success: 0, errors: 0, message: 'خطأ في قراءة الملف: ' + err.message });
+        } finally {
+            setImporting(false);
+            // Reset file input
+            if (fileInputRef.current) fileInputRef.current.value = '';
         }
     };
 
@@ -121,9 +241,9 @@ export default function SovereignTable({ tableName }: SovereignTableProps) {
                     <h2 className="text-2xl font-bold text-surface-900">{list_config.title}</h2>
                     <p className="text-surface-500 text-sm mt-1">{filteredData.length} سجل متاح</p>
                 </div>
-                <div className="flex items-center gap-3 w-full sm:w-auto">
+                <div className="flex items-center gap-2 w-full sm:w-auto flex-wrap">
                     {list_config.searchable !== false && (
-                        <div className="relative flex-1 sm:w-64">
+                        <div className="relative flex-1 sm:w-56">
                             <Search className="w-5 h-5 absolute right-3 top-1/2 -translate-y-1/2 text-surface-400" />
                             <input
                                 type="text"
@@ -135,6 +255,37 @@ export default function SovereignTable({ tableName }: SovereignTableProps) {
                         </div>
                     )}
                     <button
+                        onClick={handleExport}
+                        disabled={data.length === 0}
+                        className="flex items-center gap-1.5 px-3 py-2.5 text-sm font-medium bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 rounded-xl transition-all disabled:opacity-50 shrink-0"
+                        title="تصدير Excel"
+                    >
+                        <Download className="w-4 h-4" />
+                        <span className="hidden sm:inline">تصدير</span>
+                    </button>
+                    <div className="relative shrink-0">
+                        <input
+                            ref={fileInputRef}
+                            type="file"
+                            accept=".xlsx,.xls,.csv"
+                            onChange={handleImport}
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                            disabled={importing}
+                        />
+                        <button
+                            className={clsx(
+                                "flex items-center gap-1.5 px-3 py-2.5 text-sm font-medium border rounded-xl transition-all shrink-0",
+                                importing
+                                    ? "bg-blue-100 text-blue-600 border-blue-200"
+                                    : "bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100"
+                            )}
+                            title="استيراد من Excel"
+                        >
+                            {importing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+                            <span className="hidden sm:inline">استيراد</span>
+                        </button>
+                    </div>
+                    <button
                         onClick={handleCreate}
                         className="flex items-center gap-2 bg-primary-600 hover:bg-primary-500 text-white px-5 py-2.5 rounded-xl font-semibold shadow-md shadow-primary-500/20 transition-all shrink-0"
                     >
@@ -143,6 +294,28 @@ export default function SovereignTable({ tableName }: SovereignTableProps) {
                     </button>
                 </div>
             </div>
+
+            {/* Import Result Banner */}
+            {importResult && (
+                <div className={clsx(
+                    "mx-6 mt-4 p-3 rounded-xl flex items-center gap-2 text-sm font-medium border",
+                    importResult.message
+                        ? "bg-amber-50 text-amber-700 border-amber-200"
+                        : importResult.errors > 0
+                            ? "bg-amber-50 text-amber-700 border-amber-200"
+                            : "bg-emerald-50 text-emerald-700 border-emerald-200"
+                )}>
+                    {importResult.message ? (
+                        <><AlertCircle className="w-4 h-4 shrink-0" />{importResult.message}</>
+                    ) : (
+                        <>
+                            ✅ تم استيراد <strong>{importResult.success}</strong> سجل بنجاح
+                            {importResult.errors > 0 && <> | ❌ <strong>{importResult.errors}</strong> سجل فشل</>}
+                        </>
+                    )}
+                    <button onClick={() => setImportResult(null)} className="mr-auto text-xs hover:underline">إغلاق</button>
+                </div>
+            )}
 
             <div className="overflow-x-auto flex-1">
                 <table className="w-full text-right text-sm">
