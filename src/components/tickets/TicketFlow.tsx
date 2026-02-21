@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { getGeoLocation } from '../../lib/geo';
 import { useAuth } from '../../contexts/AuthContext';
-import { MapPin, Play, CheckCircle, Star, Package, Loader2, AlertCircle } from 'lucide-react';
+import { MapPin, Play, CheckCircle, Star, Package, Loader2, AlertCircle, Camera, Eye, Image as ImageIcon, X } from 'lucide-react';
 import clsx from 'clsx';
 import { format } from 'date-fns';
 import { ar } from 'date-fns/locale';
+import { compressImage } from '../../lib/image';
+import { uploadToDrive } from '../../lib/drive';
 
 interface TicketFlowProps {
     ticket: any;
@@ -26,6 +28,10 @@ export default function TicketFlow({ ticket, onUpdate }: TicketFlowProps) {
     // States for Manager Evaluation
     const [rating, setRating] = useState(5);
     const [comment, setComment] = useState('');
+
+    // State for Technician Repair Photo
+    const [resolvedImageUrl, setResolvedImageUrl] = useState<string | null>(null);
+    const [uploading, setUploading] = useState(false);
 
     useEffect(() => {
         if (ticket.status === 'in_progress' && profile?.role === 'technician') {
@@ -55,6 +61,20 @@ export default function TicketFlow({ ticket, onUpdate }: TicketFlowProps) {
 
     const removePart = (index: number) => {
         setPartsUsed(partsUsed.filter((_, i) => i !== index));
+    };
+
+    const handleImageUpload = async (file: File) => {
+        setUploading(true);
+        setError(null);
+        try {
+            const compressed = await compressImage(file);
+            const url = await uploadToDrive(compressed as File);
+            setResolvedImageUrl(url);
+        } catch (e: any) {
+            setError('خطأ في رفع صورة الإصلاح: ' + e.message);
+        } finally {
+            setUploading(false);
+        }
     };
 
     const handleAction = async (action: 'start_work' | 'resolve' | 'close') => {
@@ -93,6 +113,8 @@ export default function TicketFlow({ ticket, onUpdate }: TicketFlowProps) {
                     status: 'resolved',
                     resolved_lat: coords.lat,
                     resolved_lng: coords.lng,
+                    resolved_at: new Date().toISOString(),
+                    resolved_image_url: resolvedImageUrl,
                     updated_at: new Date().toISOString()
                 };
             }
@@ -141,6 +163,21 @@ export default function TicketFlow({ ticket, onUpdate }: TicketFlowProps) {
                         </span>
                     )}
                 </div>
+
+                {/* Display Reporting Photo if exists */}
+                {ticket.reported_image_url && (
+                    <div className="mt-4 p-3 bg-surface-50 rounded-xl border border-surface-200">
+                        <p className="text-xs font-bold text-surface-500 mb-2 flex items-center gap-1">
+                            <ImageIcon className="w-3 h-3" /> صورة العطل عند البلاغ:
+                        </p>
+                        <a href={ticket.reported_image_url} target="_blank" rel="noreferrer" className="block relative group overflow-hidden rounded-lg aspect-video w-full max-w-xs">
+                            <img src={ticket.reported_image_url} alt="العطل" className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                            <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                <Eye className="w-6 h-6 text-white" />
+                            </div>
+                        </a>
+                    </div>
+                )}
             </div>
 
             {error && (
@@ -204,15 +241,44 @@ export default function TicketFlow({ ticket, onUpdate }: TicketFlowProps) {
                         </ul>
                     )}
 
-                    <div className="pt-4 border-t border-surface-200">
+                    <div className="pt-4 border-t border-surface-200 space-y-4">
+                        <div className="space-y-2">
+                            <h5 className="text-sm font-bold text-surface-900">صورة إتمام الإصلاح <span className="text-red-500">*</span></h5>
+                            {resolvedImageUrl ? (
+                                <div className="relative w-full aspect-video rounded-xl overflow-hidden border border-teal-200">
+                                    <img src={resolvedImageUrl} className="w-full h-full object-cover" />
+                                    <button onClick={() => setResolvedImageUrl(null)} className="absolute top-2 right-2 p-1.5 bg-white/80 text-red-600 rounded-full shadow-md"><X className="w-4 h-4" /></button>
+                                </div>
+                            ) : (
+                                <div className="relative group">
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        capture="environment"
+                                        onChange={(e) => e.target.files?.[0] && handleImageUpload(e.target.files[0])}
+                                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                        disabled={uploading}
+                                    />
+                                    <div className="flex flex-col items-center justify-center p-6 border-2 border-dashed border-surface-200 group-hover:border-primary-400 rounded-2xl bg-white transition-all">
+                                        {uploading ? (
+                                            <Loader2 className="w-8 h-8 text-primary-500 animate-spin" />
+                                        ) : (
+                                            <Camera className="w-8 h-8 text-surface-400 mb-2" />
+                                        )}
+                                        <span className="text-sm text-surface-500 font-medium">التقط صورة بعد الإصلاح</span>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
                         <p className="text-xs text-surface-500 mb-4 flex items-center gap-1"><MapPin className="w-3 h-3" /> سيتم التقاط آخر موقع لك لإثبات إتمام العمل موقعياً</p>
                         <button
                             onClick={() => handleAction('resolve')}
-                            disabled={loading}
+                            disabled={loading || !resolvedImageUrl || uploading}
                             className="flex items-center justify-center gap-2 w-full px-6 py-3 bg-teal-600 hover:bg-teal-500 text-white rounded-xl font-bold shadow-md shadow-teal-500/20 transition-all disabled:opacity-70"
                         >
                             {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <CheckCircle className="w-5 h-5" />}
-                            <span>إصلاح العطل وإغلاق البلاغ للفني</span>
+                            <span>إصلاح العطل وبانتظار اعتماد المدير</span>
                         </button>
                     </div>
                 </div>
@@ -221,8 +287,25 @@ export default function TicketFlow({ ticket, onUpdate }: TicketFlowProps) {
             {/* Manager Action: Rate & Close */}
             {ticket.status === 'resolved' && profile?.role === 'manager' && (
                 <div className="bg-blue-50 rounded-xl p-5 border border-blue-100 space-y-5">
-                    <h4 className="font-bold text-blue-900 border-b border-blue-200 pb-2">تقييم الفني والإغلاق النهائي</h4>
-                    <div className="space-y-4">
+                    <h4 className="font-bold text-blue-900 border-b border-blue-200 pb-2 flex items-center gap-2">
+                        <CheckCircle className="w-5 h-5 text-teal-600" />
+                        اعتماد الاستلام وتقييم الصيانة
+                    </h4>
+
+                    {/* Display Technician's Repair Photo for Manager */}
+                    {ticket.resolved_image_url && (
+                        <div className="space-y-2">
+                            <p className="text-sm font-bold text-blue-800">صورة الإصلاح النهائية:</p>
+                            <a href={ticket.resolved_image_url} target="_blank" rel="noreferrer" className="block relative group overflow-hidden rounded-xl aspect-video w-full bg-white border border-blue-200 shadow-sm">
+                                <img src={ticket.resolved_image_url} className="w-full h-full object-cover" />
+                                <div className="absolute inset-0 bg-blue-600/10 flex items-center justify-center group-hover:bg-blue-600/20 transition-all">
+                                    <Eye className="w-8 h-8 text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                </div>
+                            </a>
+                        </div>
+                    )}
+
+                    <div className="bg-white/60 p-4 rounded-xl border border-blue-100 space-y-4">
                         <div>
                             <label className="block text-sm font-semibold text-blue-800 mb-2">التقييم (من 1 إلى 5)</label>
                             <div className="flex gap-2 text-2xl" dir="ltr">

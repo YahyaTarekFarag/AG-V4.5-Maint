@@ -3,71 +3,25 @@ import DashboardLayout from '../components/layout/DashboardLayout';
 import { supabase } from '../lib/supabase';
 import { MapPin, Users, Loader2 } from 'lucide-react';
 
-// Load Leaflet dynamically via CDN to avoid npm install
+// Use global Leaflet (L) loaded via index.html
 function useLeaflet(mapRef: React.RefObject<HTMLDivElement | null>, branches: any[], technicians: any[]) {
     const mapInstanceRef = useRef<any>(null);
+    const markersLayerRef = useRef<any>(null);
 
+    // 1. Initial Map Setup (Run once)
     useEffect(() => {
-        if (!mapRef.current || branches.length === 0) return;
-        if (mapInstanceRef.current) return; // already initialized
+        const L = (window as any).L;
+        if (!mapRef.current || !L || mapInstanceRef.current) return;
 
-        // Load CSS
-        const link = document.createElement('link');
-        link.rel = 'stylesheet';
-        link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
-        document.head.appendChild(link);
+        const map = L.map(mapRef.current).setView([26.8206, 30.8025], 6);
+        mapInstanceRef.current = map;
 
-        // Load JS
-        const script = document.createElement('script');
-        script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
-        script.onload = () => {
-            const L = (window as any).L;
-            if (!mapRef.current || mapInstanceRef.current) return;
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors',
+            maxZoom: 19
+        }).addTo(map);
 
-            // Center on Egypt by default
-            const map = L.map(mapRef.current).setView([26.8206, 30.8025], 6);
-            mapInstanceRef.current = map;
-
-            // OpenStreetMap tiles (free)
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap contributors'
-            }).addTo(map);
-
-            // Branch markers (blue)
-            const branchIcon = L.divIcon({
-                html: `<div style="background:#0ea5e9;color:white;border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 2px 8px rgba(0,0,0,.3);border:2px solid white">🏢</div>`,
-                iconSize: [36, 36], iconAnchor: [18, 18], className: ''
-            });
-
-            branches.forEach(b => {
-                L.marker([b.latitude, b.longitude], { icon: branchIcon })
-                    .addTo(map)
-                    .bindPopup(`<b>🏢 ${b.name || b.branch_name || b.title || 'فرع'}</b><br/>${b.address || b.sector || ''}`);
-            });
-
-            // Technician markers (green = available)
-            const techIcon = L.divIcon({
-                html: `<div style="background:#10b981;color:white;border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 2px 8px rgba(0,0,0,.3);border:2px solid white">👤</div>`,
-                iconSize: [36, 36], iconAnchor: [18, 18], className: ''
-            });
-
-            technicians.forEach(t => {
-                if (!t.start_lat || !t.start_lng) return;
-                L.marker([t.start_lat, t.start_lng], { icon: techIcon })
-                    .addTo(map)
-                    .bindPopup(`<b>🔧 ${t.full_name || 'فني'}</b><br/>مناوبة بدأت: ${t.start_at ? new Date(t.start_at).toLocaleTimeString('ar-EG') : '—'}`);
-            });
-
-            // Fit bounds if we have markers
-            const allPoints = [
-                ...branches.filter(b => b.latitude && b.longitude).map(b => [b.latitude, b.longitude]),
-                ...technicians.filter(t => t.start_lat && t.start_lng).map(t => [t.start_lat, t.start_lng]),
-            ];
-            if (allPoints.length > 0) {
-                map.fitBounds(allPoints as any, { padding: [40, 40] });
-            }
-        };
-        document.body.appendChild(script);
+        markersLayerRef.current = L.featureGroup().addTo(map);
 
         return () => {
             if (mapInstanceRef.current) {
@@ -75,7 +29,54 @@ function useLeaflet(mapRef: React.RefObject<HTMLDivElement | null>, branches: an
                 mapInstanceRef.current = null;
             }
         };
-    }, [branches, technicians]);
+    }, []); // Run ONLY once
+
+    // 2. Sync markers and FitBounds (Run when data or map instance ready)
+    useEffect(() => {
+        const L = (window as any).L;
+        const map = mapInstanceRef.current;
+        const layer = markersLayerRef.current;
+
+        if (!map || !layer || !L) return;
+
+        layer.clearLayers();
+
+        const branchIcon = L.divIcon({
+            html: `<div style="background:#0ea5e9;color:white;border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 3px 10px rgba(0,0,0,.2);border:2px solid white">🏢</div>`,
+            iconSize: [34, 34], iconAnchor: [17, 17], className: ''
+        });
+
+        const techIcon = L.divIcon({
+            html: `<div style="background:#10b981;color:white;border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 3px 10px rgba(0,0,0,.2);border:2px solid white">👤</div>`,
+            iconSize: [34, 34], iconAnchor: [17, 17], className: ''
+        });
+
+        const points: any[] = [];
+        branches.forEach(b => {
+            if (b.latitude && b.longitude) {
+                L.marker([b.latitude, b.longitude], { icon: branchIcon }).bindPopup(`<b>${b.name}</b>`).addTo(layer);
+                points.push([b.latitude, b.longitude]);
+            }
+        });
+
+        technicians.forEach(t => {
+            if (t.start_lat && t.start_lng) {
+                L.marker([t.start_lat, t.start_lng], { icon: techIcon }).bindPopup(`<b>${t.full_name}</b>`).addTo(layer);
+                points.push([t.start_lat, t.start_lng]);
+            }
+        });
+
+        if (points.length > 0) {
+            // Delay marginally to ensure DOM has settled
+            const timer = setTimeout(() => {
+                if (mapInstanceRef.current) {
+                    mapInstanceRef.current.invalidateSize();
+                    mapInstanceRef.current.fitBounds(points, { padding: [50, 50], maxZoom: 12, animate: false });
+                }
+            }, 100);
+            return () => clearTimeout(timer);
+        }
+    }, [branches, technicians]); // Sync when data changes
 }
 
 export default function MapPage() {
@@ -87,42 +88,25 @@ export default function MapPage() {
     useEffect(() => {
         const load = async () => {
             setLoading(true);
+            try {
+                const { data: bData } = await supabase.from('branches').select('*');
+                const { data: sData } = await supabase.from('shifts').select('*, profiles(full_name)').is('end_at', null);
 
-            // Fetch ALL branches — filter client-side for map pins
-            const { data: branchData, error } = await supabase
-                .from('branches')
-                .select('*');
+                const resolveLat = (b: any) => Number(b.latitude ?? b.branch_lat ?? b.lat);
+                const resolveLng = (b: any) => Number(b.longitude ?? b.branch_lng ?? b.lng);
 
-            if (error) console.error('MapPage branches error:', error);
-
-            // Fetch technicians in active shift
-            const { data: shiftData } = await supabase
-                .from('shifts')
-                .select('*, profiles(full_name, employee_code)')
-                .is('end_at', null);
-
-            // Helper: resolve lat/lng from ANY column naming convention
-            const resolveLat = (b: any) => {
-                const v = b.latitude ?? b.lat ?? b.branch_lat ?? b.branch_latitude;
-                return v != null && v !== '' && !isNaN(Number(v)) ? Number(v) : null;
-            };
-            const resolveLng = (b: any) => {
-                const v = b.longitude ?? b.lng ?? b.branch_lng ?? b.branch_longitude;
-                return v != null && v !== '' && !isNaN(Number(v)) ? Number(v) : null;
-            };
-
-            // Only branches WITH valid coordinates go on the map
-            const withCoords = (branchData || [])
-                .map((b: any) => ({ ...b, latitude: resolveLat(b), longitude: resolveLng(b) }))
-                .filter((b: any) => b.latitude !== null && b.longitude !== null);
-
-            setBranches(withCoords);
-            setTechnicians((shiftData || []).map((s: any) => ({
-                ...s,
-                full_name: s.profiles?.full_name,
-                employee_code: s.profiles?.employee_code,
-            })));
-            setLoading(false);
+                setBranches((bData || []).map(b => ({ ...b, latitude: resolveLat(b), longitude: resolveLng(b) })));
+                setTechnicians((sData || []).map(s => ({
+                    ...s,
+                    full_name: s.profiles?.full_name,
+                    start_lat: s.start_lat,
+                    start_lng: s.start_lng
+                })));
+            } catch (e) {
+                console.error(e);
+            } finally {
+                setLoading(false);
+            }
         };
         load();
     }, []);
@@ -157,24 +141,27 @@ export default function MapPage() {
                 </div>
             </div>
 
-            {/* Map */}
-            <div className="bg-white rounded-2xl border border-surface-200 shadow-sm overflow-hidden" style={{ height: '60vh', minHeight: 400 }}>
-                {loading ? (
-                    <div className="flex items-center justify-center h-full flex-col gap-3 text-surface-400">
+            {/* Map Container */}
+            <div className="bg-white rounded-2xl border border-surface-200 shadow-sm overflow-hidden relative" style={{ height: '60vh', minHeight: 400 }}>
+                {loading && (
+                    <div className="absolute inset-0 z-10 bg-white/80 backdrop-blur-sm flex items-center justify-center flex-col gap-3 text-surface-400">
                         <Loader2 className="w-10 h-10 animate-spin text-primary-400" />
-                        <p className="text-sm font-medium">جاري تحميل بيانات الخريطة...</p>
+                        <p className="text-sm font-medium text-surface-600">جاري تحميل بيانات الخريطة...</p>
                     </div>
-                ) : branches.length === 0 && technicians.length === 0 ? (
-                    <div className="flex items-center justify-center h-full flex-col gap-4 text-surface-400">
+                )}
+
+                {!loading && branches.length === 0 && technicians.length === 0 && (
+                    <div className="absolute inset-0 z-10 bg-white flex items-center justify-center flex-col gap-4 text-surface-400">
                         <MapPin className="w-16 h-16 text-surface-300" />
                         <div className="text-center">
-                            <p className="font-semibold text-lg">لا توجد إحداثيات مسجّلة بعد</p>
-                            <p className="text-sm mt-1">أضف latitude/longitude للفروع في قاعدة البيانات لتظهر على الخريطة</p>
+                            <p className="font-semibold text-lg text-surface-900">لا توجد إحداثيات مسجّلة بعد</p>
+                            <p className="text-sm mt-1">يجب تسجيل إحداثيات الفروع لتظهر هنا</p>
                         </div>
                     </div>
-                ) : (
-                    <div ref={mapRef} style={{ height: '100%', width: '100%' }} />
                 )}
+
+                {/* Always rendered but may be covered by overlays */}
+                <div ref={mapRef} style={{ height: '100%', width: '100%' }} className="z-0" />
             </div>
 
             {/* Active Technicians List */}

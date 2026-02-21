@@ -2,7 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { supabase, supabaseAdmin } from '../../lib/supabase';
 import { UISchema, FieldConfig } from '../../types/schema';
 import { getGeoLocation } from '../../lib/geo';
-import { X, Save, Loader2, MapPin, Navigation } from 'lucide-react';
+import { X, Save, Loader2, MapPin, Navigation, Upload } from 'lucide-react';
+import { compressImage } from '../../lib/image';
+import { uploadToDrive } from '../../lib/drive';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface SovereignActionModalProps {
     isOpen: boolean;
@@ -13,12 +16,15 @@ interface SovereignActionModalProps {
 }
 
 export default function SovereignActionModal({ isOpen, onClose, schema, record, onSuccess }: SovereignActionModalProps) {
+    const { user } = useAuth();
     const [formData, setFormData] = useState<Record<string, any>>({});
     const [loading, setLoading] = useState(false);
+    const [uploading, setUploading] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [lookupData, setLookupData] = useState<Record<string, any[]>>({});
     const [gpsLoading, setGpsLoading] = useState(false);
     const [gpsSuccess, setGpsSuccess] = useState(false);
+    const [settings, setSettings] = useState<Record<string, any>>({});
 
     const { form_config, table_name } = schema;
     const isEdit = !!record;
@@ -27,7 +33,6 @@ export default function SovereignActionModal({ isOpen, onClose, schema, record, 
         if (isOpen) {
             setError(null);
             if (isEdit && record) {
-                // Handle JSON object parsing for edit mode
                 const initialData = { ...record };
                 for (const key in initialData) {
                     if (typeof initialData[key] === 'object' && initialData[key] !== null) {
@@ -38,9 +43,33 @@ export default function SovereignActionModal({ isOpen, onClose, schema, record, 
             } else {
                 setFormData({});
             }
-            fetchLookups();
+            fetchInitialData();
         }
     }, [isOpen, record, schema]);
+
+    const fetchInitialData = async () => {
+        await Promise.all([fetchLookups(), fetchSettings()]);
+    };
+
+    const fetchSettings = async () => {
+        try {
+            const { data } = await supabase.from('system_settings').select('*');
+            if (data) {
+                const mapped = data.reduce((acc, s) => ({ ...acc, [s.key]: s.value }), {});
+                setSettings(mapped);
+
+                // Auto-fill branch if restricted
+                if (table_name === 'tickets' && !isEdit && user?.role === 'manager' && mapped.restrict_branch_submission === 'true') {
+                    const { data: profile } = await supabase.from('profiles').select('branch_id').eq('id', user.id).single();
+                    if (profile?.branch_id) {
+                        setFormData(prev => ({ ...prev, branch_id: profile.branch_id }));
+                    }
+                }
+            }
+        } catch (e) {
+            console.error('Settings fetch error', e);
+        }
+    };
 
     // Smart Fetch for Dropdowns (The Reverse Lookup)
     const fetchLookups = async () => {
@@ -61,6 +90,20 @@ export default function SovereignActionModal({ isOpen, onClose, schema, record, 
 
     const handleChange = (key: string, value: any) => {
         setFormData(prev => ({ ...prev, [key]: value }));
+    };
+
+    const handleImageUpload = async (key: string, file: File) => {
+        setUploading(key);
+        setError(null);
+        try {
+            const compressed = await compressImage(file);
+            const url = await uploadToDrive(compressed as File);
+            setFormData(prev => ({ ...prev, [key]: url }));
+        } catch (e: any) {
+            setError('خطأ في رفع الصورة: ' + e.message);
+        } finally {
+            setUploading(null);
+        }
     };
 
     // GPS auto-fill — robust check that works with any lat/lng field naming
@@ -119,10 +162,11 @@ export default function SovereignActionModal({ isOpen, onClose, schema, record, 
 
             if (isEdit) {
                 if (table_name === 'profiles') {
-                    // Update profile info (Note: does not update password)
+                    // Update profile info (Exclude password/email virtual fields from public.profiles table update)
+                    const { password, ...updatePayload } = processedData;
                     const { error: updateError } = await supabase
                         .from(table_name as any)
-                        .update(processedData)
+                        .update(updatePayload)
                         .eq('id', record.id);
                     if (updateError) throw updateError;
                 } else {
@@ -231,56 +275,97 @@ export default function SovereignActionModal({ isOpen, onClose, schema, record, 
                             </div>
                         )}
 
-                        {form_config.fields.map((field) => (
-                            <div key={field.key} className={field.type === 'hidden' ? 'hidden' : 'block'}>
-                                <label className="block text-sm font-semibold text-surface-700 mb-1.5">
-                                    {field.label} {field.required && <span className="text-red-500">*</span>}
-                                </label>
+                        {form_config.fields.map((field) => {
+                            // Hide password field in Edit mode for profiles (passwords managed via Auth/Admin)
+                            if (isEdit && table_name === 'profiles' && field.key === 'password') return null;
 
-                                {field.type === 'text' || field.type === 'number' || field.type === 'email' ? (
-                                    <input
-                                        type={field.type}
-                                        required={field.required}
-                                        placeholder={field.placeholder}
-                                        value={formData[field.key] || ''}
-                                        onChange={(e) => handleChange(field.key, e.target.value)}
-                                        className="w-full px-4 py-2.5 bg-surface-50 border border-surface-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 transition-all text-surface-900"
-                                    />
-                                ) : field.type === 'textarea' ? (
-                                    <textarea
-                                        required={field.required}
-                                        placeholder={field.placeholder}
-                                        value={formData[field.key] || ''}
-                                        rows={4}
-                                        onChange={(e) => handleChange(field.key, e.target.value)}
-                                        className="w-full px-4 py-2.5 bg-surface-50 border border-surface-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 transition-all text-surface-900"
-                                    />
-                                ) : field.type === 'select' ? (
-                                    <select
-                                        required={field.required}
-                                        value={formData[field.key] || ''}
-                                        onChange={(e) => handleChange(field.key, e.target.value)}
-                                        className="w-full px-4 py-2.5 bg-surface-50 border border-surface-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 transition-all text-surface-900"
-                                    >
-                                        <option value="" disabled>-- اختر --</option>
-                                        {/* Fixed options if no dataSource, or dynamic if dataSource present */}
-                                        {field.dataSource && lookupData[field.key] ? (
-                                            lookupData[field.key].map(opt => (
-                                                <option key={opt[field.dataValue || 'id']} value={opt[field.dataValue || 'id']}>
-                                                    {opt[field.dataLabel || 'name'] || opt.full_name || opt.id}
-                                                </option>
-                                            ))
-                                        ) : field.options ? (
-                                            field.options.map(opt => (
-                                                <option key={opt.value} value={opt.value}>
-                                                    {opt.label}
-                                                </option>
-                                            ))
-                                        ) : null}
-                                    </select>
-                                ) : null}
-                            </div>
-                        ))}
+                            return (
+                                <div key={field.key} className={field.type === 'hidden' ? 'hidden' : 'block'}>
+                                    <label className="block text-sm font-semibold text-surface-700 mb-1.5">
+                                        {field.label} {field.required && <span className="text-red-500">*</span>}
+                                    </label>
+
+                                    {field.type === 'text' || field.type === 'number' || field.type === 'email' ? (
+                                        <input
+                                            type={field.type}
+                                            required={field.required}
+                                            placeholder={field.placeholder}
+                                            value={formData[field.key] || ''}
+                                            onChange={(e) => handleChange(field.key, e.target.value)}
+                                            className="w-full px-4 py-2.5 bg-surface-50 border border-surface-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 transition-all text-surface-900"
+                                        />
+                                    ) : field.type === 'textarea' ? (
+                                        <textarea
+                                            required={field.required}
+                                            placeholder={field.placeholder}
+                                            value={formData[field.key] || ''}
+                                            rows={4}
+                                            onChange={(e) => handleChange(field.key, e.target.value)}
+                                            className="w-full px-4 py-2.5 bg-surface-50 border border-surface-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 transition-all text-surface-900"
+                                        />
+                                    ) : field.type === 'select' ? (
+                                        <select
+                                            required={field.required}
+                                            value={formData[field.key] || ''}
+                                            disabled={field.key === 'branch_id' && user?.role === 'manager' && settings.restrict_branch_submission === 'true'}
+                                            onChange={(e) => handleChange(field.key, e.target.value)}
+                                            className="w-full px-4 py-2.5 bg-surface-50 border border-surface-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 transition-all text-surface-900 disabled:opacity-60"
+                                        >
+                                            <option value="" disabled>-- اختر --</option>
+                                            {field.dataSource && lookupData[field.key] ? (
+                                                lookupData[field.key].map(opt => (
+                                                    <option key={opt[field.dataValue || 'id']} value={opt[field.dataValue || 'id']}>
+                                                        {opt[field.dataLabel || 'name'] || opt.full_name || opt.id}
+                                                    </option>
+                                                ))
+                                            ) : field.options ? (
+                                                field.options.map(opt => (
+                                                    <option key={opt.value} value={opt.value}>
+                                                        {opt.label}
+                                                    </option>
+                                                ))
+                                            ) : null}
+                                        </select>
+                                    ) : field.type === 'image' ? (
+                                        <div className="space-y-3">
+                                            {formData[field.key] ? (
+                                                <div className="relative w-full aspect-video rounded-xl border border-surface-200 overflow-hidden bg-surface-50">
+                                                    <img src={formData[field.key]} alt={field.label} className="w-full h-full object-cover" />
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleChange(field.key, null)}
+                                                        className="absolute top-2 right-2 p-1.5 bg-white/80 hover:bg-white text-red-600 rounded-full shadow-md backdrop-blur-sm"
+                                                    >
+                                                        <X className="w-4 h-4" />
+                                                    </button>
+                                                </div>
+                                            ) : (
+                                                <div className="relative group">
+                                                    <input
+                                                        type="file"
+                                                        accept="image/*"
+                                                        capture="environment"
+                                                        onChange={(e) => e.target.files?.[0] && handleImageUpload(field.key, e.target.files[0])}
+                                                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                                        disabled={!!uploading}
+                                                    />
+                                                    <div className="flex flex-col items-center justify-center p-8 border-2 border-dashed border-surface-200 group-hover:border-primary-400 bg-surface-50 rounded-2xl transition-all">
+                                                        {uploading === field.key ? (
+                                                            <Loader2 className="w-8 h-8 text-primary-500 animate-spin" />
+                                                        ) : (
+                                                            <Upload className="w-8 h-8 text-surface-400 group-hover:text-primary-500 mb-2 transition-colors" />
+                                                        )}
+                                                        <span className="text-sm text-surface-500 font-medium">
+                                                            {uploading === field.key ? 'جاري الرفع والضغط...' : 'اضغط للرفع أو التقاط صورة'}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    ) : null}
+                                </div>
+                            );
+                        })}
                     </form>
                 </div>
 

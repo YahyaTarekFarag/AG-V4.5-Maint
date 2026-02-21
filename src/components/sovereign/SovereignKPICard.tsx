@@ -37,31 +37,27 @@ export default function SovereignKPICard({ config, userId }: Props) {
     const fetchValue = async () => {
         setLoading(true);
         try {
-            let query = supabase.from(config.table as any).select('*', { count: 'exact', head: config.aggregate === 'count' });
-
-            // Apply filters — replace $user_id placeholder
+            // Resolve filters — replace $user_id placeholder
+            const resolvedFilter: Record<string, any> = {};
             if (config.filter) {
                 for (const [col, val] of Object.entries(config.filter)) {
-                    const resolved = val === '$user_id' ? userId : val;
-                    if (resolved !== undefined && resolved !== null) {
-                        query = (query as any).eq(col, resolved);
-                    }
+                    resolvedFilter[col] = val === '$user_id' ? userId : val;
                 }
             }
 
-            if (config.aggregate === 'count') {
-                const { count, error } = await query;
-                if (!error) setValue(count ?? 0);
-            } else {
-                // Sum / Avg — fetch data and compute client-side
-                const { data, error } = await (supabase.from(config.table as any).select(config.aggregate_col || 'id') as any);
-                if (!error && data && config.aggregate_col) {
-                    const nums = (data as any[]).map(r => Number(r[config.aggregate_col!]) || 0);
-                    if (config.aggregate === 'sum') setValue(nums.reduce((a, b) => a + b, 0));
-                    if (config.aggregate === 'avg') setValue(nums.length ? Math.round(nums.reduce((a, b) => a + b, 0) / nums.length) : 0);
-                }
-            }
-        } catch {
+            // Call the Optimized Server-Side Aggregator
+            const { data, error } = await supabase.rpc('sovereign_get_aggregate', {
+                p_table: config.table,
+                p_aggregate: config.aggregate,
+                p_column: config.aggregate_col || 'id',
+                p_filter: resolvedFilter
+            });
+
+            if (error) throw error;
+            setValue(Number(data) || 0);
+
+        } catch (e) {
+            console.error('KPI Fetch Error:', e);
             setValue(null);
         } finally {
             setLoading(false);

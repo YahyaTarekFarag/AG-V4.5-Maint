@@ -16,7 +16,7 @@ export interface ListConfig {
 export interface FieldConfig {
     key: string;
     label: string;
-    type: 'text' | 'number' | 'email' | 'select' | 'textarea' | 'date' | 'hidden';
+    type: 'text' | 'number' | 'email' | 'select' | 'textarea' | 'date' | 'hidden' | 'image';
     required?: boolean;
     placeholder?: string;
     dataSource?: string; // e.g., 'branches' for a select field to fetch from branches table

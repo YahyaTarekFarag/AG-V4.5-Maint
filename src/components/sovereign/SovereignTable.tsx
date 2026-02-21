@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { supabase } from '../../lib/supabase';
-import { UISchema, ListConfig, ColumnConfig } from '../../types/schema';
-import { Plus, Search, Edit2, Trash2, ChevronRight, Loader2, AlertCircle } from 'lucide-react';
+import { ColumnConfig } from '../../types/schema';
+import { Plus, Search, Edit2, Trash2, Loader2, AlertCircle } from 'lucide-react';
 import SovereignActionModal from './SovereignActionModal';
+import { useSovereign } from '../../hooks/useSovereign';
 import clsx from 'clsx';
 import { format } from 'date-fns';
 import { ar } from 'date-fns/locale';
@@ -12,57 +13,10 @@ interface SovereignTableProps {
 }
 
 export default function SovereignTable({ tableName }: SovereignTableProps) {
-    const [schema, setSchema] = useState<UISchema | null>(null);
-    const [data, setData] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-
+    const { schema, data, loading, error, refetch } = useSovereign(tableName);
     const [searchTerm, setSearchTerm] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedRecord, setSelectedRecord] = useState<any | null>(null);
-
-    useEffect(() => {
-        fetchSchemaAndData();
-    }, [tableName]);
-
-    const fetchSchemaAndData = async () => {
-        setLoading(true);
-        setError(null);
-        try {
-            // 1. Fetch Schema Definition
-            const { data: schemaData, error: schemaError } = await supabase
-                .from('ui_schemas')
-                .select('*')
-                .eq('table_name', tableName)
-                .single();
-
-            if (schemaError) throw new Error(`لم يتم العثور على إعدادات الواجهة للجدول: ${tableName}`);
-            if (!schemaData) throw new Error('لا توجد بيانات وصفية.');
-
-            setSchema(schemaData as UISchema);
-
-            // 2. Fetch Actual Data
-            await loadData(schemaData.list_config);
-
-        } catch (e: any) {
-            setError(e.message || 'حدث خطأ مجهول أثناء جلب الواجهة.');
-            console.error(e);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const loadData = async (config: ListConfig) => {
-        let query = supabase.from(tableName as any).select('*');
-        if (config.defaultSort) {
-            query = query.order(config.defaultSort.column, { ascending: config.defaultSort.ascending });
-        } else {
-            query = query.order('created_at', { ascending: false }); // Default fallback
-        }
-        const { data: rows, error: rowsError } = await query;
-        if (rowsError) throw new Error(`خطأ في جلب بيانات الجدول: ${rowsError.message}`);
-        setData(rows || []);
-    };
 
     const handleCreate = () => {
         setSelectedRecord(null);
@@ -77,9 +31,21 @@ export default function SovereignTable({ tableName }: SovereignTableProps) {
     const handleDelete = async (id: string) => {
         if (!window.confirm('هل أنت متأكد من الحذف؟')) return;
         try {
-            const { error } = await supabase.from(tableName as any).delete().eq('id', id);
-            if (error) throw error;
-            setData(data.filter(item => item.id !== id));
+            // Priority: Soft Delete
+            const { error: softError } = await supabase
+                .from(tableName as any)
+                .update({ is_deleted: true } as any)
+                .eq('id', id);
+
+            if (softError) {
+                // Fallback: Hard Delete (if is_deleted not implemented on table yet)
+                const { error: hardError } = await supabase
+                    .from(tableName as any)
+                    .delete()
+                    .eq('id', id);
+                if (hardError) throw hardError;
+            }
+            refetch();
         } catch (e: any) {
             alert(`خطأ في الحذف: ${e.message}`);
         }
@@ -109,7 +75,11 @@ export default function SovereignTable({ tableName }: SovereignTableProps) {
                     </span>
                 );
             case 'date':
-                return <span>{format(new Date(val), 'PPP hh:mm a', { locale: ar })}</span>;
+                try {
+                    return <span>{format(new Date(val), 'PPP hh:mm a', { locale: ar })}</span>;
+                } catch {
+                    return <span>{val}</span>;
+                }
             case 'badge':
                 return <span className="px-2 py-1 bg-primary-50 text-primary-700 rounded text-sm font-medium">{val}</span>;
             default:
@@ -130,8 +100,8 @@ export default function SovereignTable({ tableName }: SovereignTableProps) {
         return (
             <div className="flex flex-col items-center justify-center p-12 bg-red-50 rounded-3xl border border-red-200">
                 <AlertCircle className="w-10 h-10 text-red-500 mb-4" />
-                <p className="text-red-700 font-medium">{error}</p>
-                <button onClick={fetchSchemaAndData} className="mt-4 px-4 py-2 bg-white text-red-600 rounded-lg shadow-sm border border-red-100 hover:bg-red-50 transition-colors">إعادة المحاولة</button>
+                <p className="text-red-700 font-medium text-center">{error}</p>
+                <button onClick={refetch} className="mt-4 px-4 py-2 bg-white text-red-600 rounded-lg shadow-sm border border-red-100 hover:bg-red-50 transition-colors">إعادة المحاولة</button>
             </div>
         );
     }
@@ -174,9 +144,9 @@ export default function SovereignTable({ tableName }: SovereignTableProps) {
                 </div>
             </div>
 
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto flex-1">
                 <table className="w-full text-right text-sm">
-                    <thead>
+                    <thead className="sticky top-0 z-20">
                         <tr className="bg-surface-50 text-surface-500 font-medium border-b border-surface-200">
                             {list_config.columns.map((col, idx) => (
                                 <th key={idx} className="px-6 py-4 whitespace-nowrap">{col.label}</th>
@@ -223,7 +193,7 @@ export default function SovereignTable({ tableName }: SovereignTableProps) {
                 record={selectedRecord}
                 onSuccess={() => {
                     setIsModalOpen(false);
-                    loadData(list_config);
+                    refetch();
                 }}
             />
         </div>

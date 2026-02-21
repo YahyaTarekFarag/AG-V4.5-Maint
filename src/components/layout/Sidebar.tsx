@@ -1,7 +1,7 @@
 
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { LayoutDashboard, Users, Building2, Package, Wrench, Settings, LogOut, ClipboardList, Map, Timer } from 'lucide-react';
+import { LayoutDashboard, Users, Building2, Package, Wrench, Settings, LogOut, ClipboardList, Map, Timer, ShieldCheck } from 'lucide-react';
 import clsx from 'clsx';
 
 export default function Sidebar() {
@@ -16,7 +16,8 @@ export default function Sidebar() {
         { label: 'إدارة المخزون', path: '/inventory', icon: Package, roles: ['admin', 'technician'] },
         { label: 'الفروع', path: '/branches', icon: Building2, roles: ['admin'] },
         { label: 'الموظفين', path: '/users', icon: Users, roles: ['admin'] },
-        { label: 'إعدادات النظام', path: '/settings', icon: Settings, roles: ['admin'] },
+        { label: 'إعدادات الواجهات', path: '/settings', icon: Settings, roles: ['admin'] },
+        { label: 'إعدادات النظام', path: '/admin/settings', icon: ShieldCheck, roles: ['admin'] },
     ];
 
     // RBAC Filtering at the UI level based on profiles table, not RLS

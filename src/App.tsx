@@ -8,6 +8,7 @@ import SchemaBuilderPage from './pages/SchemaBuilderPage';
 import ManagerTicketsPage from './pages/ManagerTicketsPage';
 import TechnicianTicketsPage from './pages/TechnicianTicketsPage';
 import MapPage from './pages/MapPage';
+import AdminSettingsPage from './pages/AdminSettingsPage';
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
     const { user, isLoading } = useAuth();
@@ -36,6 +37,7 @@ function App() {
             <Route path="/branches" element={<PrivateRoute><MasterDataPage tableName="branches" /></PrivateRoute>} />
             <Route path="/users" element={<PrivateRoute><MasterDataPage tableName="profiles" /></PrivateRoute>} />
             <Route path="/settings" element={<PrivateRoute><SchemaBuilderPage /></PrivateRoute>} />
+            <Route path="/admin/settings" element={<PrivateRoute><AdminSettingsPage /></PrivateRoute>} />
             <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
     );

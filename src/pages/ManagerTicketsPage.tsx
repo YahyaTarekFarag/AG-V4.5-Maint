@@ -3,10 +3,12 @@ import DashboardLayout from '../components/layout/DashboardLayout';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import TicketFlow from '../components/tickets/TicketFlow';
-import { MapPin, Clock, CheckCircle, AlertCircle, Loader2, ChevronDown, ChevronUp, Plus } from 'lucide-react';
+import { MapPin, Clock, CheckCircle, AlertCircle, Loader2, ChevronDown, ChevronUp, Plus, Camera, X } from 'lucide-react';
 import { format } from 'date-fns';
 import { ar } from 'date-fns/locale';
 import { getGeoLocation } from '../lib/geo';
+import { compressImage } from '../lib/image';
+import { uploadToDrive } from '../lib/drive';
 
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
     open: { label: 'جديد', color: 'bg-blue-100 text-blue-700' },
@@ -25,9 +27,11 @@ export default function ManagerTicketsPage() {
     const [showForm, setShowForm] = useState(false);
 
     // New ticket form
-    const [newTitle, setNewTitle] = useState('');
+    const [newAssetName, setNewAssetName] = useState('');
     const [newDesc, setNewDesc] = useState('');
     const [submitting, setSubmitting] = useState(false);
+    const [uploading, setUploading] = useState(false);
+    const [reportedImageUrl, setReportedImageUrl] = useState<string | null>(null);
     const [formError, setFormError] = useState<string | null>(null);
 
     useEffect(() => { fetchTickets(); }, [profile]);
@@ -44,9 +48,23 @@ export default function ManagerTicketsPage() {
         setLoading(false);
     };
 
+    const handleImageUpload = async (file: File) => {
+        setUploading(true);
+        setFormError(null);
+        try {
+            const compressed = await compressImage(file);
+            const url = await uploadToDrive(compressed as File);
+            setReportedImageUrl(url);
+        } catch (e: any) {
+            setFormError('خطأ في رفع صورة العطل: ' + e.message);
+        } finally {
+            setUploading(false);
+        }
+    };
+
     const handleNewTicket = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!profile || !newTitle.trim()) return;
+        if (!profile || !newAssetName.trim()) return;
 
         // branch_id is required — must be set on the manager's profile
         if (!profile.branch_id) {
@@ -62,16 +80,17 @@ export default function ManagerTicketsPage() {
             try { coords = await getGeoLocation(); } catch { /* GPS optional */ }
 
             const { error } = await supabase.from('tickets').insert([{
-                title: newTitle.trim(),
+                asset_name: newAssetName.trim(),
                 description: newDesc.trim(),
                 status: 'open',
                 manager_id: profile.id,
                 branch_id: profile.branch_id,
                 reported_at: new Date().toISOString(),
+                reported_image_url: reportedImageUrl,
                 ...(coords ? { reported_lat: coords.lat, reported_lng: coords.lng } : {}),
             }]);
             if (error) throw error;
-            setNewTitle(''); setNewDesc(''); setShowForm(false);
+            setNewAssetName(''); setNewDesc(''); setReportedImageUrl(null); setShowForm(false);
             fetchTickets();
         } catch (e: any) {
             setFormError(e.message);
@@ -117,12 +136,41 @@ export default function ManagerTicketsPage() {
                         </div>
                     )}
                     <div>
-                        <label className="text-xs font-semibold text-surface-500 mb-1 block">عنوان العطل *</label>
-                        <input required value={newTitle} onChange={e => setNewTitle(e.target.value)} placeholder="مثال: عطل في التكييف المركزي" className={input} />
+                        <label className="text-xs font-semibold text-surface-500 mb-1 block">عنوان العطل أو اسم المعدة *</label>
+                        <input required value={newAssetName} onChange={e => setNewAssetName(e.target.value)} placeholder="مثال: عطل في التكييف المركزي" className={input} />
                     </div>
                     <div>
                         <label className="text-xs font-semibold text-surface-500 mb-1 block">وصف تفصيلي</label>
                         <textarea value={newDesc} onChange={e => setNewDesc(e.target.value)} rows={3} placeholder="اشرح المشكلة بالتفصيل..." className={input} />
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-xs font-semibold text-surface-500 mb-1 block">صورة العطل (اختياري)</label>
+                        {reportedImageUrl ? (
+                            <div className="relative w-full aspect-video rounded-xl overflow-hidden border border-primary-100 bg-primary-50">
+                                <img src={reportedImageUrl} className="w-full h-full object-cover" />
+                                <button type="button" onClick={() => setReportedImageUrl(null)} className="absolute top-2 right-2 p-1.5 bg-white/80 text-red-600 rounded-full shadow-md"><X className="w-4 h-4" /></button>
+                            </div>
+                        ) : (
+                            <div className="relative group">
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    capture="environment"
+                                    onChange={(e) => e.target.files?.[0] && handleImageUpload(e.target.files[0])}
+                                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                    disabled={uploading}
+                                />
+                                <div className="flex flex-col items-center justify-center p-6 border-2 border-dashed border-primary-100 group-hover:border-primary-400 rounded-2xl bg-primary-50/30 transition-all">
+                                    {uploading ? (
+                                        <Loader2 className="w-8 h-8 text-primary-500 animate-spin" />
+                                    ) : (
+                                        <Camera className="w-8 h-8 text-primary-400 mb-2" />
+                                    )}
+                                    <span className="text-sm text-primary-600 font-medium font-bold">التقط صورة للعطل</span>
+                                </div>
+                            </div>
+                        )}
                     </div>
                     <div className="flex justify-end gap-3">
                         <button type="button" onClick={() => setShowForm(false)} className="px-5 py-2 text-surface-600 hover:bg-surface-100 rounded-xl text-sm font-medium transition-colors">إلغاء</button>
@@ -170,7 +218,7 @@ export default function ManagerTicketsPage() {
                                     <div className="flex items-center gap-4">
                                         <span className={`px-3 py-1 rounded-full text-xs font-semibold ${st.color}`}>{st.label}</span>
                                         <div className="text-right">
-                                            <p className="font-semibold text-surface-900">{ticket.title || ticket.description || 'بلاغ صيانة'}</p>
+                                            <p className="font-semibold text-surface-900">{ticket.asset_name || ticket.description || 'بلاغ صيانة'}</p>
                                             <div className="flex items-center gap-3 mt-1 text-xs text-surface-400">
                                                 <span className="flex items-center gap-1">
                                                     <Clock className="w-3 h-3" />
