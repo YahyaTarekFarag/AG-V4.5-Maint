@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
 import { supabase } from '../../lib/supabase';
 import { ColumnConfig } from '../../types/schema';
-import { Plus, Search, Edit2, Trash2, Loader2, AlertCircle, Download, Upload } from 'lucide-react';
+import { Plus, Search, Edit2, Trash2, Loader2, AlertCircle, Download, Upload, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
 import SovereignActionModal from './SovereignActionModal';
 import { useSovereign } from '../../hooks/useSovereign';
 import clsx from 'clsx';
@@ -14,7 +14,7 @@ interface SovereignTableProps {
 }
 
 export default function SovereignTable({ tableName }: SovereignTableProps) {
-    const { schema, data, loading, error, refetch } = useSovereign(tableName);
+    const { schema, data, loading, error, refetch, page, totalPages, totalCount, pageSize, goToPage, fetchAllRows } = useSovereign(tableName);
     const [searchTerm, setSearchTerm] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedRecord, setSelectedRecord] = useState<any | null>(null);
@@ -55,9 +55,15 @@ export default function SovereignTable({ tableName }: SovereignTableProps) {
         }
     };
 
-    // ─── Excel Export ───
-    const handleExport = () => {
-        if (!data || data.length === 0) {
+    // ─── Excel Export (fetches ALL rows, not just current page) ───
+    const handleExport = async () => {
+        if (totalCount === 0 && (!data || data.length === 0)) {
+            alert('لا توجد بيانات للتصدير.');
+            return;
+        }
+        // Fetch ALL data for export (not just current page)
+        const allData = await fetchAllRows();
+        if (allData.length === 0) {
             alert('لا توجد بيانات للتصدير.');
             return;
         }
@@ -67,8 +73,8 @@ export default function SovereignTable({ tableName }: SovereignTableProps) {
 
         if (columns && columns.length > 0) {
             // Map to nice headers + include all raw keys
-            const allKeys = Object.keys(data[0]);
-            exportData = data.map(row => {
+            const allKeys = Object.keys(allData[0]);
+            exportData = allData.map(row => {
                 const obj: any = {};
                 allKeys.forEach(key => {
                     const col = columns.find(c => c.key === key);
@@ -79,7 +85,7 @@ export default function SovereignTable({ tableName }: SovereignTableProps) {
                 return obj;
             });
         } else {
-            exportData = data.map(row => {
+            exportData = allData.map(row => {
                 const obj: any = {};
                 Object.entries(row).forEach(([k, v]) => {
                     obj[k] = (v !== null && typeof v === 'object') ? JSON.stringify(v) : v;
@@ -358,6 +364,79 @@ export default function SovereignTable({ tableName }: SovereignTableProps) {
                     </tbody>
                 </table>
             </div>
+
+            {/* ─── Pagination Bar ─── */}
+            {totalPages > 1 && (
+                <div className="px-6 py-3 border-t border-surface-100 bg-surface-50/50 flex items-center justify-between gap-4 flex-wrap">
+                    <p className="text-sm text-surface-500">
+                        عرض <strong>{page * pageSize + 1}</strong>–<strong>{Math.min((page + 1) * pageSize, totalCount)}</strong> من <strong>{totalCount}</strong> سجل
+                    </p>
+                    <div className="flex items-center gap-1" dir="ltr">
+                        <button
+                            onClick={() => goToPage(0)}
+                            disabled={page === 0 || loading}
+                            className="p-2 rounded-lg hover:bg-surface-200 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                            title="الصفحة الأولى"
+                        >
+                            <ChevronsLeft className="w-4 h-4" />
+                        </button>
+                        <button
+                            onClick={() => goToPage(page - 1)}
+                            disabled={page === 0 || loading}
+                            className="p-2 rounded-lg hover:bg-surface-200 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                            title="السابق"
+                        >
+                            <ChevronLeft className="w-4 h-4" />
+                        </button>
+
+                        {/* Page Numbers */}
+                        {Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
+                            let pageNum: number;
+                            if (totalPages <= 7) {
+                                pageNum = i;
+                            } else if (page < 3) {
+                                pageNum = i;
+                            } else if (page > totalPages - 4) {
+                                pageNum = totalPages - 7 + i;
+                            } else {
+                                pageNum = page - 3 + i;
+                            }
+                            return (
+                                <button
+                                    key={pageNum}
+                                    onClick={() => goToPage(pageNum)}
+                                    disabled={loading}
+                                    className={clsx(
+                                        "w-9 h-9 rounded-lg text-sm font-medium transition-all",
+                                        page === pageNum
+                                            ? "bg-primary-600 text-white shadow-sm"
+                                            : "hover:bg-surface-200 text-surface-600"
+                                    )}
+                                >
+                                    {pageNum + 1}
+                                </button>
+                            );
+                        })}
+
+                        <button
+                            onClick={() => goToPage(page + 1)}
+                            disabled={page >= totalPages - 1 || loading}
+                            className="p-2 rounded-lg hover:bg-surface-200 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                            title="التالي"
+                        >
+                            <ChevronRight className="w-4 h-4" />
+                        </button>
+                        <button
+                            onClick={() => goToPage(totalPages - 1)}
+                            disabled={page >= totalPages - 1 || loading}
+                            className="p-2 rounded-lg hover:bg-surface-200 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                            title="الصفحة الأخيرة"
+                        >
+                            <ChevronsRight className="w-4 h-4" />
+                        </button>
+                    </div>
+                </div>
+            )}
 
             <SovereignActionModal
                 isOpen={isModalOpen}
