@@ -7,7 +7,10 @@
       "role": "admin",
       "created_at": "2026-02-21T10:13:55.791738+00:00",
       "is_deleted": false,
-      "branch_id": null
+      "branch_id": null,
+      "brand_id": null,
+      "sector_id": null,
+      "area_id": null
     },
     {
       "id": "2f09fee4-3864-4d33-8511-1cb8000f410e",
@@ -16,7 +19,10 @@
       "role": "manager",
       "created_at": "2026-02-21T10:30:31.094159+00:00",
       "is_deleted": false,
-      "branch_id": null
+      "branch_id": null,
+      "brand_id": null,
+      "sector_id": null,
+      "area_id": null
     },
     {
       "id": "f12fc508-e791-42c2-b8cc-be15331089b7",
@@ -25,7 +31,10 @@
       "role": "technician",
       "created_at": "2026-02-21T14:58:28.17091+00:00",
       "is_deleted": false,
-      "branch_id": null
+      "branch_id": null,
+      "brand_id": null,
+      "sector_id": null,
+      "area_id": null
     },
     {
       "id": "5896e092-45b4-468d-a618-f493a1556806",
@@ -34,7 +43,36 @@
       "role": "manager",
       "created_at": "2026-02-21T17:18:34.850643+00:00",
       "is_deleted": false,
-      "branch_id": null
+      "branch_id": null,
+      "brand_id": null,
+      "sector_id": null,
+      "area_id": null
+    }
+  ],
+  "brands": [
+    {
+      "id": "53040ed8-0c09-43ca-91aa-7cb73b354710",
+      "name": "بلبن",
+      "is_deleted": false,
+      "created_at": "2026-02-21T22:38:51.598956+00:00"
+    }
+  ],
+  "sectors": [
+    {
+      "id": "3eedf907-e640-4ddd-95ed-a79a5fdbc8da",
+      "name": "القاهرة",
+      "brand_id": "53040ed8-0c09-43ca-91aa-7cb73b354710",
+      "is_deleted": false,
+      "created_at": "2026-02-21T22:56:59.297841+00:00"
+    }
+  ],
+  "areas": [
+    {
+      "id": "0f9cc2bb-ae50-40a0-802f-84b1b9622b07",
+      "name": "مدينة نصر",
+      "sector_id": "3eedf907-e640-4ddd-95ed-a79a5fdbc8da",
+      "is_deleted": false,
+      "created_at": "2026-02-21T22:57:34.71094+00:00"
     }
   ],
   "branches": [
@@ -49,7 +87,8 @@
       "sector": "القاهرة",
       "latitude": null,
       "longitude": null,
-      "is_deleted": false
+      "is_deleted": false,
+      "area_id": null
     },
     {
       "id": "33333333-3333-3333-3333-333333333333",
@@ -62,7 +101,8 @@
       "sector": "الاقاليم",
       "latitude": null,
       "longitude": null,
-      "is_deleted": false
+      "is_deleted": false,
+      "area_id": null
     },
     {
       "id": "22222222-2222-2222-2222-222222222222",
@@ -75,7 +115,8 @@
       "sector": "الاسكندرية",
       "latitude": null,
       "longitude": null,
-      "is_deleted": false
+      "is_deleted": false,
+      "area_id": null
     },
     {
       "id": "c9dbc90b-94ad-4801-987f-0f68da9520ca",
@@ -88,7 +129,8 @@
       "sector": "القاهرة",
       "latitude": null,
       "longitude": null,
-      "is_deleted": false
+      "is_deleted": false,
+      "area_id": null
     },
     {
       "id": "549d7573-038a-4d66-9047-992a4c8642ac",
@@ -101,7 +143,8 @@
       "sector": "القاهرة",
       "latitude": null,
       "longitude": null,
-      "is_deleted": false
+      "is_deleted": false,
+      "area_id": null
     }
   ],
   "inventory": [
@@ -168,7 +211,8 @@
       "assigned_to": null,
       "is_deleted": false,
       "reported_image_url": null,
-      "resolved_image_url": null
+      "resolved_image_url": null,
+      "assigned_by": null
     },
     {
       "id": "6cfb9abf-8a1a-4470-99bb-10b4a45bc51d",
@@ -195,7 +239,8 @@
       "assigned_to": null,
       "is_deleted": false,
       "reported_image_url": null,
-      "resolved_image_url": null
+      "resolved_image_url": null,
+      "assigned_by": null
     },
     {
       "id": "265ce94d-e674-4fef-915e-0555039f4b08",
@@ -222,7 +267,8 @@
       "assigned_to": null,
       "is_deleted": false,
       "reported_image_url": null,
-      "resolved_image_url": null
+      "resolved_image_url": null,
+      "assigned_by": null
     },
     {
       "id": "1e4f85dc-810a-4ea3-9e15-e743a440fc36",
@@ -249,7 +295,8 @@
       "assigned_to": null,
       "is_deleted": false,
       "reported_image_url": null,
-      "resolved_image_url": null
+      "resolved_image_url": null,
+      "assigned_by": null
     }
   ],
   "inventory_transactions": [],
@@ -376,6 +423,76 @@
       "page_config": null
     },
     {
+      "id": "daf0873d-fa05-41d8-9c75-420f71bf3bcb",
+      "table_name": "branches",
+      "list_config": {
+        "title": "دليل الفروع",
+        "columns": [
+          {
+            "key": "name",
+            "type": "text",
+            "label": "اسم الفرع"
+          },
+          {
+            "key": "br_tel",
+            "type": "text",
+            "label": "رقم الهاتف"
+          },
+          {
+            "key": "area_id",
+            "type": "text",
+            "label": "المنطقة"
+          }
+        ],
+        "searchable": true
+      },
+      "form_config": {
+        "title": "إضافة / تعديل فرع",
+        "fields": [
+          {
+            "key": "name",
+            "type": "text",
+            "label": "اسم الفرع",
+            "required": true
+          },
+          {
+            "key": "br_tel",
+            "type": "text",
+            "label": "رقم الهاتف"
+          },
+          {
+            "key": "area_id",
+            "type": "select",
+            "label": "المنطقة",
+            "required": true,
+            "dataSource": "areas"
+          },
+          {
+            "key": "branch_lat",
+            "type": "number",
+            "label": "خط العرض"
+          },
+          {
+            "key": "branch_lng",
+            "type": "number",
+            "label": "خط الطول"
+          }
+        ]
+      },
+      "created_at": "2026-02-21T04:20:13.532253+00:00",
+      "page_config": {
+        "kpi_cards": [
+          {
+            "icon": "BarChart3",
+            "color": "blue",
+            "label": "Branches",
+            "table": "branchesbranches",
+            "aggregate": "count"
+          }
+        ]
+      }
+    },
+    {
       "id": "5170b3b9-8487-4cb2-84fd-df97edd4dbeb",
       "table_name": "shifts",
       "list_config": {
@@ -426,108 +543,6 @@
         ]
       },
       "created_at": "2026-02-21T11:02:25.207277+00:00",
-      "page_config": null
-    },
-    {
-      "id": "daf0873d-fa05-41d8-9c75-420f71bf3bcb",
-      "table_name": "branches",
-      "list_config": {
-        "title": "دليل الفروع",
-        "columns": [
-          {
-            "key": "name",
-            "type": "text",
-            "label": "اسم الفرع"
-          },
-          {
-            "key": "br_tel",
-            "type": "text",
-            "label": "رقم الهاتف",
-            "sortable": true
-          },
-          {
-            "key": "sector",
-            "type": "text",
-            "label": "القطاع",
-            "sortable": true
-          },
-          {
-            "key": "branch_lat",
-            "type": "number",
-            "label": "خط العرض (Latitude)",
-            "sortable": true
-          },
-          {
-            "key": "branch_lng",
-            "type": "number",
-            "label": "خط الطول (Longitude)",
-            "sortable": true
-          }
-        ],
-        "searchable": true
-      },
-      "form_config": {
-        "title": "إضافة / تعديل فرع",
-        "fields": [
-          {
-            "key": "name",
-            "type": "text",
-            "label": "اسم الفرع",
-            "required": true
-          },
-          {
-            "key": "br_tel",
-            "type": "number",
-            "label": "رقم الهاتف",
-            "required": false,
-            "placeholder": ""
-          },
-          {
-            "key": "sector",
-            "type": "text",
-            "label": "القطاع",
-            "required": false,
-            "placeholder": ""
-          },
-          {
-            "key": "branch_lat",
-            "type": "number",
-            "label": "خط العرض (Latitude)",
-            "required": true
-          },
-          {
-            "key": "branch_lng",
-            "type": "number",
-            "label": "خط الطول (Longitude)",
-            "required": true
-          }
-        ]
-      },
-      "created_at": "2026-02-21T04:20:13.532253+00:00",
-      "page_config": {
-        "kpi_cards": [
-          {
-            "icon": "BarChart3",
-            "color": "blue",
-            "label": "Branches",
-            "table": "branchesbranches",
-            "aggregate": "count"
-          }
-        ]
-      }
-    },
-    {
-      "id": "63de8dd8-3607-4cf6-8d3d-4ae22c43f5ac",
-      "table_name": "inventory_transactions",
-      "list_config": {
-        "title": "inventory_transactions",
-        "columns": []
-      },
-      "form_config": {
-        "title": "inventory_transactions",
-        "fields": []
-      },
-      "created_at": "2026-02-21T12:35:32.897426+00:00",
       "page_config": null
     },
     {
@@ -587,29 +602,81 @@
             "label": "صلاحية النظام",
             "options": [
               {
+                "label": "مسؤول نظام",
+                "value": "admin"
+              },
+              {
+                "label": "مدير تشغيل البراند",
+                "value": "brand_ops_manager"
+              },
+              {
+                "label": "مدير قطاع",
+                "value": "sector_manager"
+              },
+              {
+                "label": "مدير منطقة",
+                "value": "area_manager"
+              },
+              {
                 "label": "مدير فرع",
                 "value": "manager"
               },
               {
-                "label": "فني صيانة",
-                "value": "technician"
+                "label": "مدير صيانة",
+                "value": "maint_manager"
               },
               {
-                "label": "مسؤول نظام (أدمن)",
-                "value": "admin"
+                "label": "مشرف صيانة",
+                "value": "maint_supervisor"
+              },
+              {
+                "label": "فني صيانة",
+                "value": "technician"
               }
             ],
             "required": true
           },
           {
+            "key": "brand_id",
+            "type": "select",
+            "label": "البراند",
+            "dataSource": "brands"
+          },
+          {
+            "key": "sector_id",
+            "type": "select",
+            "label": "القطاع",
+            "dataSource": "sectors"
+          },
+          {
+            "key": "area_id",
+            "type": "select",
+            "label": "المنطقة",
+            "dataSource": "areas"
+          },
+          {
             "key": "branch_id",
             "type": "select",
-            "label": "الفرع التابع له (لمديري الفروع)",
+            "label": "الفرع",
             "dataSource": "branches"
           }
         ]
       },
       "created_at": "2026-02-21T04:24:27.720761+00:00",
+      "page_config": null
+    },
+    {
+      "id": "63de8dd8-3607-4cf6-8d3d-4ae22c43f5ac",
+      "table_name": "inventory_transactions",
+      "list_config": {
+        "title": "inventory_transactions",
+        "columns": []
+      },
+      "form_config": {
+        "title": "inventory_transactions",
+        "fields": []
+      },
+      "created_at": "2026-02-21T12:35:32.897426+00:00",
       "page_config": null
     },
     {
@@ -729,6 +796,114 @@
         "fields": []
       },
       "created_at": "2026-02-21T17:24:09.263142+00:00",
+      "page_config": null
+    },
+    {
+      "id": "e6ad6100-95d3-41a3-9f01-1a09b5e10bc0",
+      "table_name": "brands",
+      "list_config": {
+        "title": "إدارة البراندات",
+        "columns": [
+          {
+            "key": "name",
+            "type": "text",
+            "label": "اسم البراند"
+          }
+        ],
+        "searchable": true
+      },
+      "form_config": {
+        "title": "إضافة / تعديل براند",
+        "fields": [
+          {
+            "key": "name",
+            "type": "text",
+            "label": "اسم البراند",
+            "required": true
+          }
+        ]
+      },
+      "created_at": "2026-02-21T22:21:57.818068+00:00",
+      "page_config": null
+    },
+    {
+      "id": "babe2a10-dce2-44dd-8c44-56e75f9ce944",
+      "table_name": "sectors",
+      "list_config": {
+        "title": "إدارة القطاعات",
+        "columns": [
+          {
+            "key": "name",
+            "type": "text",
+            "label": "اسم القطاع"
+          },
+          {
+            "key": "brand_id",
+            "type": "text",
+            "label": "البراند"
+          }
+        ],
+        "searchable": true
+      },
+      "form_config": {
+        "title": "إضافة / تعديل قطاع",
+        "fields": [
+          {
+            "key": "name",
+            "type": "text",
+            "label": "اسم القطاع",
+            "required": true
+          },
+          {
+            "key": "brand_id",
+            "type": "select",
+            "label": "البراند",
+            "required": true,
+            "dataSource": "brands"
+          }
+        ]
+      },
+      "created_at": "2026-02-21T22:21:57.818068+00:00",
+      "page_config": null
+    },
+    {
+      "id": "7ba52379-7f7d-4f96-b5ae-fb741e61224a",
+      "table_name": "areas",
+      "list_config": {
+        "title": "إدارة المناطق",
+        "columns": [
+          {
+            "key": "name",
+            "type": "text",
+            "label": "اسم المنطقة"
+          },
+          {
+            "key": "sector_id",
+            "type": "text",
+            "label": "القطاع"
+          }
+        ],
+        "searchable": true
+      },
+      "form_config": {
+        "title": "إضافة / تعديل منطقة",
+        "fields": [
+          {
+            "key": "name",
+            "type": "text",
+            "label": "اسم المنطقة",
+            "required": true
+          },
+          {
+            "key": "sector_id",
+            "type": "select",
+            "label": "القطاع",
+            "required": true,
+            "dataSource": "sectors"
+          }
+        ]
+      },
+      "created_at": "2026-02-21T22:21:57.818068+00:00",
       "page_config": null
     }
   ],
