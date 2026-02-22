@@ -1,4 +1,4 @@
-import React from 'react';
+
 import DashboardLayout from '../components/layout/DashboardLayout';
 import SovereignTable from '../components/sovereign/SovereignTable';
 
