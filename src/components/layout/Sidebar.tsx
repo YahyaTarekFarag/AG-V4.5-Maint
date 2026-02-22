@@ -1,10 +1,15 @@
 
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { LayoutDashboard, Users, Building2, Package, Wrench, Settings, LogOut, ClipboardList, Map, Timer, ShieldCheck } from 'lucide-react';
+import { LayoutDashboard, Users, Building2, Package, Wrench, Settings, LogOut, ClipboardList, Map, Timer, ShieldCheck, X } from 'lucide-react';
 import clsx from 'clsx';
 
-export default function Sidebar() {
+interface SidebarProps {
+    isOpen: boolean;
+    onClose: () => void;
+}
+
+export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     const { profile, signOut } = useAuth();
 
     const ROLE_LABELS: Record<string, string> = {
@@ -43,14 +48,26 @@ export default function Sidebar() {
     const authorizedLinks = navItems.filter(item => profile && item.roles.includes(profile.role));
 
     return (
-        <aside className="w-64 bg-surface-900 text-white flex flex-col min-h-screen fixed right-0 top-0 bottom-0 z-40 transition-transform shadow-2xl">
-            <div className="p-6 flex items-center gap-4 border-b border-surface-800">
-                <div className="w-10 h-10 bg-gradient-to-br from-primary-400 to-primary-600 rounded-xl flex items-center justify-center shadow-lg shadow-primary-500/20 shrink-0">
-                    <Settings className="w-6 h-6 text-white animate-spin-slow" />
+        <aside className={clsx(
+            "w-64 bg-surface-900 text-white flex flex-col min-h-screen fixed right-0 top-0 bottom-0 z-40 transition-transform duration-300 shadow-2xl lg:translate-x-0",
+            isOpen ? "translate-x-0" : "translate-x-full"
+        )}>
+            <div className="p-6 flex items-center justify-between border-b border-surface-800">
+                <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 bg-gradient-to-br from-primary-400 to-primary-600 rounded-xl flex items-center justify-center shadow-lg shadow-primary-500/20 shrink-0">
+                        <Settings className="w-6 h-6 text-white animate-spin-slow" />
+                    </div>
+                    <div>
+                        <h2 className="text-lg font-bold tracking-tight">نظام الصيانة V10</h2>
+                    </div>
                 </div>
-                <div>
-                    <h2 className="text-lg font-bold tracking-tight">نظام الصيانة V10</h2>
-                </div>
+                {/* Close button for mobile */}
+                <button
+                    onClick={onClose}
+                    className="lg:hidden p-2 hover:bg-surface-800 rounded-lg text-surface-400"
+                >
+                    <X className="w-6 h-6" />
+                </button>
             </div>
 
             <div className="p-6 pb-4 border-b border-surface-800 bg-surface-800/20">
@@ -72,6 +89,7 @@ export default function Sidebar() {
                     <NavLink
                         key={item.path}
                         to={item.path}
+                        onClick={onClose}
                         className={({ isActive }) => clsx(
                             "flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all text-sm font-medium",
                             isActive
