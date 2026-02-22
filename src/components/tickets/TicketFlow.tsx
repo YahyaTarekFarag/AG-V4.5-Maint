@@ -86,6 +86,16 @@ export default function TicketFlow({ ticket, onUpdate }: TicketFlowProps) {
             let updatePayload: any = {};
 
             if (action === 'start_work') {
+                // ─── Stage 3: Geofencing for Start Work ───────────
+                const { data: branch } = await supabase.from('branches').select('latitude, longitude').eq('id', ticket.branch_id).single();
+                if (branch?.latitude && branch?.longitude) {
+                    const { calculateDistance } = await import('../../lib/geo');
+                    const dist = calculateDistance(coords.lat, coords.lng, branch.latitude, branch.longitude);
+                    if (dist > 100) {
+                        throw new Error(`خطأ أمني: يجب أن تكون داخل نطاق الفرع (أقل من 100م) لبدء العمل. المسافة الحالية: ${Math.round(dist)} متر.`);
+                    }
+                }
+
                 updatePayload = {
                     status: 'in_progress',
                     started_lat: coords.lat,
@@ -93,7 +103,7 @@ export default function TicketFlow({ ticket, onUpdate }: TicketFlowProps) {
                 };
             }
             else if (action === 'resolve') {
-                // Record inventory transactions first
+                // ... (Inventory logic remains same)
                 for (const pt of partsUsed) {
                     await supabase.from('inventory_transactions').insert([{
                         inventory_id: pt.part_id,
@@ -102,7 +112,6 @@ export default function TicketFlow({ ticket, onUpdate }: TicketFlowProps) {
                         quantity_used: pt.qty
                     }]);
 
-                    // Deduct from inventory
                     const pData = inventory.find(i => i.id === pt.part_id);
                     if (pData) {
                         await supabase.from('inventory').update({ quantity: pData.quantity - pt.qty }).eq('id', pt.part_id);
@@ -119,6 +128,11 @@ export default function TicketFlow({ ticket, onUpdate }: TicketFlowProps) {
                 };
             }
             else if (action === 'close') {
+                // ─── Stage 5: Mandatory Evaluation ───────────
+                if (!rating || !comment.trim()) {
+                    throw new Error('يجب وضع تقييم بالنجوم وكتابة تعليق لإغلاق البلاغ.');
+                }
+
                 updatePayload = {
                     status: 'closed',
                     rating_score: rating,
@@ -307,7 +321,7 @@ export default function TicketFlow({ ticket, onUpdate }: TicketFlowProps) {
 
                     <div className="bg-white/60 p-4 rounded-xl border border-blue-100 space-y-4">
                         <div>
-                            <label className="block text-sm font-semibold text-blue-800 mb-2">التقييم (من 1 إلى 5)</label>
+                            <label className="block text-sm font-semibold text-blue-800 mb-2">التقييم (إجباري - من 1 إلى 5)</label>
                             <div className="flex gap-2 text-2xl" dir="ltr">
                                 {[1, 2, 3, 4, 5].map(v => (
                                     <button key={v} onClick={() => setRating(v)} className={clsx("transition-transform hover:scale-110", rating >= v ? "text-amber-400" : "text-blue-200")}>
@@ -317,7 +331,7 @@ export default function TicketFlow({ ticket, onUpdate }: TicketFlowProps) {
                             </div>
                         </div>
                         <div>
-                            <label className="block text-sm font-semibold text-blue-800 mb-2">تعليق على أداء الفني (اختياري)</label>
+                            <label className="block text-sm font-semibold text-blue-800 mb-2">تعليق على أداء الفني (إجباري)</label>
                             <textarea
                                 value={comment}
                                 onChange={(e) => setComment(e.target.value)}

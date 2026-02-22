@@ -89,13 +89,10 @@ export default function MapPage() {
         const load = async () => {
             setLoading(true);
             try {
-                const { data: bData } = await supabase.from('branches').select('*');
+                const { data: bData } = await supabase.from('branches').select('id, name, latitude, longitude');
                 const { data: sData } = await supabase.from('shifts').select('*, profiles(full_name)').is('end_at', null);
 
-                const resolveLat = (b: any) => Number(b.latitude ?? b.branch_lat ?? b.lat);
-                const resolveLng = (b: any) => Number(b.longitude ?? b.branch_lng ?? b.lng);
-
-                setBranches((bData || []).map(b => ({ ...b, latitude: resolveLat(b), longitude: resolveLng(b) })));
+                setBranches(bData || []);
                 setTechnicians((sData || []).map(s => ({
                     ...s,
                     full_name: s.profiles?.full_name,

@@ -187,7 +187,21 @@ export default function SovereignTable({ tableName }: SovereignTableProps) {
     };
 
     const renderCell = (row: any, col: ColumnConfig) => {
-        const val = row[col.key];
+        let val = row[col.key];
+
+        // ─── Auto-Resolve Relation Names ───
+        // If it's a UUID/ID field and we have joined data, use the name instead
+        if (col.key.endsWith('_id') || col.key === 'assigned_to') {
+            const relationKey =
+                col.key === 'assigned_to' ? 'assigned_to_profile' :
+                    col.key === 'branch_id' ? 'branches' :
+                        col.key.replace('_id', 's'); // e.g. area_id -> areas
+
+            if (row[relationKey] && typeof row[relationKey] === 'object') {
+                val = row[relationKey].name || row[relationKey].full_name || val;
+            }
+        }
+
         if (val == null) return <span className="text-surface-400">-</span>;
 
         switch (col.type) {
@@ -242,11 +256,25 @@ export default function SovereignTable({ tableName }: SovereignTableProps) {
     }
 
     const { list_config } = schema;
+
+    const getCellValue = (row: any, colKey: string) => {
+        let val = row[colKey];
+        if (colKey.endsWith('_id') || colKey === 'assigned_to') {
+            const relationKey =
+                colKey === 'assigned_to' ? 'assigned_to_profile' :
+                    colKey === 'branch_id' ? 'branches' :
+                        colKey.replace('_id', 's');
+            if (row[relationKey] && typeof row[relationKey] === 'object') {
+                val = row[relationKey].name || row[relationKey].full_name || val;
+            }
+        }
+        return String(val || '').toLowerCase();
+    };
+
     const filteredData = data.filter(row => {
         if (!searchTerm) return true;
-        return list_config.columns.some(col =>
-            String(row[col.key] || '').toLowerCase().includes(searchTerm.toLowerCase())
-        );
+        const search = searchTerm.toLowerCase();
+        return list_config.columns.some(col => getCellValue(row, col.key).includes(search));
     });
 
     return (

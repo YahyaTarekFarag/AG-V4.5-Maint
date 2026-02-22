@@ -10,6 +10,18 @@ export function useSovereign(tableName: string) {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
+    // ─── Relation Joins — To show names instead of IDs ───
+    const getSelectString = useCallback(() => {
+        switch (tableName) {
+            case 'branches': return '*, areas:area_id(name)';
+            case 'profiles': return '*, brands:brand_id(name), sectors:sector_id(name), areas:area_id(name), branches:branch_id(name)';
+            case 'tickets': return '*, branches:branch_id(name), assigned_to_profile:assigned_to(full_name)';
+            case 'sectors': return '*, brands:brand_id(name)';
+            case 'areas': return '*, sectors:sector_id(name)';
+            default: return '*';
+        }
+    }, [tableName]);
+
     // ─── Pagination State ───
     const [page, setPage] = useState(0); // 0-indexed
     const [totalCount, setTotalCount] = useState(0);
@@ -43,7 +55,7 @@ export function useSovereign(tableName: string) {
             const from = pageNum * PAGE_SIZE;
             const to = from + PAGE_SIZE - 1;
 
-            let query = supabase.from(tableName as any).select('*');
+            let query = supabase.from(tableName as any).select(getSelectString());
             query = query.eq('is_deleted', false);
 
             if (config.defaultSort) {
@@ -60,7 +72,7 @@ export function useSovereign(tableName: string) {
             if (rowsError && rowsError.message.includes('column "is_deleted" does not exist')) {
                 let retryQuery = supabase
                     .from(tableName as any)
-                    .select('*')
+                    .select(getSelectString())
                     .order('created_at', { ascending: false })
                     .range(from, to);
 
@@ -125,7 +137,7 @@ export function useSovereign(tableName: string) {
     // ─── Fetch ALL rows (for export only — not rendered) ───
     const fetchAllRows = useCallback(async (): Promise<any[]> => {
         try {
-            let query = supabase.from(tableName as any).select('*');
+            let query = supabase.from(tableName as any).select(getSelectString());
             query = query.eq('is_deleted', false);
             query = query.order('created_at', { ascending: false });
 

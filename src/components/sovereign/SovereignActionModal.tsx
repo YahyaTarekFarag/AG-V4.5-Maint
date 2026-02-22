@@ -146,8 +146,33 @@ export default function SovereignActionModal({ isOpen, onClose, schema, record, 
         setError(null);
 
         try {
-            // Process form data to convert JSON strings back to objects before saving
+            // Process form data...
             const processedData = { ...formData };
+
+            // ─── Stage 1: Geofencing for Ticket Creation ───────────
+            if (table_name === 'tickets' && !isEdit) {
+                const restrict = settings.restrict_branch_submission === 'true';
+                const branchId = processedData.branch_id;
+
+                if (restrict && branchId) {
+                    const { data: branch } = await supabase.from('branches').select('latitude, longitude').eq('id', branchId).single();
+                    if (branch?.latitude && branch?.longitude) {
+                        const coords = await getGeoLocation();
+                        const { calculateDistance } = await import('../../lib/geo');
+                        const dist = calculateDistance(coords.lat, coords.lng, branch.latitude, branch.longitude);
+
+                        if (dist > 100) {
+                            throw new Error(`خطأ أمني: يجب أن تكون داخل نطاق الفرع (أقل من 100م) لفتح بلاغ. المسافة الحالية: ${Math.round(dist)} متر.`);
+                        }
+
+                        // Store the reporting location
+                        processedData.reported_lat = coords.lat;
+                        processedData.reported_lng = coords.lng;
+                    }
+                }
+            }
+
+            // Process form data to convert JSON strings back to objects before saving
             schema.form_config.fields.forEach(field => {
                 if (field.type === 'textarea') {
                     try {
@@ -161,15 +186,32 @@ export default function SovereignActionModal({ isOpen, onClose, schema, record, 
                 }
             });
 
+            // ─── Stage 2: Payload Cleaning (Whitelist valid columns only) ───────────
+            const allowedKeys = new Set([
+                ...schema.form_config.fields.map(f => f.key),
+                'status', 'reported_lat', 'reported_lng', 'started_lat', 'started_lng',
+                'resolved_lat', 'resolved_lng', 'resolved_at', 'rating_score', 'rating_comment'
+            ]);
+
+            const finalPayload: Record<string, any> = {};
+            Object.keys(processedData).forEach(key => {
+                // Only include keys in the schema or operational whitelist
+                // AND exclude objects/arrays that wasn't explicitly handled (like joined relation objects)
+                const val = processedData[key];
+                if (allowedKeys.has(key)) {
+                    finalPayload[key] = val;
+                }
+            });
+
             if (isEdit) {
                 // AUTO-STATUS FOR ASSIGNMENT
                 if (isAssignMode && table_name === 'tickets') {
-                    processedData.status = 'assigned';
+                    finalPayload.status = 'assigned';
                 }
 
                 if (table_name === 'profiles') {
                     // Update profile info (Exclude password/email virtual fields from public.profiles table update)
-                    const { password, ...updatePayload } = processedData;
+                    const { password, ...updatePayload } = finalPayload;
                     const { error: updateError } = await supabase
                         .from(table_name as any)
                         .update(updatePayload)
@@ -178,48 +220,50 @@ export default function SovereignActionModal({ isOpen, onClose, schema, record, 
                 } else {
                     const { error: updateError } = await supabase
                         .from(table_name as any)
-                        .update(processedData)
+                        .update(finalPayload)
                         .eq('id', record.id);
                     if (updateError) throw updateError;
                 }
             } else {
                 if (table_name === 'profiles') {
-                    // ─── Create Employee via Admin API (Reliable Method) ───────────
+                    // ─── Create Employee via Admin API ───────────
                     if (!supabaseAdmin) {
-                        throw new Error('مفتاح الخدمة (Service Role Key) غير مُعرَّف. أضف VITE_SUPABASE_SERVICE_ROLE_KEY في ملف .env.local');
+                        throw new Error('مفتاح الخدمة (Service Role Key) غير مُعرَّف.');
                     }
 
-                    const employeeCode = (processedData.employee_code || '').trim();
+                    const employeeCode = (finalPayload.employee_code || '').trim();
                     const email = `${employeeCode}@fsc-system.local`;
-                    const password = processedData.password || '12345';
+                    const password = finalPayload.password || '12345';
 
-                    // Step 1: Create the auth user with auto-confirm
                     const { data: newUser, error: createError } = await supabaseAdmin.auth.admin.createUser({
                         email,
                         password,
                         email_confirm: true,
                         user_metadata: {
                             employee_code: employeeCode,
-                            full_name: processedData.full_name,
-                            role: processedData.role,
+                            full_name: finalPayload.full_name,
+                            role: finalPayload.role,
                         },
                     });
                     if (createError) throw createError;
 
-                    // Step 2: Upsert the profile (trigger may have already created it)
                     const { error: profileError } = await supabase
                         .from('profiles' as any)
                         .upsert({
                             id: newUser.user.id,
                             employee_code: employeeCode,
-                            full_name: processedData.full_name,
-                            role: processedData.role,
+                            full_name: finalPayload.full_name,
+                            role: finalPayload.role,
+                            brand_id: finalPayload.brand_id,
+                            sector_id: finalPayload.sector_id,
+                            area_id: finalPayload.area_id,
+                            branch_id: finalPayload.branch_id,
                         }, { onConflict: 'id' });
                     if (profileError) throw profileError;
                 } else {
                     const { error: insertError } = await supabase
                         .from(table_name as any)
-                        .insert([processedData]);
+                        .insert([finalPayload]);
                     if (insertError) throw insertError;
                 }
             }
@@ -283,7 +327,7 @@ export default function SovereignActionModal({ isOpen, onClose, schema, record, 
 
                         {form_config.fields.map((field) => {
                             // If in Assign Mode, only show assigned_to/technician_id fields
-                            if (isAssignMode && !['assigned_to', 'technician_id'].includes(field.key)) return null;
+                            if (isAssignMode && field.key !== 'assigned_to') return null;
 
                             // Hide password field in Edit mode for profiles (passwords managed via Auth/Admin)
                             if (isEdit && table_name === 'profiles' && field.key === 'password') return null;
