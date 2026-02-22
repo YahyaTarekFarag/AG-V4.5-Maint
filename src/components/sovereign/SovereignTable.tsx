@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
 import { supabase } from '../../lib/supabase';
 import { ColumnConfig } from '../../types/schema';
-import { Plus, Search, Edit2, Trash2, Loader2, AlertCircle, Download, Upload, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
+import { Plus, Search, Edit2, Trash2, Loader2, AlertCircle, Download, Upload, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, UserPlus } from 'lucide-react';
 import SovereignActionModal from './SovereignActionModal';
 import { useSovereign } from '../../hooks/useSovereign';
 import clsx from 'clsx';
@@ -18,17 +18,26 @@ export default function SovereignTable({ tableName }: SovereignTableProps) {
     const [searchTerm, setSearchTerm] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedRecord, setSelectedRecord] = useState<any | null>(null);
+    const [isAssignMode, setIsAssignMode] = useState(false);
     const [importing, setImporting] = useState(false);
     const [importResult, setImportResult] = useState<{ success: number; errors: number; message?: string } | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleCreate = () => {
         setSelectedRecord(null);
+        setIsAssignMode(false);
         setIsModalOpen(true);
     };
 
     const handleEdit = (record: any) => {
         setSelectedRecord(record);
+        setIsAssignMode(false);
+        setIsModalOpen(true);
+    };
+
+    const handleAssign = (record: any) => {
+        setSelectedRecord(record);
+        setIsAssignMode(true);
         setIsModalOpen(true);
     };
 
@@ -349,12 +358,29 @@ export default function SovereignTable({ tableName }: SovereignTableProps) {
                                         </td>
                                     ))}
                                     <td className="px-6 py-4">
-                                        <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <button onClick={() => handleEdit(row)} className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="تعديل">
-                                                <Edit2 className="w-4 h-4" />
+                                        <div className="flex items-center justify-center gap-2">
+                                            {tableName === 'tickets' && (row.status === 'open' || row.status === 'assigned') && (
+                                                <button
+                                                    onClick={() => handleAssign(row)}
+                                                    className="p-2 text-purple-600 hover:bg-purple-50 rounded-xl transition-all border border-transparent hover:border-purple-100"
+                                                    title="تعيين فني"
+                                                >
+                                                    <UserPlus className="w-4.5 h-4.5" />
+                                                </button>
+                                            )}
+                                            <button
+                                                onClick={() => handleEdit(row)}
+                                                className="p-2 text-blue-600 hover:bg-blue-50 rounded-xl transition-all border border-transparent hover:border-blue-100"
+                                                title="تعديل"
+                                            >
+                                                <Edit2 className="w-4.5 h-4.5" />
                                             </button>
-                                            <button onClick={() => handleDelete(row.id)} className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="حذف">
-                                                <Trash2 className="w-4 h-4" />
+                                            <button
+                                                onClick={() => handleDelete(row.id)}
+                                                className="p-2 text-red-600 hover:bg-red-50 rounded-xl transition-all border border-transparent hover:border-red-100"
+                                                title="حذف"
+                                            >
+                                                <Trash2 className="w-4.5 h-4.5" />
                                             </button>
                                         </div>
                                     </td>
@@ -443,6 +469,7 @@ export default function SovereignTable({ tableName }: SovereignTableProps) {
                 onClose={() => setIsModalOpen(false)}
                 schema={schema}
                 record={selectedRecord}
+                isAssignMode={isAssignMode}
                 onSuccess={() => {
                     setIsModalOpen(false);
                     refetch();

@@ -13,9 +13,10 @@ interface SovereignActionModalProps {
     schema: UISchema;
     record: any | null; // null means create mode
     onSuccess: () => void;
+    isAssignMode?: boolean;
 }
 
-export default function SovereignActionModal({ isOpen, onClose, schema, record, onSuccess }: SovereignActionModalProps) {
+export default function SovereignActionModal({ isOpen, onClose, schema, record, onSuccess, isAssignMode }: SovereignActionModalProps) {
     const { user } = useAuth();
     const [formData, setFormData] = useState<Record<string, any>>({});
     const [loading, setLoading] = useState(false);
@@ -161,6 +162,11 @@ export default function SovereignActionModal({ isOpen, onClose, schema, record, 
             });
 
             if (isEdit) {
+                // AUTO-STATUS FOR ASSIGNMENT
+                if (isAssignMode && table_name === 'tickets') {
+                    processedData.status = 'assigned';
+                }
+
                 if (table_name === 'profiles') {
                     // Update profile info (Exclude password/email virtual fields from public.profiles table update)
                     const { password, ...updatePayload } = processedData;
@@ -236,7 +242,7 @@ export default function SovereignActionModal({ isOpen, onClose, schema, record, 
             <div className="relative bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
                 <div className="p-6 border-b border-surface-100 flex justify-between items-center bg-surface-50">
                     <h3 className="text-xl font-bold text-surface-900">
-                        {isEdit ? 'تعديل السجل' : form_config.title || 'إضافة جديد'}
+                        {isAssignMode ? 'تعيين فني للبلاغ' : isEdit ? 'تعديل السجل' : form_config.title || 'إضافة جديد'}
                     </h3>
                     <button onClick={onClose} className="p-2 text-surface-400 hover:text-surface-700 hover:bg-surface-200 rounded-full transition-colors">
                         <X className="w-5 h-5" />
@@ -276,6 +282,9 @@ export default function SovereignActionModal({ isOpen, onClose, schema, record, 
                         )}
 
                         {form_config.fields.map((field) => {
+                            // If in Assign Mode, only show assigned_to/technician_id fields
+                            if (isAssignMode && !['assigned_to', 'technician_id'].includes(field.key)) return null;
+
                             // Hide password field in Edit mode for profiles (passwords managed via Auth/Admin)
                             if (isEdit && table_name === 'profiles' && field.key === 'password') return null;
 
