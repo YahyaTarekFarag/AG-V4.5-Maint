@@ -5,12 +5,16 @@ import { AuthProvider } from './contexts/AuthContext'
 import App from './App'
 import './index.css'
 
+import { ToastProvider } from './contexts/ToastContext'
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
         <AuthProvider>
-            <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-                <App />
-            </BrowserRouter>
+            <ToastProvider>
+                <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+                    <App />
+                </BrowserRouter>
+            </ToastProvider>
         </AuthProvider>
     </React.StrictMode>,
 )

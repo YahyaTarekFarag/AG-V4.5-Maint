@@ -47,6 +47,18 @@
       "brand_id": null,
       "sector_id": null,
       "area_id": null
+    },
+    {
+      "id": "80b5bd54-e249-4488-8e67-ff33e13d41f2",
+      "employee_code": "111",
+      "full_name": "111",
+      "role": "maint_manager",
+      "created_at": "2026-02-23T01:48:21.554077+00:00",
+      "is_deleted": false,
+      "branch_id": "900557f3-82ca-4ead-80b6-40b310ffc1ad",
+      "brand_id": "2d90d13f-e632-4a8a-ab23-646ba275e61e",
+      "sector_id": "3eedf907-e640-4ddd-95ed-a79a5fdbc8da",
+      "area_id": null
     }
   ],
   "brands": [
@@ -284,13 +296,13 @@
       "id": "6cfb9abf-8a1a-4470-99bb-10b4a45bc51d",
       "branch_id": "22222222-2222-2222-2222-222222222222",
       "asset_name": "ماكينة الفاكيوم للصناعي",
-      "status": "assigned",
+      "status": "in_progress",
       "description": "الماكينة تقطع الكيس ولا تسحب الهواء كاملاً",
       "priority": "normal",
       "reported_lat": 31.2003,
       "reported_lng": 29.9189,
-      "started_lat": null,
-      "started_lng": null,
+      "started_lat": 30.0873831806173,
+      "started_lng": 31.2755576976197,
       "resolved_lat": null,
       "resolved_lng": null,
       "rating_score": null,
@@ -980,8 +992,18 @@
   "system_settings": [
     {
       "key": "restrict_branch_submission",
-      "value": "true",
+      "value": "false",
       "updated_at": "2026-02-21T17:06:16.200431+00:00"
+    },
+    {
+      "key": "geofencing_enabled",
+      "value": true,
+      "updated_at": "2026-02-23T00:49:42.186822+00:00"
+    },
+    {
+      "key": "geofencing_radius",
+      "value": 100,
+      "updated_at": "2026-02-23T00:49:42.186822+00:00"
     }
   ]
 }

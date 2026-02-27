@@ -1,68 +1,141 @@
-
+import { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { LayoutDashboard, Users, Building2, Package, Wrench, Settings, LogOut, ClipboardList, Map, Timer, ShieldCheck } from 'lucide-react';
+import { LogOut, Smartphone } from 'lucide-react';
+import { supabase } from '../../lib/supabase';
+import { SOVEREIGN_REGISTRY } from '../../lib/sovereign';
+import * as LucideIcons from 'lucide-react';
 import clsx from 'clsx';
 
-export default function Sidebar() {
+export default function Sidebar({ onItemClick }: { onItemClick?: () => void }) {
+    const [dynamicItems, setDynamicItems] = useState<any[]>([]);
     const { profile, signOut } = useAuth();
+    const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+    const [isInstalled, setIsInstalled] = useState(false);
+
+    useEffect(() => {
+        // Fetch dynamic schemas for individual SaaS routes
+        const fetchDynamicItems = async () => {
+            const { data } = await supabase
+                .from('ui_schemas')
+                .select('table_name, list_config, nav_config');
+
+            if (data) {
+                const items = data
+                    .filter(s => s.nav_config?.is_visible !== false)
+                    .filter(s => !s.nav_config?.roles || (Array.isArray(s.nav_config.roles) && s.nav_config.roles.includes(profile?.role)))
+                    .map(s => ({
+                        label: s.list_config?.title || s.table_name,
+                        path: `/manage/${s.table_name}`,
+                        icon: s.nav_config?.icon || 'Layout',
+                        roles: s.nav_config?.roles || ALL_ROLES
+                    }));
+                setDynamicItems(items);
+            }
+        };
+
+        if (profile) fetchDynamicItems();
+    }, [profile]);
+
+    useEffect(() => {
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            setDeferredPrompt(e);
+        });
+
+        if (window.matchMedia('(display-mode: standalone)').matches) {
+            setIsInstalled(true);
+        }
+    }, []);
+
+    const handleInstall = async () => {
+        if (!deferredPrompt) return;
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+            setDeferredPrompt(null);
+        }
+    };
 
     const ROLE_LABELS: Record<string, string> = {
-        admin: 'مسؤول نظام',
-        brand_ops_manager: 'مدير تشغيل البراند',
-        sector_manager: 'مدير قطاع',
-        area_manager: 'مدير منطقة',
-        manager: 'مدير فرع',
-        maint_manager: 'مدير صيانة',
-        maint_supervisor: 'مشرف صيانة',
-        technician: 'فني صيانة',
+        admin: 'المدير العام للنظام',
+        brand_ops_manager: 'مدير العمليات المركزية',
+        sector_manager: 'مدير الخدمات اللوجستية',
+        area_manager: 'مدير النطاق التشغيلي',
+        manager: 'مدير الموقع الإداري',
+        maint_manager: 'مدير عام الصيانة',
+        maint_supervisor: 'مشرف العمليات الفنية',
+        technician: 'أخصائي صيانة ميدانية',
     };
 
     const ALL_ROLES = Object.keys(ROLE_LABELS);
-    const MAINT_ROLES = ['maint_manager', 'maint_supervisor'];
-    const OPS_ROLES = ['admin', 'brand_ops_manager', 'sector_manager', 'area_manager'];
 
-    const navItems = [
-        { label: 'الرئيسية', path: '/', icon: LayoutDashboard, roles: ALL_ROLES },
-        { label: 'بلاغاتي', path: '/my-tickets', icon: ClipboardList, roles: ['manager'] },
-        { label: 'مهامي', path: '/tech-tickets', icon: Timer, roles: ['technician'] },
-        { label: 'لوحة الصيانة', path: '/maint-dashboard', icon: Wrench, roles: MAINT_ROLES },
-        { label: 'كل البلاغات', path: '/tickets', icon: Wrench, roles: ['admin', ...MAINT_ROLES] },
-        { label: 'الخريطة التشغيلية', path: '/map', icon: Map, roles: ['admin', 'manager', ...MAINT_ROLES, ...OPS_ROLES] },
-        { label: 'إدارة المخزون', path: '/inventory', icon: Package, roles: ['admin', 'technician', ...MAINT_ROLES] },
-        { label: 'البراندات', path: '/brands', icon: Building2, roles: ['admin'] },
-        { label: 'القطاعات', path: '/sectors', icon: Building2, roles: ['admin', 'brand_ops_manager'] },
-        { label: 'المناطق', path: '/areas', icon: Building2, roles: ['admin', 'brand_ops_manager', 'sector_manager'] },
-        { label: 'الفروع', path: '/branches', icon: Building2, roles: ['admin', ...OPS_ROLES] },
-        { label: 'الموظفين', path: '/users', icon: Users, roles: ['admin'] },
-        { label: 'إعدادات الواجهات', path: '/settings', icon: Settings, roles: ['admin'] },
-        { label: 'إعدادات النظام', path: '/admin/settings', icon: ShieldCheck, roles: ['admin'] },
+    // ─── Core Navigation (Static) ───
+    const coreItems = [
+        { label: 'المنصة الاستراتيجية الشاملة', path: '/', icon: 'LayoutDashboard', roles: ALL_ROLES },
+        { label: 'مركز إدارة بلاغات الموقع', path: '/my-tickets', icon: 'ClipboardList', roles: ['manager'] },
+        { label: 'جدول التكليفات التشغيلية', path: '/tech-tickets', icon: 'Timer', roles: ['technician'] },
+        { label: 'مركز الاستحقاقات والبدلات', path: '/my-salary', icon: 'Wallet', roles: ['technician'] },
+        { label: 'مركز قيادة العمليات الفنية', path: '/maint-dashboard', icon: 'Wrench', roles: ['admin', 'maint_manager', 'maint_supervisor', 'brand_ops_manager', 'sector_manager', 'area_manager'] },
+        { label: 'سجل الحضور والانتظام الميداني', path: '/attendance-live', icon: 'Fingerprint', roles: ['admin', 'maint_manager', 'maint_supervisor', 'brand_ops_manager', 'sector_manager', 'area_manager'] },
+        { label: 'مركز التقارير والذكاء التشغيلي', path: '/reports', icon: 'BarChart3', roles: ['admin', 'maint_manager', 'brand_ops_manager'] },
+        { label: 'منظومة الربط الجغرافي (GIS)', path: '/map', icon: 'Map', roles: ['admin', 'manager', 'maint_manager', 'maint_supervisor', 'brand_ops_manager', 'sector_manager', 'area_manager'] },
     ];
 
-    // RBAC Filtering at the UI level based on profiles table, not RLS
-    const authorizedLinks = navItems.filter(item => profile && item.roles.includes(profile.role));
+    // ─── Sovereign Registry Navigation (Dynamic) ───
+    const registryItems = Object.values(SOVEREIGN_REGISTRY).map(entry => ({
+        label: entry.label,
+        path: entry.path,
+        icon: entry.icon || 'Layout',
+        roles: entry.roles || []
+    }));
+
+
+    const ADMIN_ROLES = ['admin'];
+
+    // ─── Admin Utility Links (Static) ───
+    const adminItems = [
+        { label: 'تهيئة تفضيلات النظام', path: '/settings', icon: 'Settings', roles: ADMIN_ROLES },
+        { label: 'إدارة السياسات والحوكمة الأمنية', path: '/admin/settings', icon: 'ShieldCheck', roles: ADMIN_ROLES },
+    ];
+
+    // Filter dynamic items to avoid duplicates with static registry or core
+    const filteredDynamic = dynamicItems.filter(d =>
+        !coreItems.some(c => c.path === d.path) &&
+        !registryItems.some(r => r.path === d.path)
+    );
+
+    const allNavItems = [...coreItems, ...registryItems, ...filteredDynamic, ...adminItems];
+    const authorizedLinks = allNavItems.filter(item => profile && item.roles.includes(profile.role));
 
     return (
-        <aside className="w-64 bg-surface-900 text-white flex flex-col min-h-screen fixed right-0 top-0 bottom-0 z-40 transition-transform shadow-2xl">
-            <div className="p-6 flex items-center gap-4 border-b border-surface-800">
-                <div className="w-10 h-10 bg-gradient-to-br from-primary-400 to-primary-600 rounded-xl flex items-center justify-center shadow-lg shadow-primary-500/20 shrink-0">
-                    <Settings className="w-6 h-6 text-white animate-spin-slow" />
+        <aside className="w-72 brand-gradient text-white flex flex-col h-full transition-all duration-500 shadow-2xl overflow-y-auto custom-scrollbar relative z-50">
+            <div className="absolute inset-0 bg-black/10 -z-10" />
+            <div className="p-6 flex items-center gap-4 border-b border-surface-800 shrink-0">
+                <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-lg shrink-0">
+                    <img src="/logo.png" alt="B.Laban" className="w-8 h-8 object-contain" onError={(e) => {
+                        (e.target as any).src = 'https://portal.blaban.com.eg/assets/images/logo.png';
+                    }} />
                 </div>
                 <div>
-                    <h2 className="text-lg font-bold tracking-tight">نظام الصيانة V10</h2>
+                    <h2 className="text-xl font-black tracking-tighter text-white">B.LABAN</h2>
+                    <p className="text-[10px] text-primary-400 font-bold uppercase tracking-widest">Sovereign Engine</p>
                 </div>
             </div>
 
-            <div className="p-6 pb-4 border-b border-surface-800 bg-surface-800/20">
-                <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-surface-700 rounded-full flex items-center justify-center text-primary-400 font-bold text-lg shrink-0 border border-surface-600 shadow-inner">
+            <div className="p-6 pb-4 border-b border-white/10 bg-black/10 shrink-0">
+                <div className="flex items-center gap-3 p-3 rounded-2xl bg-white/10 backdrop-blur-md border border-white/10 shadow-inner">
+                    <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-primary-600 font-black text-lg shrink-0 border border-white/20 shadow-lg">
                         {profile?.full_name?.charAt(0) || 'M'}
                     </div>
                     <div className="overflow-hidden">
-                        <p className="font-semibold text-sm truncate">{profile?.full_name}</p>
-                        <p className="text-xs text-primary-400 capitalize mt-0.5">
-                            {ROLE_LABELS[profile?.role || ''] || profile?.role}
-                        </p>
+                        <p className="font-black text-sm text-white truncate">{profile?.full_name}</p>
+                        <div className="flex items-center gap-1 mt-0.5">
+                            <div className="w-1.5 h-1.5 rounded-full bg-accent-sky animate-pulse" />
+                            <p className="text-[10px] text-white/80 font-black uppercase tracking-widest truncate">
+                                {ROLE_LABELS[profile?.role || ''] || profile?.role}
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -72,26 +145,50 @@ export default function Sidebar() {
                     <NavLink
                         key={item.path}
                         to={item.path}
-                        className={({ isActive }) => clsx(
-                            "flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all text-sm font-medium",
+                        onClick={onItemClick}
+                        className={({ isActive }: { isActive: boolean }) => clsx(
+                            "flex items-center gap-4 px-5 py-4 rounded-2xl transition-all duration-300 text-sm font-black group relative overflow-hidden",
                             isActive
-                                ? "bg-primary-600 text-white shadow-md shadow-primary-900/40"
-                                : "text-surface-300 hover:bg-surface-800 hover:text-white"
+                                ? "bg-white text-primary-600 shadow-xl shadow-black/20 translate-x-3 scale-[1.02]"
+                                : "text-white/80 hover:bg-white/10 hover:text-white hover:translate-x-2"
                         )}
                     >
-                        <item.icon className="w-5 h-5 shrink-0" />
-                        <span>{item.label}</span>
+                        {({ isActive }: { isActive: boolean }) => (
+                            <>
+                                <div className={clsx(
+                                    "w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 shadow-inner",
+                                    isActive ? "bg-primary-50 text-primary-600 rotate-6" : "bg-white/10 group-hover:bg-white/20 group-hover:rotate-6 border border-white/5"
+                                )}>
+                                    {(() => {
+                                        const IconComponent = (LucideIcons as any)[item.icon] || LucideIcons.Layout;
+                                        return <IconComponent className={clsx("w-5 h-5 shrink-0 transition-transform duration-500", !isActive && "group-hover:scale-110")} />;
+                                    })()}
+                                </div>
+                                <span className="flex-1 font-outfit tracking-wide">{item.label}</span>
+                                {isActive && <div className="w-2 h-2 rounded-full bg-white shadow-[0_0_15px_rgba(255,255,255,1)] animate-pulse" />}
+                            </>
+                        )}
                     </NavLink>
                 ))}
             </nav>
 
-            <div className="p-4 border-t border-surface-800 bg-surface-800/10">
+            <div className="p-4 border-t border-surface-800 bg-surface-800/10 space-y-2 shrink-0">
+                {deferredPrompt && !isInstalled && (
+                    <button
+                        onClick={(e) => { e.stopPropagation(); handleInstall(); }}
+                        className="btn-3d flex items-center gap-3 w-full px-4 py-3 text-sm font-bold text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 rounded-xl transition-all border border-emerald-500/20 shadow-lg shadow-emerald-900/10"
+                    >
+                        <Smartphone className="w-5 h-5 shrink-0" />
+                        <span>تنشيط وضع الوصول الذكي (Mobile PWA)</span>
+                    </button>
+                )}
+
                 <button
-                    onClick={() => signOut()}
-                    className="flex items-center gap-3 w-full px-4 py-3 text-sm font-medium text-red-400 hover:bg-red-500/10 hover:text-red-300 rounded-xl transition-all"
+                    onClick={() => { if (window.confirm('تأكيد إنهاء الجلسة الآمنة والتسجيل خارج النظام؟')) signOut(); }}
+                    className="flex items-center gap-3 w-full px-4 py-3 text-sm font-bold text-red-400 hover:bg-red-500/10 hover:text-red-300 rounded-xl transition-all"
                 >
                     <LogOut className="w-5 h-5 shrink-0" />
-                    <span>تسجيل الخروج</span>
+                    <span>إنهاء الجلسة الآمنة</span>
                 </button>
             </div>
         </aside>

@@ -13,7 +13,7 @@ export default function Login() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!employeeCode || !password) {
-            setError('يرجى إدخال كود الموظف وكلمة المرور.');
+            setError('يتطلب الدخول إدخال الرقم الوظيفي وكلمة المرور المعتمدة.');
             return;
         }
         setError(null);
@@ -22,9 +22,9 @@ export default function Login() {
         const { error: signInError } = await signIn(employeeCode, password);
         if (signInError) {
             if (signInError.message?.includes('Invalid login credentials')) {
-                setError('كود الموظف أو كلمة المرور غير صحيحة.');
+                setError('لم نتمكن من التحقق من بيانات الدخول؛ يرجى مراجعة الرقم الوظيفي أو كلمة المرور.');
             } else if (signInError.message?.includes('Email not confirmed')) {
-                setError('الحساب غير مفعّل. تواصل مع المدير.');
+                setError('الحساب قيد المراجعة الإدارية؛ يرجى التواصل مع إدارة التقنية لتفعيل الدخول.');
             } else {
                 setError(`خطأ في الاتصال: ${signInError.message}`);
             }
@@ -36,18 +36,18 @@ export default function Login() {
         <div className="relative min-h-screen flex items-center justify-center bg-surface-900 overflow-hidden">
             {/* Background decoration - Premium Aesthetics */}
             <div className="absolute inset-0 z-0">
-                <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-primary-600/20 rounded-full blur-[120px] mix-blend-screen"></div>
+                <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-brand-blaban/20 rounded-full blur-[120px] mix-blend-screen"></div>
                 <div className="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] bg-teal-800/30 rounded-full blur-[150px] mix-blend-screen"></div>
             </div>
 
             <div className="relative z-10 w-full max-w-md px-6">
                 <div className="bg-surface-800/60 backdrop-blur-xl border border-surface-700 shadow-2xl rounded-3xl p-8 transform transition-all">
                     <div className="flex flex-col items-center mb-8">
-                        <div className="w-16 h-16 bg-gradient-to-br from-primary-400 to-primary-600 rounded-2xl flex items-center justify-center shadow-lg shadow-primary-500/30 mb-4">
-                            <Settings className="w-8 h-8 text-white animate-spin-slow" />
+                        <div className="w-20 h-20 bg-gradient-to-br from-brand-blaban to-brand-basbosa rounded-[2rem] flex items-center justify-center shadow-2xl shadow-brand-blaban/30 mb-6 border-2 border-white/20">
+                            <Settings className="w-10 h-10 text-white animate-spin-slow" />
                         </div>
-                        <h1 className="text-3xl font-bold tracking-tight text-white mb-2">النظام الموحد</h1>
-                        <p className="text-surface-400 text-sm tracking-wide">FSC Maintenance App V10.0</p>
+                        <h1 className="text-3xl font-bold tracking-tight text-white mb-2">منصة الحوكمة الموحدة (ERP)</h1>
+                        <p className="text-surface-400 text-sm tracking-wide">نظام إدارة الصيانة الاستراتيجية — V10.0</p>
                     </div>
 
                     <form onSubmit={handleSubmit} className="space-y-6">
@@ -59,7 +59,7 @@ export default function Login() {
                         )}
 
                         <div>
-                            <label className="block text-sm font-medium text-surface-300 mb-2">كود الموظف</label>
+                            <label className="block text-sm font-medium text-surface-300 mb-2">الرقم الوظيفي</label>
                             <div className="relative">
                                 <input
                                     type="text"
@@ -67,7 +67,7 @@ export default function Login() {
                                     value={employeeCode}
                                     onChange={(e) => setEmployeeCode(e.target.value)}
                                     className="w-full bg-surface-900/50 border border-surface-600 text-white rounded-xl px-4 py-3 placeholder:text-surface-500 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 transition-all font-medium text-left"
-                                    placeholder="1001"
+                                    placeholder="Employee ID"
                                     autoComplete="username"
                                 />
                             </div>
@@ -92,7 +92,7 @@ export default function Login() {
                             type="submit"
                             disabled={loading}
                             className={clsx(
-                                "w-full flex items-center justify-center gap-2 py-3.5 px-4 bg-primary-600 hover:bg-primary-500 text-white rounded-xl font-semibold shadow-lg shadow-primary-900/20 transition-all focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 focus:ring-offset-surface-800",
+                                "w-full flex items-center justify-center gap-2 py-4 px-4 bg-brand-blaban hover:bg-brand-blaban/90 text-white rounded-2xl font-black shadow-2xl shadow-brand-blaban/30 transition-all focus:outline-none focus:ring-2 focus:ring-accent-sky/50 focus:ring-offset-2 focus:ring-offset-surface-900 active:scale-95",
                                 loading && "opacity-70 cursor-not-allowed"
                             )}
                         >
@@ -101,14 +101,14 @@ export default function Login() {
                             ) : (
                                 <>
                                     <LogIn className="w-5 h-5" />
-                                    <span>تسجيل الدخول</span>
+                                    <span>دخول آمن للمنصة</span>
                                 </>
                             )}
                         </button>
                     </form>
 
                     <div className="mt-8 text-center">
-                        <p className="text-xs text-surface-500">نظام مغلق مخصص لموظفي الشركة فقط.<br />لا يوجد خيار لإنشاء حساب.</p>
+                        <p className="text-xs text-surface-500">هذا النظام محمي لأغراض مؤسسية فقط؛ يرجى الامتناع عن محاولة الدخول لغير المصرح لهم.<br />إدارة الحسابات تتم مركزياً عبر قسم الموارد البشرية.</p>
                     </div>
                 </div>
             </div>

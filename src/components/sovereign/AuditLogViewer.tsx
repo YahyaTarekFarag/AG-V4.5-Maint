@@ -23,9 +23,9 @@ const ACTION_STYLE: Record<string, string> = {
     DELETE: 'text-red-700   bg-red-50   border-red-200',
 };
 const ACTION_LABEL: Record<string, string> = {
-    INSERT: '+ إضافة',
-    UPDATE: '✏ تعديل',
-    DELETE: '✕ حذف',
+    INSERT: '+ تسجيل قيد جديد',
+    UPDATE: '✏ تعديل البيانات',
+    DELETE: '✕ حذف السجل',
 };
 
 interface Props { tableName: string; }
@@ -61,7 +61,7 @@ export default function AuditLogViewer({ tableName }: Props) {
             <div className="p-5 border-b border-surface-100 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                     <History className="w-5 h-5 text-primary-500" />
-                    <span className="font-semibold text-surface-800">سجل التغييرات</span>
+                    <span className="font-semibold text-surface-800">بروتوكول سجل العمليات التشغيلية</span>
                     <span className="text-xs bg-surface-100 text-surface-500 px-2 py-0.5 rounded-full font-mono">{tableName}</span>
                 </div>
                 <button onClick={load} className="p-2 text-surface-400 hover:text-surface-700 hover:bg-surface-100 rounded-lg transition-colors">

@@ -1,7 +1,10 @@
 import { useEffect, useState, useRef } from 'react';
 import DashboardLayout from '../components/layout/DashboardLayout';
 import { supabase } from '../lib/supabase';
-import { MapPin, Users, Loader2 } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
+import { MapPin, Users, Shield, Map } from 'lucide-react';
+import clsx from 'clsx';
+import { applyRBACFilter } from '../lib/rbac';
 
 // Use global Leaflet (L) loaded via index.html
 function useLeaflet(mapRef: React.RefObject<HTMLDivElement | null>, branches: any[], technicians: any[]) {
@@ -13,12 +16,18 @@ function useLeaflet(mapRef: React.RefObject<HTMLDivElement | null>, branches: an
         const L = (window as any).L;
         if (!mapRef.current || !L || mapInstanceRef.current) return;
 
-        const map = L.map(mapRef.current).setView([26.8206, 30.8025], 6);
-        mapInstanceRef.current = map;
+        // Optimized for Middle East Focus
+        const map = L.map(mapRef.current, {
+            zoomControl: false,
+            attributionControl: false
+        }).setView([26.8206, 30.8025], 6);
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors',
-            maxZoom: 19
+        mapInstanceRef.current = map;
+        (window as any).leafletMapInstance = map;
+
+        // Premium Dark Matter Tiles
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            maxZoom: 20
         }).addTo(map);
 
         markersLayerRef.current = L.featureGroup().addTo(map);
@@ -29,9 +38,11 @@ function useLeaflet(mapRef: React.RefObject<HTMLDivElement | null>, branches: an
                 mapInstanceRef.current = null;
             }
         };
-    }, []); // Run ONLY once
+    }, []);
 
-    // 2. Sync markers and FitBounds (Run when data or map instance ready)
+    const markersMapRef = useRef<Record<string, any>>({});
+
+    // 2. Sync markers
     useEffect(() => {
         const L = (window as any).L;
         const map = mapInstanceRef.current;
@@ -39,156 +50,298 @@ function useLeaflet(mapRef: React.RefObject<HTMLDivElement | null>, branches: an
 
         if (!map || !layer || !L) return;
 
-        layer.clearLayers();
+        const currentIds = new Set();
 
+        // Premium Branch Icon with Pulse
         const branchIcon = L.divIcon({
-            html: `<div style="background:#0ea5e9;color:white;border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 3px 10px rgba(0,0,0,.2);border:2px solid white">🏢</div>`,
-            iconSize: [34, 34], iconAnchor: [17, 17], className: ''
+            html: `
+                <div class="relative flex items-center justify-center">
+                    <div class="absolute w-8 h-8 bg-sky-500/40 rounded-full animate-ring"></div>
+                    <div class="relative w-8 h-8 bg-sky-500 text-white rounded-full flex items-center justify-center text-sm shadow-lg border-2 border-surface-900 group">🏢</div>
+                </div>
+            `,
+            iconSize: [32, 32], iconAnchor: [16, 16], className: 'custom-div-icon'
         });
 
+        // Premium Technician Icon with Emerald Pulse
         const techIcon = L.divIcon({
-            html: `<div style="background:#10b981;color:white;border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 3px 10px rgba(0,0,0,.2);border:2px solid white">👤</div>`,
-            iconSize: [34, 34], iconAnchor: [17, 17], className: ''
+            html: `
+                <div class="relative flex items-center justify-center">
+                    <div class="absolute w-8 h-8 bg-emerald-500/40 rounded-full animate-ring"></div>
+                    <div class="relative w-8 h-8 bg-emerald-500 text-white rounded-full flex items-center justify-center text-sm shadow-lg border-2 border-surface-900">👤</div>
+                </div>
+            `,
+            iconSize: [32, 32], iconAnchor: [16, 16], className: 'custom-div-icon'
         });
 
-        const points: any[] = [];
+        // Handle Branches
         branches.forEach(b => {
-            if (b.latitude && b.longitude) {
-                L.marker([b.latitude, b.longitude], { icon: branchIcon }).bindPopup(`<b>${b.name}</b>`).addTo(layer);
-                points.push([b.latitude, b.longitude]);
-            }
-        });
-
-        technicians.forEach(t => {
-            if (t.start_lat && t.start_lng) {
-                L.marker([t.start_lat, t.start_lng], { icon: techIcon }).bindPopup(`<b>${t.full_name}</b>`).addTo(layer);
-                points.push([t.start_lat, t.start_lng]);
-            }
-        });
-
-        if (points.length > 0) {
-            // Delay marginally to ensure DOM has settled
-            const timer = setTimeout(() => {
-                if (mapInstanceRef.current) {
-                    mapInstanceRef.current.invalidateSize();
-                    mapInstanceRef.current.fitBounds(points, { padding: [50, 50], maxZoom: 12, animate: false });
+            const id = `branch-${b.id}`;
+            currentIds.add(id);
+            const lat = b.latitude;
+            const lng = b.longitude;
+            if (lat && lng) {
+                let marker = markersMapRef.current[id];
+                if (marker) {
+                    marker.setLatLng([lat, lng]);
+                } else {
+                    marker = L.marker([lat, lng], { icon: branchIcon }).addTo(layer);
+                    marker.bindPopup(`
+                        <div class="p-3 bg-surface-950 text-white rounded-xl min-w-[200px]">
+                            <h4 class="font-black text-sky-400 mb-1">${b.name}</h4>
+                            <p class="text-[10px] text-surface-400 font-bold uppercase tracking-widest mb-3">مركز عمليات الفرع</p>
+                            <div class="grid grid-cols-2 gap-2 mt-2">
+                                <div class="bg-surface-900/50 p-2 rounded-lg border border-surface-800">
+                                    <p class="text-[9px] text-surface-500 font-bold">الحالة</p>
+                                    <p class="text-xs text-emerald-400 font-black">نشط</p>
+                                </div>
+                                <div class="bg-surface-900/50 p-2 rounded-lg border border-surface-800">
+                                    <p class="text-[9px] text-surface-500 font-bold">المعدات</p>
+                                    <p class="text-xs text-white font-black">مراقب</p>
+                                </div>
+                            </div>
+                        </div>
+                    `, { className: 'premium-popup' });
+                    markersMapRef.current[id] = marker;
                 }
-            }, 100);
-            return () => clearTimeout(timer);
-        }
-    }, [branches, technicians]); // Sync when data changes
+            }
+        });
+
+        // Handle Technicians
+        technicians.forEach(t => {
+            const id = `tech-${t.id}`;
+            currentIds.add(id);
+            if (t.clock_in_lat && t.clock_in_lng) {
+                let marker = markersMapRef.current[id];
+                if (marker) {
+                    marker.setLatLng([t.clock_in_lat, t.clock_in_lng]);
+                } else {
+                    marker = L.marker([t.clock_in_lat, t.clock_in_lng], { icon: techIcon }).addTo(layer);
+                    marker.bindPopup(`
+                        <div class="p-3 bg-surface-950 text-white rounded-xl min-w-[180px]">
+                            <h4 class="font-black text-emerald-400 mb-1">${t.full_name}</h4>
+                            <p class="text-[10px] text-surface-400 font-bold uppercase tracking-widest mb-3">فني ميداني نشط</p>
+                            <div class="flex items-center gap-2 bg-emerald-900/20 p-2 rounded-lg border border-emerald-900/30">
+                                <div class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
+                                <p class="text-[10px] text-emerald-400 font-black">جاري تنفيذ المهام الميدانية</p>
+                            </div>
+                        </div>
+                    `, { className: 'premium-popup' });
+                    markersMapRef.current[id] = marker;
+                }
+            }
+        });
+
+        // Cleanup
+        Object.keys(markersMapRef.current).forEach(id => {
+            if (!currentIds.has(id)) {
+                layer.removeLayer(markersMapRef.current[id]);
+                delete markersMapRef.current[id];
+            }
+        });
+    }, [branches, technicians]);
 }
 
 export default function MapPage() {
+    const { profile } = useAuth();
     const mapRef = useRef<HTMLDivElement>(null);
     const [branches, setBranches] = useState<any[]>([]);
     const [technicians, setTechnicians] = useState<any[]>([]);
+    const [stream, setStream] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [isFullscreen, setIsFullscreen] = useState(false);
+
+    const handleLocate = () => {
+        if (!navigator.geolocation) return;
+        navigator.geolocation.getCurrentPosition((pos) => {
+            const L = (window as any).L;
+            const map = (window as any).leafletMapInstance;
+            if (map && L) {
+                const latlng = [pos.coords.latitude, pos.coords.longitude];
+                map.flyTo(latlng, 15, { animate: true, duration: 2 });
+                L.circle(latlng, { radius: 100, color: '#0ea5e9', fillOpacity: 0.1, weight: 1 }).addTo(map);
+            }
+        });
+    };
+
+    const load = async () => {
+        if (!profile) return;
+        setLoading(true);
+        try {
+            // Branches
+            let bQuery = supabase.from('branches').select('id, name, latitude, longitude');
+            bQuery = applyRBACFilter(bQuery, 'branches', profile);
+
+            // Attendance
+            let aQuery = supabase.from('technician_attendance')
+                .select('*, profiles:profile_id!inner(full_name), clock_in_lat, clock_in_lng')
+                .is('clock_out', null);
+            aQuery = applyRBACFilter(aQuery, 'technician_attendance', profile);
+
+            // Operational Stream (Last 10 Events)
+            const { data: streamData } = await supabase
+                .from('technician_attendance')
+                .select('id, created_at, profile_id, profiles:profile_id(full_name), branches:branch_id(name)')
+                .order('created_at', { ascending: false })
+                .limit(10);
+
+            const [{ data: bData }, { data: aData }] = await Promise.all([bQuery, aQuery]);
+
+            setBranches(bData || []);
+            setTechnicians((aData || []).map((s: any) => ({
+                ...s,
+                full_name: s.profiles?.full_name,
+            })));
+            setStream(streamData || []);
+        } catch (e) {
+            console.error('Map loading error:', e);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        const load = async () => {
-            setLoading(true);
-            try {
-                const { data: bData } = await supabase.from('branches').select('id, name, latitude, longitude');
-                const { data: sData } = await supabase.from('shifts').select('*, profiles(full_name)').is('end_at', null);
-
-                setBranches(bData || []);
-                setTechnicians((sData || []).map(s => ({
-                    ...s,
-                    full_name: s.profiles?.full_name,
-                    start_lat: s.start_lat,
-                    start_lng: s.start_lng
-                })));
-            } catch (e) {
-                console.error(e);
-            } finally {
-                setLoading(false);
-            }
-        };
-        load();
-    }, []);
+        if (profile) {
+            load();
+            const channel = supabase.channel('map-sync')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'technician_attendance' }, () => load())
+                .subscribe();
+            return () => { channel.unsubscribe(); };
+        }
+    }, [profile]);
 
     useLeaflet(mapRef, branches, technicians);
 
     return (
         <DashboardLayout>
-            {/* Header */}
-            <div className="flex items-center justify-between mb-6">
-                <div>
-                    <h2 className="text-2xl font-bold text-surface-900">الخريطة التشغيلية</h2>
-                    <p className="text-surface-500 text-sm mt-1">مواقع الفروع والفنيين المتاحين الآن</p>
-                </div>
-            </div>
-
-            {/* Legend */}
-            <div className="flex flex-wrap gap-4 mb-4">
-                <div className="flex items-center gap-2 bg-white border border-surface-200 rounded-xl px-4 py-2.5 shadow-sm">
-                    <div className="w-8 h-8 bg-sky-500 rounded-full flex items-center justify-center text-white text-sm">🏢</div>
+            <div className="flex flex-col h-full overflow-hidden">
+                {/* Header Section */}
+                <div className="flex items-center justify-between mb-6 px-1">
                     <div>
-                        <p className="text-xs text-surface-400 font-medium">الفروع</p>
-                        <p className="text-lg font-bold text-surface-900">{branches.length}</p>
+                        <h2 className="text-3xl font-black text-white tracking-tight flex items-center gap-3">
+                            <Map className="w-8 h-8 text-brand-blaban" /> مركز القيادة السيادي
+                        </h2>
+                        <p className="text-surface-500 text-sm mt-1 font-bold">الرصد الجغرافي اللحظي للفروع والكوادر الميدانية</p>
                     </div>
                 </div>
-                <div className="flex items-center gap-2 bg-white border border-surface-200 rounded-xl px-4 py-2.5 shadow-sm">
-                    <div className="w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center text-white text-sm">👤</div>
-                    <div>
-                        <p className="text-xs text-surface-400 font-medium">فنيون متاحون الآن</p>
-                        <p className="text-lg font-bold text-surface-900">{technicians.length}</p>
-                    </div>
-                </div>
-            </div>
 
-            {/* Map Container */}
-            <div className="bg-white rounded-2xl border border-surface-200 shadow-sm overflow-hidden relative" style={{ height: '60vh', minHeight: 400 }}>
-                {loading && (
-                    <div className="absolute inset-0 z-10 bg-white/80 backdrop-blur-sm flex items-center justify-center flex-col gap-3 text-surface-400">
-                        <Loader2 className="w-10 h-10 animate-spin text-primary-400" />
-                        <p className="text-sm font-medium text-surface-600">جاري تحميل بيانات الخريطة...</p>
-                    </div>
-                )}
-
-                {!loading && branches.length === 0 && technicians.length === 0 && (
-                    <div className="absolute inset-0 z-10 bg-white flex items-center justify-center flex-col gap-4 text-surface-400">
-                        <MapPin className="w-16 h-16 text-surface-300" />
-                        <div className="text-center">
-                            <p className="font-semibold text-lg text-surface-900">لا توجد إحداثيات مسجّلة بعد</p>
-                            <p className="text-sm mt-1">يجب تسجيل إحداثيات الفروع لتظهر هنا</p>
-                        </div>
-                    </div>
-                )}
-
-                {/* Always rendered but may be covered by overlays */}
-                <div ref={mapRef} style={{ height: '100%', width: '100%' }} className="z-0" />
-            </div>
-
-            {/* Active Technicians List */}
-            {technicians.length > 0 && (
-                <div className="mt-5">
-                    <h3 className="font-bold text-surface-700 mb-3 flex items-center gap-2">
-                        <Users className="w-5 h-5 text-emerald-500" /> الفنيون في المناوبة الآن
-                    </h3>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-                        {technicians.map(t => (
-                            <div key={t.id} className="bg-white border border-emerald-200 rounded-xl p-4 flex items-center gap-3 shadow-sm">
-                                <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center shrink-0">
-                                    <Users className="w-5 h-5 text-emerald-600" />
-                                </div>
-                                <div className="min-w-0">
-                                    <p className="font-semibold text-surface-900 text-sm truncate">{t.full_name || 'فني'}</p>
-                                    <p className="text-xs text-emerald-600">🟢 متاح</p>
+                <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 flex-1 min-h-0">
+                    {/* Main Content (Map) */}
+                    <div className="lg:col-span-3 flex flex-col gap-6 h-full">
+                        {/* KPI Bar */}
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                            <div className="glass-premium p-4 rounded-2xl border border-sky-900/20 flex items-center gap-4">
+                                <div className="w-10 h-10 bg-sky-500/10 rounded-xl flex items-center justify-center text-sky-500 shrink-0">🏢</div>
+                                <div>
+                                    <p className="text-[10px] text-surface-500 font-black uppercase tracking-widest">إجمالي الفروع</p>
+                                    <p className="text-xl font-black text-white">{branches.length}</p>
                                 </div>
                             </div>
-                        ))}
+                            <div className="glass-premium p-4 rounded-2xl border border-emerald-900/20 flex items-center gap-4">
+                                <div className="w-10 h-10 bg-emerald-500/10 rounded-xl flex items-center justify-center text-emerald-500 shrink-0">👤</div>
+                                <div>
+                                    <p className="text-[10px] text-surface-500 font-black uppercase tracking-widest">فنيين نشطين</p>
+                                    <p className="text-xl font-black text-white">{technicians.length}</p>
+                                </div>
+                            </div>
+                            <div className="hidden sm:flex glass-premium p-4 rounded-2xl border border-purple-900/20 items-center gap-4">
+                                <div className="w-10 h-10 bg-purple-500/10 rounded-xl flex items-center justify-center text-purple-500 shrink-0">📡</div>
+                                <div>
+                                    <p className="text-[10px] text-surface-500 font-black uppercase tracking-widest">حالة الربط</p>
+                                    <p className="text-sm font-black text-white">لحظي / متصل</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Map Container */}
+                        <div className={clsx(
+                            "bg-surface-950 rounded-[2.5rem] border border-surface-800 shadow-2xl shadow-black/50 overflow-hidden relative flex-1 min-h-[400px]",
+                            isFullscreen && "fixed inset-0 z-[100] rounded-none !h-screen"
+                        )}>
+                            <div ref={mapRef} className="w-full h-full grayscale-[0.2] brightness-[0.9] contrast-[1.1]" />
+
+                            {/* Map Overlays */}
+                            <div className="absolute top-6 right-6 z-[1000] flex flex-col gap-3">
+                                <button
+                                    onClick={() => setIsFullscreen(!isFullscreen)}
+                                    className="p-3 bg-surface-900/80 backdrop-blur-md border border-surface-700/50 rounded-2xl text-white hover:bg-brand-blaban transition-all shadow-xl group"
+                                >
+                                    {isFullscreen ? <Users className="w-5 h-5" /> : <Map className="w-5 h-5 group-hover:scale-110" />}
+                                </button>
+                                <button
+                                    onClick={handleLocate}
+                                    className="p-3 bg-surface-900/80 backdrop-blur-md border border-surface-700/50 rounded-2xl text-brand-blaban hover:bg-brand-blaban hover:text-white transition-all shadow-xl group"
+                                >
+                                    <MapPin className="w-5 h-5 group-hover:scale-110" />
+                                </button>
+                            </div>
+
+                            {loading && (
+                                <div className="absolute inset-0 z-[2000] bg-surface-950/60 backdrop-blur-sm flex items-center justify-center">
+                                    <div className="flex flex-col items-center gap-4">
+                                        <div className="w-16 h-1 bg-surface-800 rounded-full overflow-hidden">
+                                            <div className="w-1/2 h-full bg-brand-blaban animate-progress origin-left"></div>
+                                        </div>
+                                        <p className="text-xs font-black text-surface-400 uppercase tracking-widest animate-pulse">Initializing Command Grid...</p>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Operational Stream Sidebar */}
+                    <div className="lg:col-span-1 flex flex-col bg-surface-900/30 rounded-[2.5rem] border border-surface-800 p-6 h-full min-h-0">
+                        <div className="flex items-center justify-between mb-6">
+                            <h3 className="font-black text-white text-lg tracking-tight">التدفق العملياتي</h3>
+                            <span className="px-2 py-1 bg-brand-blaban/10 text-brand-blaban text-[10px] font-black rounded-lg">Live</span>
+                        </div>
+
+                        <div className="flex-1 overflow-y-auto custom-scrollbar space-y-4 pr-1">
+                            {stream.length === 0 ? (
+                                <div className="h-full flex flex-col items-center justify-center text-center p-8 opacity-20">
+                                    <Shield className="w-16 h-16 mb-4" />
+                                    <p className="text-sm font-bold">في انتظار استلام إشارات ميدانية...</p>
+                                </div>
+                            ) : (
+                                stream.map((item, idx) => (
+                                    <div key={item.id} className="p-4 bg-surface-950/50 border border-surface-800 rounded-2xl animate-stream-in" style={{ animationDelay: `${idx * 0.1}s` }}>
+                                        <div className="flex items-start gap-3">
+                                            <div className="w-8 h-8 bg-emerald-500/10 rounded-full flex items-center justify-center shrink-0">
+                                                <Users className="w-4 h-4 text-emerald-500" />
+                                            </div>
+                                            <div className="min-w-0">
+                                                <p className="text-xs text-white font-black truncate">{item.profiles?.full_name}</p>
+                                                <p className="text-[10px] text-surface-500 font-bold mt-0.5">سجل حضور في <span className="text-sky-400">{item.branches?.name}</span></p>
+                                                <div className="flex items-center gap-2 mt-2">
+                                                    <span className="text-[9px] text-surface-600 font-black">{new Date(item.created_at).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' })}</span>
+                                                    <div className="w-1 h-1 rounded-full bg-surface-700" />
+                                                    <span className="text-[9px] text-emerald-500 font-black uppercase">ناجح</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+
+                        <div className="mt-6 pt-6 border-t border-surface-800 text-center">
+                            <p className="text-[10px] text-surface-600 font-black uppercase tracking-[0.2em]">Operational Pulse Active</p>
+                        </div>
                     </div>
                 </div>
-            )}
+            </div>
 
-            {/* Branches without coords warning */}
-            {branches.length === 0 && !loading && (
-                <div className="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-700">
-                    <strong>تنبيه:</strong> لإظهار الفروع على الخريطة، أضف أعمدة <code>latitude</code> و <code>longitude</code> لجدول <code>branches</code> في Supabase وأدخل الإحداثيات.
-                </div>
-            )}
+            <style dangerouslySetInnerHTML={{
+                __html: `
+                .premium-popup .leaflet-popup-content-wrapper { background: transparent; padding: 0; border: none; box-shadow: none; }
+                .premium-popup .leaflet-popup-tip { background: #0a0a0a; border: 1px solid #1f2937; }
+                .leaflet-container { font-family: 'Cairo', sans-serif; }
+                @keyframes progress { 
+                    0% { transform: translateX(-100%); }
+                    100% { transform: translateX(200%); }
+                }
+                .animate-progress { animation: progress 2s infinite ease-in-out; }
+            `}} />
         </DashboardLayout>
     );
 }

@@ -71,28 +71,28 @@ export default function AdminSettingsPage() {
         <DashboardLayout>
             <div className="p-6 max-w-4xl mx-auto">
                 <div className="flex items-center gap-3 mb-8">
-                    <div className="p-3 bg-primary-50 text-primary-600 rounded-2xl">
+                    <div className="p-3 bg-primary-900/20 text-primary-400 rounded-2xl border border-primary-800/30">
                         <Settings className="w-8 h-8" />
                     </div>
                     <div>
-                        <h1 className="text-3xl font-bold text-surface-900">إعدادات النظام</h1>
-                        <p className="text-surface-500">إدارة الصلاحيات والقيود العامة للمنصة</p>
+                        <h1 className="text-3xl font-bold text-white">تهيئة إعدادات النظام الإستراتيجية</h1>
+                        <p className="text-surface-400">إدارة بروتوكولات التشغيل، صلاحيات الوصول، والقيود التنظيمية للمنصة</p>
                     </div>
                 </div>
 
-                <div className="bg-white rounded-3xl border border-surface-200 shadow-sm overflow-hidden">
-                    <div className="p-6 border-b border-surface-100 flex items-center gap-2 bg-surface-50">
+                <div className="bg-surface-900 rounded-3xl border border-surface-800 shadow-2xl overflow-hidden">
+                    <div className="p-6 border-b border-surface-800 flex items-center gap-2 bg-surface-800/10">
                         <ShieldCheck className="w-5 h-5 text-primary-500" />
-                        <h2 className="text-lg font-bold text-surface-900">قيود التشغيل</h2>
+                        <h2 className="text-lg font-bold text-white">ضوابط وسياسات التشغيل الميداني</h2>
                     </div>
 
                     <div className="p-6 space-y-6">
-                        <div className="flex items-center justify-between p-4 bg-surface-50 rounded-2xl border border-surface-100">
+                        <div className="flex items-center justify-between p-4 bg-surface-50 dark:bg-surface-800/50 rounded-2xl border border-surface-100 dark:border-surface-700">
                             <div className="flex-1">
-                                <h3 className="font-bold text-surface-900">تقييد بلاغات مديري الفروع</h3>
-                                <p className="text-sm text-surface-500 mt-1">
-                                    عند التفعيل، لن يتمكن مدير الفرع من تسجيل بلاغ إلا لفرعه الخاص فقط.
-                                    عند الإلغاء، يمكن للمدير اختيار أي فرع يتواجد به يدوياً.
+                                <h3 className="font-bold text-white">بروتوكول حوكمة البلاغات المكانية</h3>
+                                <p className="text-sm text-surface-400 mt-1">
+                                    تفعيل: تقتصر صلاحية مدير الفرع على تقديم البلاغات الفنية المرتبطة بفرعه المسجل فقط.
+                                    تعطيل: تمنح الصلاحية للمدير باختيار أي موقع جغرافي لرفع البلاغ يدوياً وفق مقتضيات العمل.
                                 </p>
                             </div>
                             <button
@@ -107,14 +107,55 @@ export default function AdminSettingsPage() {
                             </button>
                         </div>
 
-                        <div className="flex justify-end p-2">
+                        {/* Dynamic Geofencing Section */}
+                        <div className="pt-4 border-t border-surface-800">
+                            <div className="flex items-center justify-between p-4 bg-surface-800/50 rounded-2xl border border-surface-800">
+                                <div className="flex-1">
+                                    <h3 className="font-bold text-white">تفعيل منظومة التحقق الجغرافي الذكي (Geofencing)</h3>
+                                    <p className="text-sm text-surface-400 mt-1">
+                                        فرض بروتوكول الحضور المكاني للفنيين عند مباشرة المهام، وللمديرين عند إنشاء طلبات الصيانة لضمان دقة البيانات الجغرافية.
+                                    </p>
+                                </div>
+                                <button
+                                    onClick={() => toggleSetting('geofencing_enabled')}
+                                    className="ml-4 transition-colors p-2 hover:bg-surface-800 rounded-xl"
+                                >
+                                    {settings.geofencing_enabled === 'true' ? (
+                                        <ToggleRight className="w-12 h-12 text-teal-400" />
+                                    ) : (
+                                        <ToggleLeft className="w-12 h-12 text-surface-600" />
+                                    )}
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center justify-between p-4 bg-surface-800/50 rounded-2xl border border-surface-800">
+                            <div className="flex-1">
+                                <h3 className="font-bold text-white">قطر السماح التشغيلي (متر)</h3>
+                                <p className="text-sm text-surface-400 mt-1">
+                                    تحديد المسافة الشعاعية القصوى (بالمتـر) المسموح بها كفارق بين إحداثيات المستخدم والإحداثيات المرجعية للموقع.
+                                </p>
+                            </div>
+                            <div className="w-32">
+                                <input
+                                    type="number"
+                                    value={settings.geofencing_radius || 100}
+                                    onChange={(e) => setSettings(prev => ({ ...prev, geofencing_radius: e.target.value }))}
+                                    className="w-full px-4 py-2 rounded-xl border border-surface-800 bg-surface-950 text-white focus:ring-2 focus:ring-primary-500 outline-none font-bold text-center text-lg shadow-inner"
+                                    placeholder="100"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="flex justify-end p-2 gap-4 items-center">
+                            {success && <span className="text-emerald-600 font-bold animate-pulse">✓ تم الحفظ بنجاح</span>}
                             <button
                                 onClick={handleSave}
                                 disabled={saving}
                                 className="flex items-center gap-2 px-8 py-3 bg-primary-600 hover:bg-primary-500 text-white font-bold rounded-xl shadow-lg shadow-primary-500/20 transition-all disabled:opacity-70"
                             >
                                 {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
-                                {success ? 'تم الحفظ بنجاح!' : 'حفظ التغييرات'}
+                                {saving ? 'جاري الحفظ...' : 'اعتماد التحديثات الإستراتيجية'}
                             </button>
                         </div>
                     </div>

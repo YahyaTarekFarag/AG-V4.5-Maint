@@ -1,15 +1,180 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@200..1000&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   body {
-    @apply bg-surface-50 text-surface-900 antialiased selection:bg-primary-200 selection:text-primary-900 font-sans;
+    @apply bg-surface-950 text-surface-50 antialiased font-sans transition-colors duration-300;
+    background-color: theme('colors.surface.950');
+    color: theme('colors.surface.50');
+  }
+
+  ::selection {
+    background-color: theme('colors.brand.blaban');
+    color: white;
+  }
+}
+
+@layer components {
+  .btn-3d-success {
+    @apply relative transition-all duration-100 active:translate-y-[2px];
+    box-shadow: 0 4px 0 #15803d;
+  }
+
+  .btn-3d-success:active {
+    box-shadow: 0 2px 0 #15803d;
   }
 }
 
 @layer utilities {
   .rtl-grid {
     direction: rtl;
+  }
+
+  .glass {
+    @apply bg-surface-900/80 backdrop-blur-xl border border-surface-700/50;
+  }
+
+  .glass-premium {
+    @apply bg-surface-900/40 backdrop-blur-xl border border-surface-700/30 transition-all duration-300 shadow-none;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+  }
+
+  .brand-gradient {
+    background: linear-gradient(135deg, theme('colors.brand.blaban') 0%, theme('colors.brand.basbosa') 100%);
+  }
+
+  .mesh-gradient {
+    background-image:
+      radial-gradient(at 0% 0%, rgba(0, 74, 173, 0.25) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, rgba(245, 130, 32, 0.15) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, rgba(102, 45, 145, 0.2) 0px, transparent 50%),
+      radial-gradient(at 0% 100%, rgba(237, 28, 36, 0.1) 0px, transparent 50%);
+  }
+
+  @keyframes pulse-premium {
+
+    0%,
+    100% {
+      opacity: 1;
+    }
+
+    50% {
+      opacity: 0.5;
+    }
+  }
+
+  .animate-pulse-premium {
+    animation: pulse-premium 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  .noise-overlay {
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    right: -50%;
+    bottom: -50%;
+    width: 200%;
+    height: 200%;
+    background: transparent url('http://assets.iceable.com/img/noise-transparent.png') repeat 0 0;
+    background-repeat: repeat;
+    background-attachment: fixed;
+    opacity: .05;
+    pointer-events: none;
+    z-index: 9999;
+    animation: noise 1s steps(2) infinite;
+  }
+
+  @keyframes noise {
+    0% {
+      transform: translate(0, 0)
+    }
+
+    10% {
+      transform: translate(-5%, -5%)
+    }
+
+    20% {
+      transform: translate(-10%, 5%)
+    }
+
+    30% {
+      transform: translate(5%, -10%)
+    }
+
+    40% {
+      transform: translate(-5%, 15%)
+    }
+
+    50% {
+      transform: translate(-10%, 5%)
+    }
+
+    60% {
+      transform: translate(15%, 0)
+    }
+
+    70% {
+      transform: translate(0, 10%)
+    }
+
+    80% {
+      transform: translate(-15%, 0)
+    }
+
+    90% {
+      transform: translate(10%, 5%)
+    }
+
+    100% {
+      transform: translate(5%, 0)
+    }
+  }
+
+  @keyframes ring {
+    0% {
+      transform: scale(0.5);
+      opacity: 1;
+    }
+
+    100% {
+      transform: scale(2.5);
+      opacity: 0;
+    }
+  }
+
+  .animate-ring {
+    animation: ring 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+
+  @keyframes stream-in {
+    from {
+      transform: translateX(20px);
+      opacity: 0;
+    }
+
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  .animate-stream-in {
+    animation: stream-in 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-surface-800 rounded-full hover:bg-surface-700;
   }
 }

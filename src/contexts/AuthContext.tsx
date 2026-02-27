@@ -14,6 +14,9 @@ interface Profile {
     brand_id?: string | null;
     sector_id?: string | null;
     area_id?: string | null;
+    base_daily_rate?: number;
+    per_km_allowance?: number;
+    star_bonus_rate?: number;
 }
 
 interface AuthContextType {

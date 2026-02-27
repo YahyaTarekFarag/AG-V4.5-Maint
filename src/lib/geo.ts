@@ -15,6 +15,12 @@ export const getGeoLocation = (): Promise<GeoLocation> => {
             return;
         }
 
+        const options = {
+            enableHighAccuracy: true,
+            timeout: 5000, // Reduced from 10k to 5s to prevent UI hanging
+            maximumAge: 0
+        };
+
         navigator.geolocation.getCurrentPosition(
             (position) => {
                 resolve({
@@ -26,23 +32,20 @@ export const getGeoLocation = (): Promise<GeoLocation> => {
                 let errorMsg = 'تعذر الحصول على الموقع الجغرافي.';
                 switch (error.code) {
                     case error.PERMISSION_DENIED:
-                        errorMsg = 'تم رفض صلاحية الوصول للموقع. يجب تفعيل الـ GPS لتسجيل البلاغ.';
+                        errorMsg = '🚨 تم رفض صلاحية الموقع. يرجى تفعيل الـ GPS من إعدادات المتصفح/الهاتف للمتابعة.';
                         break;
                     case error.POSITION_UNAVAILABLE:
-                        errorMsg = 'معلومات الموقع غير متوفرة حالياً.';
+                        errorMsg = 'إشارة الـ GPS ضعيفة أو غير متوفرة حالياً.';
                         break;
                     case error.TIMEOUT:
-                        errorMsg = 'انتهى وقت طلب الموقع.';
+                        errorMsg = '⏳ انتهى وقت محاولة تحديد موقعك. يرجى التأكد من قوة الإشارة أو إعادة المحاولة.';
                         break;
                 }
                 reject(new Error(errorMsg));
             },
-            {
-                enableHighAccuracy: true,
-                timeout: 10000,
-                maximumAge: 0
-            }
+            options
         );
+
     });
 };
 
@@ -61,6 +64,7 @@ export const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2
         Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
+    if (isNaN(lat1) || isNaN(lon1) || isNaN(lat2) || isNaN(lon2)) return 9999999; // Force out-of-bounds to prevent bypass
     const d = R * c; // in metres
     return d;
 };
