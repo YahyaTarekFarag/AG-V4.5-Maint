@@ -481,7 +481,7 @@ export default function SovereignActionModal({ isOpen, onClose, schema, record, 
                                         onChange={(e) => handleChange(field.key, e.target.value)}
                                         className="w-full px-4 py-2.5 bg-surface-50 border border-surface-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 transition-all text-surface-900 dark:bg-surface-800 dark:border-surface-700 dark:text-white dark:placeholder-surface-500"
                                     />
-                                ) : field.type === 'select' ? (
+                                ) : field.type === 'select' || field.type === 'status' ? (
                                     <select
                                         required={field.required}
                                         value={formData[field.key] || ''}
@@ -500,6 +500,12 @@ export default function SovereignActionModal({ isOpen, onClose, schema, record, 
                                             field.options.map(opt => (
                                                 <option key={opt.value} value={opt.value}>
                                                     {opt.label}
+                                                </option>
+                                            ))
+                                        ) : schema.formatting?.statusLabels ? (
+                                            Object.entries(schema.formatting.statusLabels).map(([val, label]) => (
+                                                <option key={val} value={val}>
+                                                    {label as string}
                                                 </option>
                                             ))
                                         ) : null}
