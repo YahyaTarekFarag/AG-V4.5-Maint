@@ -1,0 +1,11 @@
+node_modules/
+dist/
+backup V1.001/
+backups/
+scripts/
+database/
+public/
+temp/
+tmp/
+*.mjs
+*.sql

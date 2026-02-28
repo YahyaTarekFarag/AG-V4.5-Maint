@@ -1,7 +1,8 @@
 export interface ColumnConfig {
-    key: string;
+    key?: string;
+    field?: string;
     label: string;
-    type: 'text' | 'number' | 'status' | 'date' | 'datetime' | 'badge' | 'checkbox';
+    type: 'text' | 'number' | 'status' | 'date' | 'datetime' | 'badge' | 'checkbox' | 'time' | 'boolean';
     sortable?: boolean;
 }
 

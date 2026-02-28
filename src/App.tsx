@@ -1,22 +1,23 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { useAuth } from './contexts/AuthContext';
-import Skeleton from './components/ui/Skeleton';
+import { useAuth } from '@shared/hooks/useAuth';
+import Skeleton from '@shared/components/ui/Skeleton';
 import { Loader2 } from 'lucide-react';
 
 // Lazy load pages for better performance
-const Login = React.lazy(() => import('./pages/Login'));
-const Dashboard = React.lazy(() => import('./pages/Dashboard'));
-const MasterDataPage = React.lazy(() => import('./pages/MasterDataPage'));
-const SchemaBuilderPage = React.lazy(() => import('./pages/SchemaBuilderPage'));
-const ManagerTicketsPage = React.lazy(() => import('./pages/ManagerTicketsPage'));
-const TechnicianTicketsPage = React.lazy(() => import('./pages/TechnicianTicketsPage'));
-const MapPage = React.lazy(() => import('./pages/MapPage'));
-const AdminSettingsPage = React.lazy(() => import('./pages/AdminSettingsPage'));
-const MaintenanceDashboardPage = React.lazy(() => import('./pages/MaintenanceDashboardPage'));
-const TechnicianSalaryPage = React.lazy(() => import('./pages/TechnicianSalaryPage'));
-const AttendanceDashboardPage = React.lazy(() => import('./pages/AttendanceDashboardPage'));
-const ReportsPage = React.lazy(() => import('./pages/ReportsPage'));
+const Login = React.lazy(() => import('@/modules/auth/pages/Login'));
+const Dashboard = React.lazy(() => import('@/modules/dashboard/pages/Dashboard'));
+const MasterDataPage = React.lazy(() => import('@/modules/inventory/pages/MasterDataPage'));
+const SchemaBuilderPage = React.lazy(() => import('@/modules/settings/pages/SchemaBuilderPage'));
+const ManagerTicketsPage = React.lazy(() => import('@/modules/maintenance/pages/ManagerTicketsPage'));
+const TechnicianTicketsPage = React.lazy(() => import('@/modules/maintenance/pages/TechnicianTicketsPage'));
+const MapPage = React.lazy(() => import('@/modules/map/pages/MapPage'));
+const AdminSettingsPage = React.lazy(() => import('@/modules/settings/pages/AdminSettingsPage'));
+const MaintenanceDashboardPage = React.lazy(() => import('@/modules/maintenance/pages/MaintenanceDashboardPage'));
+const TechnicianSalaryPage = React.lazy(() => import('@/modules/hr/pages/TechnicianSalaryPage'));
+const AttendanceDashboardPage = React.lazy(() => import('@/modules/hr/pages/AttendanceDashboardPage'));
+const ReportsPage = React.lazy(() => import('@/modules/reporting/pages/ReportsPage'));
+const DiagnosticsPage = React.lazy(() => import('@/modules/admin/pages/DiagnosticsPage'));
 
 const PageLoader = () => (
     <div className="p-8 space-y-4">
@@ -49,7 +50,7 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
     return <>{children}</>;
 }
 
-import ErrorBoundary from './components/ui/ErrorBoundary';
+import ErrorBoundary from '@shared/components/ui/ErrorBoundary';
 
 function App() {
     return (
@@ -68,6 +69,7 @@ function App() {
                     <Route path="/my-salary" element={<PrivateRoute><TechnicianSalaryPage /></PrivateRoute>} />
                     <Route path="/attendance-live" element={<PrivateRoute><AttendanceDashboardPage /></PrivateRoute>} />
                     <Route path="/reports" element={<PrivateRoute><ReportsPage /></PrivateRoute>} />
+                    <Route path="/diagnostics" element={<PrivateRoute><DiagnosticsPage /></PrivateRoute>} />
                     <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
             </React.Suspense>

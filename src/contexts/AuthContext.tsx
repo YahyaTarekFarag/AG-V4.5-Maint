@@ -1,34 +1,8 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { supabase } from '../lib/supabase';
+import React, { useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
-
-// No email visible to user. Fake domain logic.
-export const FAKE_DOMAIN = '@fsc-system.local';
-
-interface Profile {
-    id: string;
-    employee_code: string;
-    full_name: string;
-    role: 'admin' | 'brand_ops_manager' | 'sector_manager' | 'area_manager' | 'manager' | 'maint_manager' | 'maint_supervisor' | 'technician';
-    branch_id?: string | null;
-    brand_id?: string | null;
-    sector_id?: string | null;
-    area_id?: string | null;
-    base_daily_rate?: number;
-    per_km_allowance?: number;
-    star_bonus_rate?: number;
-}
-
-interface AuthContextType {
-    user: User | null;
-    session: Session | null;
-    profile: Profile | null;
-    isLoading: boolean;
-    signIn: (employeeCode: string, password: string) => Promise<{ error: Error | null }>;
-    signOut: () => Promise<void>;
-}
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+import { supabase } from '@shared/lib/supabase';
+import { FAKE_DOMAIN } from '@shared/lib/constants';
+import { AuthContext, Profile } from './AuthContextObject';
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [user, setUser] = useState<User | null>(null);
@@ -96,10 +70,4 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     );
 };
 
-export const useAuth = () => {
-    const context = useContext(AuthContext);
-    if (context === undefined) {
-        throw new Error('useAuth must be used within an AuthProvider');
-    }
-    return context;
-};
+
