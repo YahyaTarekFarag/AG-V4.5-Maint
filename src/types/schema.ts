@@ -18,23 +18,23 @@ export interface ListConfig {
 export interface FieldConfig {
     key: string;
     label: string;
-    type: 'text' | 'number' | 'email' | 'select' | 'textarea' | 'date' | 'datetime' | 'hidden' | 'image' | 'checkbox' | 'color';
+    type: 'text' | 'number' | 'email' | 'select' | 'status' | 'textarea' | 'date' | 'datetime' | 'hidden' | 'image' | 'checkbox' | 'color';
     required?: boolean;
     placeholder?: string;
-    dataSource?: string; // e.g., 'branches' for a select field to fetch from branches table
-    dataLabel?: string;  // e.g., 'name' column in the reference table to show
-    dataValue?: string;  // e.g., 'id' column to save
-    options?: { label: string, value: string }[]; // For fixed dropdowns like Roles
-    scanable?: boolean; // If true, show a QR scanner button next to the field
+    dataSource?: string;
+    dataLabel?: string;
+    dataValue?: string;
+    options?: { label: string, value: string }[];
+    scanable?: boolean;
 }
 
 export interface FormConfig {
-    title: string;
+    title?: string;
     fields: FieldConfig[];
 }
 
 export interface UISchema {
-    id: string;
+    id?: string;
     table_name: string;
     list_config: ListConfig;
     form_config: FormConfig;
@@ -46,6 +46,11 @@ export interface UISchema {
         icon: string;
         roles: string[];
         color: string;
+    };
+    formatting?: {
+        statusColors?: Record<string, string>;
+        statusLabels?: Record<string, string>;
+        lowStockAlert?: string;
     };
     directBranchColumn?: string;
 }
