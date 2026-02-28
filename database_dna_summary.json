@@ -1,0 +1,17 @@
+{
+  "dna_tables": {
+    "error": "Could not find the function public.sovereign_execute_sql(sql_query) in the schema cache"
+  },
+  "enums": {
+    "error": "Could not find the function public.sovereign_execute_sql(sql_query) in the schema cache"
+  },
+  "rpc_functions": {
+    "error": "Could not find the function public.sovereign_execute_sql(sql_query) in the schema cache"
+  },
+  "rls_policies": {
+    "error": "Could not find the function public.sovereign_execute_sql(sql_query) in the schema cache"
+  },
+  "ui_schemas_audit": {
+    "error": "Could not find the function public.sovereign_execute_sql(sql_query) in the schema cache"
+  }
+}

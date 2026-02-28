@@ -25,13 +25,13 @@ export const MaintenanceOrchestrator = {
     async resolveTicket(data: TicketUpdateData) {
         console.log('[Orchestrator] Resolving ticket:', data.ticketId);
 
-        // We use the RPC 'resolve_ticket_complete' created in previous phases to ensure atomicity
-        const { data: result, error } = await supabase.rpc('resolve_ticket_complete', {
+        // We use the RPC 'resolve_ticket_v3' to ensure absolute atomicity
+        const { data: result, error } = await supabase.rpc('resolve_ticket_v3', {
             p_ticket_id: data.ticketId,
             p_technician_id: data.technicianId,
             p_parts_used: data.partsUsed,
             p_labor_cost: data.laborCost,
-            p_resolved_image_url: data.resolvedImageUrl,
+            p_resolution_image_url: data.resolvedImageUrl,
             p_resolved_lat: data.resolvedLat || null,
             p_resolved_lng: data.resolvedLng || null,
             p_fault_type_id: data.faultTypeId || null,
@@ -55,7 +55,7 @@ export const MaintenanceOrchestrator = {
         console.log('[Orchestrator] Assigning ticket:', ticketId, 'to', technicianId);
 
         const updateData: any = {
-            assigned_to_id: technicianId,
+            assigned_to: technicianId,
             status: 'assigned',
             assigned_at: new Date().toISOString()
         };

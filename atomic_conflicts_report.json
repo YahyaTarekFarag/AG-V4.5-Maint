@@ -1,0 +1,286 @@
+[
+  {
+    "file": "src\\modules\\dashboard\\pages\\Dashboard.tsx",
+    "line": 118,
+    "table": "tickets",
+    "column": "*'",
+    "error": "EXPLICIT_COLUMN_MISSING_IN_DB",
+    "severity": "CRITICAL"
+  },
+  {
+    "file": "src\\modules\\dashboard\\pages\\Dashboard.tsx",
+    "line": 118,
+    "table": "tickets",
+    "column": "'open",
+    "error": "EXPLICIT_COLUMN_MISSING_IN_DB",
+    "severity": "CRITICAL"
+  },
+  {
+    "file": "src\\modules\\dashboard\\pages\\Dashboard.tsx",
+    "line": 119,
+    "table": "tickets",
+    "column": "*'",
+    "error": "EXPLICIT_COLUMN_MISSING_IN_DB",
+    "severity": "CRITICAL"
+  },
+  {
+    "file": "src\\modules\\dashboard\\pages\\Dashboard.tsx",
+    "line": 119,
+    "table": "tickets",
+    "column": "'assigned",
+    "error": "EXPLICIT_COLUMN_MISSING_IN_DB",
+    "severity": "CRITICAL"
+  },
+  {
+    "file": "src\\modules\\dashboard\\pages\\Dashboard.tsx",
+    "line": 120,
+    "table": "tickets",
+    "column": "*'",
+    "error": "EXPLICIT_COLUMN_MISSING_IN_DB",
+    "severity": "CRITICAL"
+  },
+  {
+    "file": "src\\modules\\dashboard\\pages\\Dashboard.tsx",
+    "line": 120,
+    "table": "tickets",
+    "column": "'in_progress",
+    "error": "EXPLICIT_COLUMN_MISSING_IN_DB",
+    "severity": "CRITICAL"
+  },
+  {
+    "file": "src\\modules\\dashboard\\pages\\Dashboard.tsx",
+    "line": 121,
+    "table": "tickets",
+    "column": "*'",
+    "error": "EXPLICIT_COLUMN_MISSING_IN_DB",
+    "severity": "CRITICAL"
+  },
+  {
+    "file": "src\\modules\\dashboard\\pages\\Dashboard.tsx",
+    "line": 121,
+    "table": "tickets",
+    "column": "'resolved",
+    "error": "EXPLICIT_COLUMN_MISSING_IN_DB",
+    "severity": "CRITICAL"
+  },
+  {
+    "file": "src\\modules\\hr\\pages\\AttendanceDashboardPage.tsx",
+    "line": 35,
+    "table": "technician_attendance",
+    "column": "profiles",
+    "error": "EXPLICIT_COLUMN_MISSING_IN_DB",
+    "severity": "CRITICAL"
+  },
+  {
+    "file": "src\\modules\\hr\\pages\\AttendanceDashboardPage.tsx",
+    "line": 35,
+    "table": "technician_attendance",
+    "column": "branch_id",
+    "error": "EXPLICIT_COLUMN_MISSING_IN_DB",
+    "severity": "CRITICAL"
+  },
+  {
+    "file": "src\\modules\\hr\\pages\\AttendanceDashboardPage.tsx",
+    "line": 35,
+    "table": "technician_attendance",
+    "column": "area_id",
+    "error": "EXPLICIT_COLUMN_MISSING_IN_DB",
+    "severity": "CRITICAL"
+  },
+  {
+    "file": "src\\modules\\hr\\pages\\AttendanceDashboardPage.tsx",
+    "line": 35,
+    "table": "technician_attendance",
+    "column": "sector_id",
+    "error": "EXPLICIT_COLUMN_MISSING_IN_DB",
+    "severity": "CRITICAL"
+  },
+  {
+    "file": "src\\modules\\hr\\pages\\AttendanceDashboardPage.tsx",
+    "line": 35,
+    "table": "technician_attendance",
+    "column": "brand_id",
+    "error": "EXPLICIT_COLUMN_MISSING_IN_DB",
+    "severity": "CRITICAL"
+  },
+  {
+    "file": "src\\modules\\hr\\pages\\AttendanceDashboardPage.tsx",
+    "line": 35,
+    "table": "technician_attendance",
+    "column": "employee_code",
+    "error": "EXPLICIT_COLUMN_MISSING_IN_DB",
+    "severity": "CRITICAL"
+  },
+  {
+    "file": "src\\modules\\hr\\pages\\AttendanceDashboardPage.tsx",
+    "line": 35,
+    "table": "technician_attendance",
+    "column": "branches",
+    "error": "EXPLICIT_COLUMN_MISSING_IN_DB",
+    "severity": "CRITICAL"
+  },
+  {
+    "file": "src\\modules\\hr\\pages\\AttendanceDashboardPage.tsx",
+    "line": 42,
+    "table": "technician_attendance",
+    "column": "profiles",
+    "error": "EXPLICIT_COLUMN_MISSING_IN_DB",
+    "severity": "CRITICAL"
+  },
+  {
+    "file": "src\\modules\\hr\\pages\\AttendanceDashboardPage.tsx",
+    "line": 42,
+    "table": "technician_attendance",
+    "column": "area_id)",
+    "error": "EXPLICIT_COLUMN_MISSING_IN_DB",
+    "severity": "CRITICAL"
+  },
+  {
+    "file": "src\\modules\\maintenance\\pages\\MaintenanceDashboardPage.tsx",
+    "line": 62,
+    "table": "tickets",
+    "column": "branches",
+    "error": "EXPLICIT_COLUMN_MISSING_IN_DB",
+    "severity": "CRITICAL"
+  },
+  {
+    "file": "src\\modules\\maintenance\\pages\\MaintenanceDashboardPage.tsx",
+    "line": 62,
+    "table": "tickets",
+    "column": "area_id)",
+    "error": "EXPLICIT_COLUMN_MISSING_IN_DB",
+    "severity": "CRITICAL"
+  },
+  {
+    "file": "src\\modules\\maintenance\\pages\\MaintenanceDashboardPage.tsx",
+    "line": 62,
+    "table": "tickets",
+    "column": "maintenance_categories",
+    "error": "EXPLICIT_COLUMN_MISSING_IN_DB",
+    "severity": "CRITICAL"
+  },
+  {
+    "file": "src\\modules\\maintenance\\pages\\MaintenanceDashboardPage.tsx",
+    "line": 121,
+    "table": "v_technician_performance",
+    "error": "TABLE_NOT_FOUND_IN_DB",
+    "severity": "CRITICAL"
+  },
+  {
+    "file": "src\\modules\\reporting\\pages\\ReportsPage.tsx",
+    "line": 108,
+    "table": "mv_daily_ticket_stats",
+    "error": "TABLE_NOT_FOUND_IN_DB",
+    "severity": "CRITICAL"
+  },
+  {
+    "file": "src\\modules\\reporting\\pages\\ReportsPage.tsx",
+    "line": 118,
+    "table": "mv_category_distribution",
+    "error": "TABLE_NOT_FOUND_IN_DB",
+    "severity": "CRITICAL"
+  },
+  {
+    "file": "src\\modules\\settings\\pages\\SchemaBuilderPage.tsx",
+    "line": 92,
+    "table": "ui_schemas' as any).select('*",
+    "error": "TABLE_NOT_FOUND_IN_DB",
+    "severity": "CRITICAL"
+  },
+  {
+    "file": "src\\modules\\settings\\pages\\SchemaBuilderPage.tsx",
+    "line": 100,
+    "table": "ui_schemas' as any).select('table_name",
+    "error": "TABLE_NOT_FOUND_IN_DB",
+    "severity": "CRITICAL"
+  },
+  {
+    "table": "inventory",
+    "column": "branch_id",
+    "error": "UI_SCHEMA_DB_MISMATCH",
+    "severity": "HIGH",
+    "context": "Sovereign components will fail when writing to this field."
+  },
+  {
+    "table": "inventory",
+    "column": "item_name",
+    "error": "UI_SCHEMA_DB_MISMATCH",
+    "severity": "HIGH",
+    "context": "Sovereign components will fail when writing to this field."
+  },
+  {
+    "table": "inventory",
+    "column": "min_stock_level",
+    "error": "UI_SCHEMA_DB_MISMATCH",
+    "severity": "HIGH",
+    "context": "Sovereign components will fail when writing to this field."
+  },
+  {
+    "table": "maintenance_categories",
+    "column": "description",
+    "error": "UI_SCHEMA_DB_MISMATCH",
+    "severity": "HIGH",
+    "context": "Sovereign components will fail when writing to this field."
+  },
+  {
+    "table": "payroll_logs",
+    "column": "amount",
+    "error": "UI_SCHEMA_DB_MISMATCH",
+    "severity": "HIGH",
+    "context": "Sovereign components will fail when writing to this field."
+  },
+  {
+    "table": "payroll_logs",
+    "column": "notes",
+    "error": "UI_SCHEMA_DB_MISMATCH",
+    "severity": "HIGH",
+    "context": "Sovereign components will fail when writing to this field."
+  },
+  {
+    "table": "payroll_logs",
+    "column": "month",
+    "error": "UI_SCHEMA_DB_MISMATCH",
+    "severity": "HIGH",
+    "context": "Sovereign components will fail when writing to this field."
+  },
+  {
+    "table": "payroll_logs",
+    "column": "total_amount",
+    "error": "UI_SCHEMA_DB_MISMATCH",
+    "severity": "HIGH",
+    "context": "Sovereign components will fail when writing to this field."
+  },
+  {
+    "table": "system_settings",
+    "error": "UI_SCHEMA_DB_MISMATCH",
+    "severity": "HIGH",
+    "context": "Sovereign components will fail when writing to this field."
+  },
+  {
+    "table": "technician_missions",
+    "column": "mission_type",
+    "error": "UI_SCHEMA_DB_MISMATCH",
+    "severity": "HIGH",
+    "context": "Sovereign components will fail when writing to this field."
+  },
+  {
+    "table": "technician_missions",
+    "column": "description",
+    "error": "UI_SCHEMA_DB_MISMATCH",
+    "severity": "HIGH",
+    "context": "Sovereign components will fail when writing to this field."
+  },
+  {
+    "table": "technician_missions",
+    "column": "status",
+    "error": "UI_SCHEMA_DB_MISMATCH",
+    "severity": "HIGH",
+    "context": "Sovereign components will fail when writing to this field."
+  },
+  {
+    "table": "ui_schemas",
+    "error": "UI_SCHEMA_DB_MISMATCH",
+    "severity": "HIGH",
+    "context": "Sovereign components will fail when writing to this field."
+  }
+]

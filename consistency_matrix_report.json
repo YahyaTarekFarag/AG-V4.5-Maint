@@ -1,0 +1,892 @@
+{
+  "summaries": {},
+  "conflicts": [
+    {
+      "table": "inventory",
+      "key": "branch_id",
+      "error": "MISSING_IN_DB"
+    },
+    {
+      "table": "inventory",
+      "key": "item_name",
+      "error": "MISSING_IN_DB"
+    },
+    {
+      "table": "inventory",
+      "key": "min_stock_level",
+      "error": "MISSING_IN_DB"
+    },
+    {
+      "table": "maintenance_categories",
+      "key": "description",
+      "error": "MISSING_IN_DB"
+    },
+    {
+      "table": "payroll_logs",
+      "key": "amount",
+      "error": "MISSING_IN_DB"
+    },
+    {
+      "table": "payroll_logs",
+      "key": "notes",
+      "error": "MISSING_IN_DB"
+    },
+    {
+      "table": "payroll_logs",
+      "key": "month",
+      "error": "MISSING_IN_DB"
+    },
+    {
+      "table": "payroll_logs",
+      "key": "total_amount",
+      "error": "MISSING_IN_DB"
+    },
+    {
+      "table": "system_settings",
+      "error": "MISSING_IN_DB"
+    },
+    {
+      "table": "technician_missions",
+      "key": "mission_type",
+      "error": "MISSING_IN_DB"
+    },
+    {
+      "table": "technician_missions",
+      "key": "description",
+      "error": "MISSING_IN_DB"
+    },
+    {
+      "table": "technician_missions",
+      "key": "status",
+      "error": "MISSING_IN_DB"
+    },
+    {
+      "table": "ui_schemas",
+      "error": "MISSING_IN_DB"
+    }
+  ],
+  "matrix": {
+    "areas": {
+      "actual_columns": [
+        "id",
+        "name",
+        "sector_id",
+        "is_deleted",
+        "created_at",
+        "updated_at"
+      ],
+      "ui_schema_fields": [
+        "name",
+        "sector_id",
+        "created_at"
+      ],
+      "mismatches": []
+    },
+    "branches": {
+      "actual_columns": [
+        "id",
+        "name",
+        "manager_id",
+        "created_at",
+        "br_tel",
+        "latitude",
+        "longitude",
+        "is_deleted",
+        "area_id",
+        "updated_at"
+      ],
+      "ui_schema_fields": [
+        "name",
+        "area_id",
+        "latitude",
+        "longitude"
+      ],
+      "mismatches": [
+        {
+          "key": "manager_id",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "br_tel",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        }
+      ]
+    },
+    "brands": {
+      "actual_columns": [
+        "id",
+        "name",
+        "is_deleted",
+        "created_at",
+        "updated_at"
+      ],
+      "ui_schema_fields": [
+        "name",
+        "created_at"
+      ],
+      "mismatches": []
+    },
+    "inventory": {
+      "actual_columns": [
+        "id",
+        "name",
+        "part_number",
+        "quantity",
+        "unit",
+        "created_at",
+        "is_deleted",
+        "unit_cost",
+        "version",
+        "updated_at"
+      ],
+      "ui_schema_fields": [
+        "name",
+        "part_number",
+        "quantity",
+        "unit",
+        "unit_cost",
+        "branch_id",
+        "item_name",
+        "min_stock_level"
+      ],
+      "mismatches": [
+        {
+          "key": "branch_id",
+          "status": "❌ MISSING IN DB",
+          "context": "UI Schema references a column that does not exist in the real table."
+        },
+        {
+          "key": "item_name",
+          "status": "❌ MISSING IN DB",
+          "context": "UI Schema references a column that does not exist in the real table."
+        },
+        {
+          "key": "min_stock_level",
+          "status": "❌ MISSING IN DB",
+          "context": "UI Schema references a column that does not exist in the real table."
+        }
+      ]
+    },
+    "inventory_transactions": {
+      "actual_columns": [
+        "id",
+        "inventory_id",
+        "ticket_id",
+        "technician_id",
+        "quantity_used",
+        "created_at",
+        "submission_id",
+        "is_deleted",
+        "updated_at",
+        "transaction_type",
+        "branch_id",
+        "supplier_name",
+        "notes",
+        "unit_cost_at_time"
+      ],
+      "ui_schema_fields": [
+        "inventory_id",
+        "transaction_type",
+        "quantity_used",
+        "unit_cost_at_time",
+        "branch_id",
+        "notes",
+        "technician_id",
+        "created_at"
+      ],
+      "mismatches": [
+        {
+          "key": "ticket_id",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "submission_id",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "supplier_name",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        }
+      ]
+    },
+    "maintenance_assets": {
+      "actual_columns": [
+        "id",
+        "branch_id",
+        "category_id",
+        "name",
+        "model_number",
+        "serial_number",
+        "qr_code",
+        "purchase_date",
+        "warranty_expiry",
+        "status",
+        "last_maintenance_at",
+        "created_at",
+        "updated_at",
+        "is_deleted",
+        "service_interval_days"
+      ],
+      "ui_schema_fields": [
+        "name",
+        "category_id",
+        "branch_id",
+        "status"
+      ],
+      "mismatches": [
+        {
+          "key": "model_number",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "serial_number",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "qr_code",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "purchase_date",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "warranty_expiry",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "last_maintenance_at",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "service_interval_days",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        }
+      ]
+    },
+    "maintenance_categories": {
+      "actual_columns": [
+        "id",
+        "name",
+        "created_at",
+        "is_deleted",
+        "updated_at"
+      ],
+      "ui_schema_fields": [
+        "name",
+        "description"
+      ],
+      "mismatches": [
+        {
+          "key": "description",
+          "status": "❌ MISSING IN DB",
+          "context": "UI Schema references a column that does not exist in the real table."
+        }
+      ]
+    },
+    "payroll_logs": {
+      "actual_columns": [
+        "id",
+        "profile_id",
+        "date",
+        "base_salary",
+        "total_allowance",
+        "total_star_bonus",
+        "net_earning",
+        "is_paid",
+        "created_at",
+        "is_deleted",
+        "updated_at"
+      ],
+      "ui_schema_fields": [
+        "profile_id",
+        "amount",
+        "notes",
+        "month",
+        "total_amount"
+      ],
+      "mismatches": [
+        {
+          "key": "amount",
+          "status": "❌ MISSING IN DB",
+          "context": "UI Schema references a column that does not exist in the real table."
+        },
+        {
+          "key": "notes",
+          "status": "❌ MISSING IN DB",
+          "context": "UI Schema references a column that does not exist in the real table."
+        },
+        {
+          "key": "month",
+          "status": "❌ MISSING IN DB",
+          "context": "UI Schema references a column that does not exist in the real table."
+        },
+        {
+          "key": "total_amount",
+          "status": "❌ MISSING IN DB",
+          "context": "UI Schema references a column that does not exist in the real table."
+        },
+        {
+          "key": "date",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "base_salary",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "total_allowance",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "total_star_bonus",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "net_earning",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "is_paid",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        }
+      ]
+    },
+    "profiles": {
+      "actual_columns": [
+        "id",
+        "employee_code",
+        "full_name",
+        "role",
+        "created_at",
+        "is_deleted",
+        "branch_id",
+        "brand_id",
+        "sector_id",
+        "area_id",
+        "base_daily_rate",
+        "per_km_allowance",
+        "star_bonus_rate",
+        "updated_at"
+      ],
+      "ui_schema_fields": [
+        "full_name",
+        "employee_code",
+        "role"
+      ],
+      "mismatches": [
+        {
+          "key": "branch_id",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "brand_id",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "sector_id",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "area_id",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "base_daily_rate",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "per_km_allowance",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "star_bonus_rate",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        }
+      ]
+    },
+    "sectors": {
+      "actual_columns": [
+        "id",
+        "name",
+        "brand_id",
+        "is_deleted",
+        "created_at",
+        "updated_at"
+      ],
+      "ui_schema_fields": [
+        "name",
+        "brand_id",
+        "created_at"
+      ],
+      "mismatches": []
+    },
+    "shifts": {
+      "actual_columns": [
+        "id",
+        "technician_id",
+        "start_at",
+        "start_lat",
+        "start_lng",
+        "end_at",
+        "end_lat",
+        "end_lng",
+        "created_at"
+      ],
+      "ui_schema_fields": [
+        "technician_id",
+        "start_at",
+        "end_at",
+        "start_lat",
+        "start_lng",
+        "end_lat"
+      ],
+      "mismatches": [
+        {
+          "key": "end_lng",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        }
+      ]
+    },
+    "system_settings": {
+      "actual_columns": [
+        "key",
+        "value",
+        "updated_at",
+        "created_at"
+      ],
+      "ui_schema_fields": [
+        "key",
+        "value",
+        null
+      ],
+      "mismatches": [
+        {
+          "status": "❌ MISSING IN DB",
+          "context": "UI Schema references a column that does not exist in the real table."
+        }
+      ]
+    },
+    "technician_attendance": {
+      "actual_columns": [
+        "id",
+        "profile_id",
+        "clock_in",
+        "clock_out",
+        "clock_in_lat",
+        "clock_in_lng",
+        "clock_out_lat",
+        "clock_out_lng",
+        "shift_id",
+        "is_valid",
+        "created_at",
+        "is_deleted",
+        "updated_at"
+      ],
+      "ui_schema_fields": [
+        "profile_id",
+        "clock_in",
+        "clock_out"
+      ],
+      "mismatches": [
+        {
+          "key": "clock_in_lat",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "clock_in_lng",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "clock_out_lat",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "clock_out_lng",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "shift_id",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "is_valid",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        }
+      ]
+    },
+    "technician_missions": {
+      "actual_columns": [
+        "id",
+        "attendance_id",
+        "profile_id",
+        "ticket_id",
+        "from_branch_id",
+        "to_branch_id",
+        "distance_km",
+        "allowance_earned",
+        "created_at",
+        "is_deleted",
+        "submission_id",
+        "updated_at"
+      ],
+      "ui_schema_fields": [
+        "profile_id",
+        "mission_type",
+        "description",
+        "status"
+      ],
+      "mismatches": [
+        {
+          "key": "mission_type",
+          "status": "❌ MISSING IN DB",
+          "context": "UI Schema references a column that does not exist in the real table."
+        },
+        {
+          "key": "description",
+          "status": "❌ MISSING IN DB",
+          "context": "UI Schema references a column that does not exist in the real table."
+        },
+        {
+          "key": "status",
+          "status": "❌ MISSING IN DB",
+          "context": "UI Schema references a column that does not exist in the real table."
+        },
+        {
+          "key": "attendance_id",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "ticket_id",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "from_branch_id",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "to_branch_id",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "distance_km",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "allowance_earned",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "submission_id",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        }
+      ]
+    },
+    "tickets": {
+      "actual_columns": [
+        "id",
+        "branch_id",
+        "asset_name",
+        "status",
+        "description",
+        "priority",
+        "reported_lat",
+        "reported_lng",
+        "started_lat",
+        "started_lng",
+        "resolved_lat",
+        "resolved_lng",
+        "rating_score",
+        "rating_comment",
+        "created_at",
+        "updated_at",
+        "reported_at",
+        "manager_id",
+        "resolved_at",
+        "assigned_to",
+        "is_deleted",
+        "reported_image_url",
+        "resolved_image_url",
+        "assigned_by",
+        "asset_id",
+        "category_id",
+        "downtime_start",
+        "fault_type_id",
+        "is_emergency",
+        "started_at",
+        "reporter_name",
+        "reporter_job",
+        "reporter_phone",
+        "breakdown_time",
+        "version",
+        "assigned_at",
+        "closed_at",
+        "parts_cost",
+        "labor_cost",
+        "total_cost",
+        "parts_used",
+        "submission_id",
+        "title"
+      ],
+      "ui_schema_fields": [
+        "title",
+        "description",
+        "status",
+        "priority",
+        "id",
+        "reported_at"
+      ],
+      "mismatches": [
+        {
+          "key": "branch_id",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "asset_name",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "reported_lat",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "reported_lng",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "started_lat",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "started_lng",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "resolved_lat",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "resolved_lng",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "rating_score",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "rating_comment",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "manager_id",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "resolved_at",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "assigned_to",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "reported_image_url",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "resolved_image_url",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "assigned_by",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "asset_id",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "category_id",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "downtime_start",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "fault_type_id",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "is_emergency",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "started_at",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "reporter_name",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "reporter_job",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "reporter_phone",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "breakdown_time",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "assigned_at",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "closed_at",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "parts_cost",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "labor_cost",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "total_cost",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "parts_used",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "submission_id",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        }
+      ]
+    },
+    "ui_schemas": {
+      "actual_columns": [
+        "id",
+        "table_name",
+        "list_config",
+        "form_config",
+        "created_at",
+        "page_config",
+        "nav_config"
+      ],
+      "ui_schema_fields": [
+        null
+      ],
+      "mismatches": [
+        {
+          "status": "❌ MISSING IN DB",
+          "context": "UI Schema references a column that does not exist in the real table."
+        },
+        {
+          "key": "table_name",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "list_config",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "form_config",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "page_config",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        },
+        {
+          "key": "nav_config",
+          "status": "⚠️ ORPHAN IN DB",
+          "context": "Column exists in DB but is not utilized in UI Schema (Form or List)."
+        }
+      ]
+    }
+  }
+}

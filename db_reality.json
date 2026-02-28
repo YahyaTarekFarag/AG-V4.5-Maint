@@ -1,0 +1,32 @@
+{
+  "shifts": {
+    "error": "Could not find the table 'public.information_schema.columns' in the schema cache"
+  },
+  "tickets": {
+    "error": "Could not find the table 'public.information_schema.columns' in the schema cache"
+  },
+  "technician_attendance": {
+    "error": "Could not find the table 'public.information_schema.columns' in the schema cache"
+  },
+  "profiles": {
+    "error": "Could not find the table 'public.information_schema.columns' in the schema cache"
+  },
+  "inventory_transactions": {
+    "error": "Could not find the table 'public.information_schema.columns' in the schema cache"
+  },
+  "payroll_logs": {
+    "error": "Could not find the table 'public.information_schema.columns' in the schema cache"
+  },
+  "inventory": {
+    "error": "Could not find the table 'public.information_schema.columns' in the schema cache"
+  },
+  "branches": {
+    "error": "Could not find the table 'public.information_schema.columns' in the schema cache"
+  },
+  "maintenance_assets": {
+    "error": "Could not find the table 'public.information_schema.columns' in the schema cache"
+  },
+  "ui_schemas": {
+    "error": "Could not find the table 'public.information_schema.columns' in the schema cache"
+  }
+}

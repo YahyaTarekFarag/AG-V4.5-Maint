@@ -1,0 +1,371 @@
+[
+  {
+    "file": "src\\contexts\\AuthContext.tsx",
+    "states": [
+      "user",
+      "session",
+      "profile",
+      "isLoading"
+    ],
+    "contexts": []
+  },
+  {
+    "file": "src\\contexts\\ToastContext.tsx",
+    "states": [
+      "toasts"
+    ],
+    "contexts": []
+  },
+  {
+    "file": "src\\engine\\components\\AuditLogViewer.tsx",
+    "states": [
+      "logs",
+      "loading",
+      "page"
+    ],
+    "contexts": []
+  },
+  {
+    "file": "src\\engine\\components\\SovereignActionModal.tsx",
+    "states": [
+      "formData",
+      "loading",
+      "uploading",
+      "error",
+      "lookupData",
+      "gpsLoading",
+      "gpsSuccess",
+      "settings",
+      "isMobile",
+      "activeScannerField"
+    ],
+    "contexts": []
+  },
+  {
+    "file": "src\\engine\\components\\SovereignExport.tsx",
+    "states": [
+      "importing",
+      "importResult"
+    ],
+    "contexts": []
+  },
+  {
+    "file": "src\\engine\\components\\SovereignFilterPanel.tsx",
+    "states": [
+      "lookupData",
+      "localFilters"
+    ],
+    "contexts": []
+  },
+  {
+    "file": "src\\engine\\components\\SovereignKPICard.tsx",
+    "states": [
+      "value",
+      "loading"
+    ],
+    "contexts": []
+  },
+  {
+    "file": "src\\engine\\components\\SovereignTable.tsx",
+    "states": [
+      "searchTerm",
+      "isModalOpen",
+      "isFilterPanelOpen",
+      "selectedRecord",
+      "isAssignMode",
+      "actionTitle"
+    ],
+    "contexts": []
+  },
+  {
+    "file": "src\\engine\\hooks\\useSovereign.ts",
+    "states": [
+      "schema",
+      "data",
+      "loading",
+      "error",
+      "filters",
+      "metricsData",
+      "page",
+      "totalCount",
+      "schemaCache",
+      "debugState"
+    ],
+    "contexts": []
+  },
+  {
+    "file": "src\\modules\\admin\\pages\\DiagnosticsPage.tsx",
+    "states": [
+      "isRunning",
+      "results"
+    ],
+    "contexts": []
+  },
+  {
+    "file": "src\\modules\\auth\\pages\\Login.tsx",
+    "states": [
+      "employeeCode",
+      "password",
+      "error",
+      "loading"
+    ],
+    "contexts": []
+  },
+  {
+    "file": "src\\modules\\dashboard\\pages\\Dashboard.tsx",
+    "states": [
+      "stats",
+      "kpiCards"
+    ],
+    "contexts": []
+  },
+  {
+    "file": "src\\modules\\hr\\pages\\AttendanceDashboardPage.tsx",
+    "states": [
+      "attendance",
+      "history",
+      "loading",
+      "searchTerm",
+      "dailyTrends"
+    ],
+    "contexts": []
+  },
+  {
+    "file": "src\\modules\\hr\\pages\\TechnicianSalaryPage.tsx",
+    "states": [
+      "stats",
+      "history",
+      "loading"
+    ],
+    "contexts": []
+  },
+  {
+    "file": "src\\modules\\maintenance\\components\\TicketFlow.tsx",
+    "states": [
+      "loading",
+      "error",
+      "isMobile",
+      "isResolveSheetOpen",
+      "isRateSheetOpen",
+      "isAssetScannerOpen",
+      "inventory",
+      "selectedPart",
+      "quantity",
+      "partsUsed",
+      "partsCost",
+      "laborCost",
+      "rating",
+      "comment",
+      "resolvedImageUrl",
+      "uploading",
+      "categories",
+      "selectedCategory",
+      "assets",
+      "selectedAsset",
+      "downtimeStart",
+      "activeShiftId"
+    ],
+    "contexts": []
+  },
+  {
+    "file": "src\\modules\\maintenance\\pages\\MaintenanceDashboardPage.tsx",
+    "states": [
+      "tickets",
+      "technicians",
+      "loading",
+      "expandedId",
+      "filter",
+      "assigning",
+      "selectedTech",
+      "updatingPriority",
+      "techPerformance",
+      "criticalAssets",
+      "showIntelligence",
+      "dailyTrends",
+      "branchHealth",
+      "financialImpact",
+      "ticketPage",
+      "counts"
+    ],
+    "contexts": []
+  },
+  {
+    "file": "src\\modules\\maintenance\\pages\\ManagerTicketsPage.tsx",
+    "states": [
+      "tickets",
+      "loading",
+      "expandedId",
+      "filter",
+      "showForm",
+      "assets",
+      "categories",
+      "selectedAssetId",
+      "selectedCategoryId",
+      "isEmergency",
+      "newAssetName",
+      "newDesc",
+      "submitting",
+      "uploading",
+      "reportedImageUrl",
+      "formError",
+      "reporterName",
+      "reporterJob",
+      "reporterPhone",
+      "breakdownTime"
+    ],
+    "contexts": []
+  },
+  {
+    "file": "src\\modules\\maintenance\\pages\\TechnicianTicketsPage.tsx",
+    "states": [
+      "tickets",
+      "loading",
+      "expandedId"
+    ],
+    "contexts": []
+  },
+  {
+    "file": "src\\modules\\map\\pages\\MapPage.tsx",
+    "states": [
+      "branches",
+      "technicians",
+      "stream",
+      "loading",
+      "isFullscreen"
+    ],
+    "contexts": []
+  },
+  {
+    "file": "src\\modules\\reporting\\pages\\ReportsPage.tsx",
+    "states": [
+      "loading",
+      "exporting",
+      "dateRange",
+      "selectedBranch",
+      "selectedBrand",
+      "selectedSector",
+      "selectedArea",
+      "branches",
+      "brands",
+      "sectors",
+      "areas",
+      "categories",
+      "reportData"
+    ],
+    "contexts": []
+  },
+  {
+    "file": "src\\modules\\settings\\pages\\AdminSettingsPage.tsx",
+    "states": [
+      "settings",
+      "loading",
+      "saving",
+      "success"
+    ],
+    "contexts": []
+  },
+  {
+    "file": "src\\modules\\settings\\pages\\SchemaBuilderPage.tsx",
+    "states": [
+      "schemas",
+      "selected",
+      "formFields",
+      "listCols",
+      "tableTitle",
+      "formTitle",
+      "activeTab",
+      "kpiCards",
+      "navConfig",
+      "dbTables",
+      "dbLoading",
+      "sidebarMode",
+      "discoveredCols",
+      "discovering",
+      "saving",
+      "saveStatus",
+      "statusMsg",
+      "loading",
+      "newSchemaModal",
+      "newTableName",
+      "newDisplayName",
+      "addingSchema",
+      "createDbTable"
+    ],
+    "contexts": []
+  },
+  {
+    "file": "src\\shared\\components\\layout\\DashboardLayout.tsx",
+    "states": [
+      "isOnline",
+      "isSidebarOpen",
+      "isMobile"
+    ],
+    "contexts": []
+  },
+  {
+    "file": "src\\shared\\components\\layout\\NetworkSynchronizer.tsx",
+    "states": [
+      "isSyncing",
+      "pendingCount"
+    ],
+    "contexts": []
+  },
+  {
+    "file": "src\\shared\\components\\layout\\OmniSearch.tsx",
+    "states": [
+      "isOpen",
+      "query",
+      "results",
+      "loading",
+      "activeIndex"
+    ],
+    "contexts": []
+  },
+  {
+    "file": "src\\shared\\components\\layout\\ShiftStatus.tsx",
+    "states": [
+      "activeShift",
+      "shiftLoading",
+      "shiftError",
+      "elapsed"
+    ],
+    "contexts": []
+  },
+  {
+    "file": "src\\shared\\components\\layout\\Sidebar.tsx",
+    "states": [
+      "deferredPrompt",
+      "isInstalled",
+      "logoError"
+    ],
+    "contexts": []
+  },
+  {
+    "file": "src\\shared\\components\\ui\\BottomSheet.tsx",
+    "states": [
+      "mounted"
+    ],
+    "contexts": []
+  },
+  {
+    "file": "src\\shared\\components\\ui\\QRScanner.tsx",
+    "states": [
+      "error"
+    ],
+    "contexts": []
+  },
+  {
+    "file": "src\\shared\\hooks\\useAuth.ts",
+    "states": [],
+    "contexts": [
+      "AuthContext"
+    ]
+  },
+  {
+    "file": "src\\shared\\hooks\\useToast.ts",
+    "states": [],
+    "contexts": [
+      "ToastContext"
+    ]
+  }
+]

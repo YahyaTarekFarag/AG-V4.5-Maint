@@ -57,6 +57,33 @@ export const INVENTORY_CONFIG: Record<string, SovereignSchema> = {
             created_by: 'profiles'
         }
     },
+    suppliers: {
+        tableName: 'suppliers',
+        label: 'الموردين المعتمدين',
+        description: 'إدارة جهات التوريد، بيانات التواصل، والتصنيف الضريبي والمهني.',
+        icon: 'Truck',
+        color: 'zinc',
+        selectString: '*',
+        rbacLevel: 'global',
+        path: '/manage/suppliers',
+        roles: [...MAINT_ROLES, ...OPS_ROLES]
+    },
+    purchase_orders: {
+        tableName: 'purchase_orders',
+        label: 'طلبات الشراء (PO)',
+        description: 'إدارة دورة الشراء من المسودة حتى الاستلام الفعلي في المستودع.',
+        icon: 'FileText',
+        color: 'indigo',
+        selectString: '*, supplier:supplier_id(name), branch:branch_id(name), creator:created_by(full_name)',
+        rbacLevel: 'global',
+        path: '/manage/purchase_orders',
+        roles: [...MAINT_ROLES, ...OPS_ROLES],
+        relationships: {
+            supplier_id: 'suppliers',
+            branch_id: 'branches',
+            created_by: 'profiles'
+        }
+    },
     inventory_transactions: {
         tableName: 'inventory_transactions',
         label: 'حركات قطع الغيار',

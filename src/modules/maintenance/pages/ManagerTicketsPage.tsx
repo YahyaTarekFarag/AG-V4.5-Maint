@@ -2,15 +2,15 @@ import { useEffect, useState } from 'react';
 import DashboardLayout from '@shared/components/layout/DashboardLayout';
 import { supabase } from '@shared/lib/supabase';
 import { useAuth } from '@shared/hooks/useAuth';
-import { applyRBACFilter, getRBACSelect } from '@shared/lib/rbac';
-import TicketFlow from '@/modules/maintenance/components/TicketFlow';
-import { MapPin, Clock, CheckCircle, AlertCircle, Loader2, ChevronDown, ChevronUp, Plus, Camera, X, Ticket, FileText, ShieldCheck, Zap, Wrench } from 'lucide-react';
+import { Clock, CheckCircle, AlertCircle, Loader2, Plus, Camera, X, Ticket, FileText, ShieldCheck } from 'lucide-react';
 import clsx from 'clsx';
-import { format } from 'date-fns';
-import { ar } from 'date-fns/locale';
 import { getGeoLocation } from '@shared/lib/geo';
 import { compressImage } from '@shared/lib/image';
 import { uploadToDrive } from '@shared/lib/drive';
+import { useTickets } from '@/modules/maintenance/hooks/useTickets';
+import { useAssets } from '@/modules/maintenance/hooks/useAssets';
+import { VirtualTicketList } from '@/modules/maintenance/components/VirtualTicketList';
+import { SmartImage } from '@/shared/components/ui/SmartImage';
 
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
     open: { label: 'بلاغ جديد (قيد التدقيق الإداري)', color: 'bg-blue-900/30 text-blue-400 border border-blue-900/50' },
@@ -22,19 +22,21 @@ const STATUS_LABELS: Record<string, { label: string; color: string }> = {
 
 export default function ManagerTicketsPage() {
     const { profile } = useAuth();
-    const [tickets, setTickets] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
     const [expandedId, setExpandedId] = useState<string | null>(null);
     const [filter, setFilter] = useState<'all' | 'pending' | 'closed'>('all');
     const [showForm, setShowForm] = useState(false);
 
+    // React Query Hooks (Sovereign Engine)
+    const { data: tickets = [], isLoading: ticketsLoading, refetch: fetchTickets } = useTickets(profile?.branch_id || undefined);
+    const { data: assets = [] } = useAssets(profile?.branch_id || undefined);
+
     // New ticket form
-    const [assets, setAssets] = useState<any[]>([]);
     const [categories, setCategories] = useState<any[]>([]);
     const [selectedAssetId, setSelectedAssetId] = useState('');
     const [selectedCategoryId, setSelectedCategoryId] = useState('');
     const [isEmergency, setIsEmergency] = useState(false);
     const [newAssetName, setNewAssetName] = useState('');
+    const [newTitle, setNewTitle] = useState('');
     const [newDesc, setNewDesc] = useState('');
     const [submitting, setSubmitting] = useState(false);
     const [uploading, setUploading] = useState(false);
@@ -45,7 +47,7 @@ export default function ManagerTicketsPage() {
     const [reporterName, setReporterName] = useState('');
     const [reporterJob, setReporterJob] = useState('');
     const [reporterPhone, setReporterPhone] = useState('');
-    // [STABILITY FIX] Safely generate local ISO string without timezone drift
+
     const getLocalISOString = () => {
         const now = new Date();
         const year = now.getFullYear();
@@ -58,50 +60,17 @@ export default function ManagerTicketsPage() {
     const [breakdownTime, setBreakdownTime] = useState(getLocalISOString());
 
     useEffect(() => {
-        fetchTickets();
-        if (profile?.branch_id) {
-            fetchBranchResources();
+        if (profile) {
+            fetchCategories();
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [profile]);
 
-    const fetchBranchResources = async () => {
-        // Fetch assets for this branch using RBAC, optimized select
-        let query = supabase
-            .from('maintenance_assets')
-            .select('id, name, model_number, status')
-            .eq('is_deleted', false)
-            .order('name');
-
-        query = applyRBACFilter(query, 'maintenance_assets', profile);
-
-        const { data: assetData } = await query;
-        setAssets(assetData || []);
-
-        // Fetch categories (optimized select)
+    const fetchCategories = async () => {
         const { data: catData } = await supabase
             .from('maintenance_categories')
             .select('id, name')
             .order('name');
         setCategories(catData || []);
-    };
-
-    const fetchTickets = async () => {
-        if (!profile) return;
-        setLoading(true);
-
-        let query = supabase
-            .from('tickets')
-            .select(getRBACSelect('tickets'))
-            .eq('is_deleted', false)
-            .order('created_at', { ascending: false });
-
-        // Apply global RBAC filter
-        query = applyRBACFilter(query, 'tickets', profile);
-
-        const { data } = await query;
-        if (data) setTickets(data);
-        setLoading(false);
     };
 
     const handleImageUpload = async (file: File) => {
@@ -145,6 +114,7 @@ export default function ManagerTicketsPage() {
             const { error } = await supabase.from('tickets').insert([{
                 asset_id: selectedAssetId || null,
                 asset_name: finalAssetName.trim(),
+                title: newTitle.trim() || finalAssetName.trim(),
                 category_id: selectedCategoryId || null,
                 is_emergency: isEmergency,
                 description: newDesc.trim(),
@@ -152,6 +122,7 @@ export default function ManagerTicketsPage() {
                 manager_id: profile.id,
                 branch_id: profile.branch_id,
                 reported_at: new Date().toISOString(),
+                created_at: new Date().toISOString(),
                 reported_image_url: reportedImageUrl,
                 downtime_start: new Date(breakdownTime).toISOString(),
                 reporter_name: reporterName.trim(),
@@ -164,6 +135,7 @@ export default function ManagerTicketsPage() {
 
             // Reset form
             setNewAssetName('');
+            setNewTitle('');
             setSelectedAssetId('');
             setSelectedCategoryId('');
             setIsEmergency(false);
@@ -314,13 +286,38 @@ export default function ManagerTicketsPage() {
                             </div>
 
                             {(selectedAssetId === 'manual' || (selectedAssetId === '' && assets.length === 0)) && (
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in fade-in slide-in-from-top-2">
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-black text-surface-500 uppercase tracking-widest block px-1">اسم المعدة / الأصول</label>
+                                        <input
+                                            required
+                                            value={newAssetName}
+                                            onChange={e => setNewAssetName(e.target.value)}
+                                            placeholder="مثال: ثلاجة عرض رقم 1"
+                                            className="w-full bg-surface-950 border border-surface-800 rounded-2xl px-5 py-4 text-white focus:border-brand-blaban outline-none transition-all"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-black text-surface-500 uppercase tracking-widest block px-1">عنوان البلاغ المختصر</label>
+                                        <input
+                                            required
+                                            value={newTitle}
+                                            onChange={e => setNewTitle(e.target.value)}
+                                            placeholder="مثال: تسريب مياه أسفل المعدة"
+                                            className="w-full bg-surface-950 border border-surface-800 rounded-2xl px-5 py-4 text-white focus:border-brand-blaban outline-none transition-all"
+                                        />
+                                    </div>
+                                </div>
+                            )}
+
+                            {selectedAssetId && selectedAssetId !== 'manual' && (
                                 <div className="animate-in fade-in slide-in-from-top-2">
-                                    <label className="text-xs font-black text-surface-500 uppercase tracking-widest block px-1 mb-2">اسم المعدة / عنوان البلاغ المالي</label>
+                                    <label className="text-xs font-black text-surface-500 uppercase tracking-widest block px-1 mb-2">عنوان البلاغ المختصر</label>
                                     <input
                                         required
-                                        value={newAssetName}
-                                        onChange={e => setNewAssetName(e.target.value)}
-                                        placeholder="مثال: تعطل ضاغط التبريد رقم 4"
+                                        value={newTitle}
+                                        onChange={e => setNewTitle(e.target.value)}
+                                        placeholder="مثال: توقف مفاجئ للجهاز"
                                         className="w-full bg-surface-950 border border-surface-800 rounded-2xl px-5 py-4 text-white focus:border-brand-blaban outline-none transition-all"
                                     />
                                 </div>
@@ -366,11 +363,11 @@ export default function ManagerTicketsPage() {
                                 </div>
 
                                 <div className="space-y-4">
-                                    <label className="text-xs font-black text-surface-500 uppercase tracking-widest block px-1">توثيق الحالة (اختياري)</label>
+                                    <label className="text-xs font-black text-surface-500 uppercase tracking-widest block px-1">توثيق الحالة (الرفع الذكي للصور)</label>
                                     {reportedImageUrl ? (
-                                        <div className="relative group rounded-2xl overflow-hidden border border-surface-800 bg-surface-950 aspect-[2/1]">
-                                            <img src={reportedImageUrl} className="w-full h-full object-cover grayscale-[0.2] group-hover:grayscale-0 transition-all duration-500" />
-                                            <button type="button" onClick={() => setReportedImageUrl(null)} className="absolute top-4 right-4 p-2 bg-red-600 text-white rounded-xl shadow-xl hover:scale-110 transition-transform"><X className="w-4 h-4" /></button>
+                                        <div className="relative group rounded-[2.5rem] overflow-hidden border border-brand-blaban/20 bg-surface-950 aspect-[2/1] shadow-2xl">
+                                            <SmartImage src={reportedImageUrl} alt="Preview" className="w-full h-full" />
+                                            <button type="button" onClick={() => setReportedImageUrl(null)} className="absolute top-4 right-4 p-3 bg-red-600/80 backdrop-blur-md text-white rounded-2xl shadow-xl hover:scale-110 active:scale-95 transition-all z-20"><X className="w-5 h-5" /></button>
                                         </div>
                                     ) : (
                                         <div className="relative group aspect-[2/1]">
@@ -440,7 +437,7 @@ export default function ManagerTicketsPage() {
                         </div>
                     </div>
 
-                    {loading ? (
+                    {ticketsLoading ? (
                         <div className="flex flex-col items-center justify-center py-32 opacity-20">
                             <Loader2 className="w-16 h-16 animate-spin text-brand-blaban mb-4" />
                             <p className="text-xs font-black uppercase tracking-[0.3em]">Synchronizing Operations...</p>
@@ -454,70 +451,13 @@ export default function ManagerTicketsPage() {
                             <p className="text-surface-500 font-bold max-w-sm mx-auto">لم يتم رصد بلاغات للصيانة أو مهام ميدانية ضمن هذا التصنيف في نطاق صلاحياتك الحالية.</p>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 gap-4">
-                            {filtered.map(ticket => {
-                                const st = STATUS_LABELS[ticket.status] || { label: ticket.status, color: 'bg-surface-800 text-surface-500' };
-                                const isExpanded = expandedId === ticket.id;
-                                return (
-                                    <div
-                                        key={ticket.id}
-                                        className={clsx(
-                                            "glass-premium rounded-3xl border transition-all duration-300 overflow-hidden",
-                                            isExpanded ? "border-brand-blaban/30 shadow-2xl bg-surface-900/60" : "border-surface-800 hover:border-surface-700 shadow-sm"
-                                        )}
-                                    >
-                                        <button
-                                            onClick={() => setExpandedId(isExpanded ? null : ticket.id)}
-                                            className="w-full flex items-center gap-6 p-6 text-right group"
-                                        >
-                                            <div className={clsx(
-                                                "w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-110",
-                                                ticket.is_emergency ? "bg-red-500/10 text-red-500" : "bg-surface-800 text-surface-400"
-                                            )}>
-                                                {ticket.is_emergency ? <Zap className="w-6 h-6 animate-pulse" /> : <Wrench className="w-6 h-6" />}
-                                            </div>
-
-                                            <div className="flex-1 min-w-0">
-                                                <div className="flex items-center gap-3 mb-1">
-                                                    <span className={clsx("px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider border", st.color)}>
-                                                        {st.label}
-                                                    </span>
-                                                    {ticket.is_emergency && <span className="bg-red-500/20 text-red-500 text-[9px] font-black px-2 py-1 rounded-lg border border-red-500/20">EMERGENCY</span>}
-                                                </div>
-                                                <h4 className="text-lg font-black text-white truncate">{ticket.asset_name || 'بلاغ صيانة عام'}</h4>
-                                                <div className="flex items-center gap-4 mt-1.5">
-                                                    <div className="flex items-center gap-1.5 text-xs text-surface-500 font-bold">
-                                                        <Clock className="w-3.5 h-3.5" />
-                                                        {format(new Date(ticket.reported_at), 'PPP · p', { locale: ar })}
-                                                    </div>
-                                                    {ticket.reported_lat && (
-                                                        <div className="flex items-center gap-1.5 text-xs text-emerald-500/70 font-black uppercase">
-                                                            <MapPin className="w-3.5 h-3.5" /> GPS Verified
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </div>
-
-                                            <div className="flex flex-col items-end gap-2">
-                                                <div className="flex -space-x-3 rtl:space-x-reverse opacity-40">
-                                                    <div className="w-8 h-8 rounded-full border-2 border-surface-900 bg-surface-800" />
-                                                    <div className="w-8 h-8 rounded-full border-2 border-surface-900 bg-brand-blaban/20" />
-                                                </div>
-                                                <div className={clsx("p-2 rounded-xl border border-surface-800 transition-colors", isExpanded ? "bg-brand-blaban text-white" : "bg-surface-800 text-surface-500")}>
-                                                    {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                                                </div>
-                                            </div>
-                                        </button>
-
-                                        {isExpanded && (
-                                            <div className="border-t border-surface-800 p-8 animate-in fade-in zoom-in-95 duration-300">
-                                                <TicketFlow ticket={ticket} onUpdate={fetchTickets} />
-                                            </div>
-                                        )}
-                                    </div>
-                                );
-                            })}
-                        </div>
+                        <VirtualTicketList
+                            tickets={filtered}
+                            expandedId={expandedId}
+                            setExpandedId={setExpandedId}
+                            onUpdate={fetchTickets}
+                            statusLabels={STATUS_LABELS}
+                        />
                     )}
                 </div>
             </div>

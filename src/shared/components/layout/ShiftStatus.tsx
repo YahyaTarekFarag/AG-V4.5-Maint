@@ -40,6 +40,7 @@ export default function ShiftStatus() {
         }
 
         try {
+            // [ALIGNMENT] Querying the source table technician_attendance directly to avoid View name conflicts during write-heavy operations
             const { data } = await supabase
                 .from('technician_attendance' as any)
                 .select('*')

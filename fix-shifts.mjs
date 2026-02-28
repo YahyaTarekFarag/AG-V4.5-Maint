@@ -11,26 +11,31 @@ async function fixShifts() {
         searchable: true,
         searchPlaceholder: "البحث في المناوبات...",
         columns: [
-            { field: "profile_id", label: "الفني", type: "text" },
-            { field: "clock_in", label: "وقت الحضور", type: "datetime" },
-            { field: "clock_out", label: "وقت الانصراف", type: "datetime" },
-            { field: "created_at", label: "تاريخ الإنشاء", type: "datetime" }
+            { key: "technician_id", label: "الفني", type: "text", sortable: true },
+            { key: "start_at", label: "وقت الحضور", type: "date", sortable: true },
+            { key: "end_at", label: "وقت الانصراف", type: "date", sortable: true },
+            { key: "created_at", label: "تاريخ الإنشاء", type: "date", sortable: true }
         ]
     };
     const shiftsFormConfig = {
         title: "تحرير مناوبة",
         fields: [
-            { key: "profile_id", label: "الفني", type: "select", dataSource: "profiles", required: true },
-            { key: "clock_in", label: "وقت الحضور", type: "datetime", required: true },
-            { key: "clock_out", label: "وقت الانصراف", type: "datetime" }
+            { key: "technician_id", label: "الفني", type: "select", dataSource: "profiles", dataValue: "id", dataLabel: "full_name", required: true },
+            { key: "start_at", label: "وقت الحضور", type: "date", required: true },
+            { key: "end_at", label: "وقت الانصراف", type: "date" }
         ]
     };
 
-    await supabase.from('ui_schemas').update({
+    const { error } = await supabase.from('ui_schemas').upsert({
+        table_name: 'shifts',
         list_config: shiftsListConfig,
         form_config: shiftsFormConfig
-    }).eq('table_name', 'shifts');
+    }, { onConflict: 'table_name' });
 
-    console.log("Fixed shifts ui_schemas encoding.");
+    if (error) {
+        console.error("Error fixing shifts ui_schemas:", error.message);
+    } else {
+        console.log("Successfully synchronized shifts ui_schemas with real DB columns.");
+    }
 }
 fixShifts();

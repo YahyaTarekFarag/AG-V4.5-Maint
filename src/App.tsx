@@ -52,7 +52,10 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
 
 import ErrorBoundary from '@shared/components/ui/ErrorBoundary';
 
+import { useNetworkStatus } from './shared/hooks/useNetworkStatus';
+
 function App() {
+    useNetworkStatus(); // Global Network Listener
     return (
         <ErrorBoundary>
             <React.Suspense fallback={<PageLoader />}>

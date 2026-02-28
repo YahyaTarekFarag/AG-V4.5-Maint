@@ -39,8 +39,39 @@
   }
 
   .glass-premium {
-    @apply bg-surface-900/40 backdrop-blur-xl border border-surface-700/30 transition-all duration-300 shadow-none;
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+    @apply bg-surface-900/40 backdrop-blur-2xl border border-surface-800/50 transition-all duration-500;
+    box-shadow: 
+      inset 0 0 0 1px rgba(255, 255, 255, 0.03),
+      0 10px 30px -10px rgba(0, 0, 0, 0.5);
+  }
+
+  .glass-premium:hover {
+    @apply border-brand-blaban/30 bg-surface-900/60;
+    box-shadow: 
+      inset 0 0 0 1px rgba(255, 255, 255, 0.05),
+      0 0 20px rgba(0, 74, 173, 0.1);
+  }
+
+  .night-glow-bg {
+    @apply bg-surface-950 relative overflow-hidden;
+  }
+
+  .night-glow-bg::before {
+    content: '';
+    @apply absolute inset-0 bg-night-glow pointer-events-none;
+  }
+
+  .premium-card {
+    @apply glass-premium rounded-[2.5rem] p-8;
+  }
+
+  .glow-text-blue {
+    text-shadow: 0 0 10px rgba(0, 74, 173, 0.5);
+  }
+
+  .border-glow {
+    @apply border border-brand-blaban/20 hover:border-brand-blaban/50 transition-colors duration-500;
+    box-shadow: 0 0 15px rgba(0, 74, 173, 0.1);
   }
 
   .brand-gradient {

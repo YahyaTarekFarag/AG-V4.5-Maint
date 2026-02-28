@@ -6,13 +6,15 @@ export interface BaseEntity {
 }
 
 export interface Profile extends BaseEntity {
-    username: string;
-    full_name?: string;
-    role: string; // e.g., 'admin', 'manager', 'technician'
+    employee_code: string;
+    full_name: string;
+    role: 'admin' | 'maint_manager' | 'maint_supervisor' | 'technician' | 'manager';
     phone?: string;
     avatar_url?: string;
     branch_id?: string;
-    email?: string;
+    brand_id?: string;
+    sector_id?: string;
+    area_id?: string;
     preferences?: any;
     last_login?: string;
 }
@@ -25,19 +27,19 @@ export interface Branch extends BaseEntity {
     latitude?: number;
     longitude?: number;
     contact_info?: any;
-    metrics?: any;
 }
 
 export interface Ticket extends BaseEntity {
     branch_id: string;
-    reported_by?: string;
+    reported_by?: string; // profile_id (reporter)
     assigned_to?: string; // profile_id of technician
     category_id?: string;
     asset_id?: string;
+    asset_name?: string;
 
-    title?: string;
+    title: string;
     description: string;
-    status: 'open' | 'assigned' | 'in_progress' | 'resolved' | 'closed';
+    status: 'open' | 'assigned' | 'in_progress' | 'resolved' | 'closed' | 'cancelled';
     priority: 'low' | 'medium' | 'high' | 'critical';
 
     is_emergency: boolean;
@@ -60,34 +62,33 @@ export interface Ticket extends BaseEntity {
     parts_cost: number;
     labor_cost: number;
     total_cost: number;
-    parts_used?: any[]; // Array of parts used
+    parts_used?: { part_id: string, qty: number }[];
 
     rating_score?: number;
     rating_comment?: string;
     closed_at?: string;
-    manager_id?: string;
+    manager_id?: string; // Closer
 }
 
-export interface Shift extends BaseEntity {
+export interface TechnicianAttendance extends BaseEntity {
     profile_id: string;
-    clock_in: string; // timestamp
-    clock_out?: string; // timestamp
-    shift_date: string; // date
+    clock_in: string;
+    clock_out?: string;
+    clock_in_lat?: number;
+    clock_in_lng?: number;
+    clock_out_lat?: number;
+    clock_out_lng?: number;
     notes?: string;
-    location_in_lat?: number;
-    location_in_lng?: number;
-    location_out_lat?: number;
-    location_out_lng?: number;
-    total_hours?: number;
 }
 
 export interface MaintenanceAsset extends BaseEntity {
     branch_id: string;
+    category_id: string;
     name: string;
     serial_number?: string;
     model_number?: string;
     manufacturer?: string;
-    status: 'operational' | 'maintenance' | 'offline';
+    status: 'operational' | 'faulty' | 'maintenance' | 'offline';
     last_maintenance_at?: string;
     next_maintenance_at?: string;
 }
@@ -95,11 +96,12 @@ export interface MaintenanceAsset extends BaseEntity {
 export interface InventoryItem extends BaseEntity {
     branch_id?: string;
     name: string;
-    sku: string;
+    part_number?: string;
+    unit?: string;
     category_id?: string;
     quantity: number;
-    min_stock_level: number;
-    price: number;
-    currency: string;
+    min_quantity?: number; // حد الطلب الأدنى (V34)
+    reserved_quantity?: number; // الكمية المحجوزة (V37)
+    unit_cost: number;
     location?: string;
 }

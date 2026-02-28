@@ -1,0 +1,623 @@
+[
+  {
+    "name": "App.tsx",
+    "path": "src\\App.tsx",
+    "lines": 81,
+    "last_modified": "2026-02-28T13:34:23.859Z",
+    "supabase_calls": 0,
+    "imports_count": 6,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "AuthContext.tsx",
+    "path": "src\\contexts\\AuthContext.tsx",
+    "lines": 74,
+    "last_modified": "2026-02-28T03:47:05.988Z",
+    "supabase_calls": 4,
+    "imports_count": 5,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "AuthContextObject.ts",
+    "path": "src\\contexts\\AuthContextObject.ts",
+    "lines": 28,
+    "last_modified": "2026-02-28T15:45:15.027Z",
+    "supabase_calls": 0,
+    "imports_count": 2,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "ToastContext.tsx",
+    "path": "src\\contexts\\ToastContext.tsx",
+    "lines": 36,
+    "last_modified": "2026-02-28T03:47:23.425Z",
+    "supabase_calls": 0,
+    "imports_count": 4,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "ToastContextObject.ts",
+    "path": "src\\contexts\\ToastContextObject.ts",
+    "lines": 9,
+    "last_modified": "2026-02-28T00:21:51.301Z",
+    "supabase_calls": 0,
+    "imports_count": 2,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "AuditLogViewer.tsx",
+    "path": "src\\engine\\components\\AuditLogViewer.tsx",
+    "lines": 147,
+    "last_modified": "2026-02-28T03:24:28.882Z",
+    "supabase_calls": 0,
+    "imports_count": 5,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "SovereignActionModal.tsx",
+    "path": "src\\engine\\components\\SovereignActionModal.tsx",
+    "lines": 623,
+    "last_modified": "2026-02-28T18:20:39.273Z",
+    "supabase_calls": 3,
+    "imports_count": 13,
+    "complexity": "معقد"
+  },
+  {
+    "name": "SovereignExport.tsx",
+    "path": "src\\engine\\components\\SovereignExport.tsx",
+    "lines": 183,
+    "last_modified": "2026-02-28T09:09:30.003Z",
+    "supabase_calls": 1,
+    "imports_count": 8,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "SovereignFilterPanel.tsx",
+    "path": "src\\engine\\components\\SovereignFilterPanel.tsx",
+    "lines": 199,
+    "last_modified": "2026-02-28T03:24:28.887Z",
+    "supabase_calls": 1,
+    "imports_count": 5,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "SovereignKPIBar.tsx",
+    "path": "src\\engine\\components\\SovereignKPIBar.tsx",
+    "lines": 89,
+    "last_modified": "2026-02-28T03:24:28.889Z",
+    "supabase_calls": 0,
+    "imports_count": 6,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "SovereignKPICard.tsx",
+    "path": "src\\engine\\components\\SovereignKPICard.tsx",
+    "lines": 112,
+    "last_modified": "2026-02-28T03:24:28.890Z",
+    "supabase_calls": 1,
+    "imports_count": 8,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "SovereignMobileCard.tsx",
+    "path": "src\\engine\\components\\SovereignMobileCard.tsx",
+    "lines": 76,
+    "last_modified": "2026-02-28T13:31:02.265Z",
+    "supabase_calls": 0,
+    "imports_count": 6,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "SovereignPage.tsx",
+    "path": "src\\engine\\components\\SovereignPage.tsx",
+    "lines": 49,
+    "last_modified": "2026-02-28T03:24:28.893Z",
+    "supabase_calls": 0,
+    "imports_count": 4,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "SovereignTable.tsx",
+    "path": "src\\engine\\components\\SovereignTable.tsx",
+    "lines": 442,
+    "last_modified": "2026-02-28T14:27:32.544Z",
+    "supabase_calls": 0,
+    "imports_count": 18,
+    "complexity": "متوسط"
+  },
+  {
+    "name": "SovereignTableHeader.tsx",
+    "path": "src\\engine\\components\\table\\SovereignTableHeader.tsx",
+    "lines": 90,
+    "last_modified": "2026-02-28T09:31:22.953Z",
+    "supabase_calls": 0,
+    "imports_count": 3,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "SovereignTablePagination.tsx",
+    "path": "src\\engine\\components\\table\\SovereignTablePagination.tsx",
+    "lines": 39,
+    "last_modified": "2026-02-28T09:07:37.972Z",
+    "supabase_calls": 0,
+    "imports_count": 2,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "SovereignTableRow.tsx",
+    "path": "src\\engine\\components\\table\\SovereignTableRow.tsx",
+    "lines": 52,
+    "last_modified": "2026-02-28T13:31:00.222Z",
+    "supabase_calls": 0,
+    "imports_count": 5,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "useSovereign.ts",
+    "path": "src\\engine\\hooks\\useSovereign.ts",
+    "lines": 362,
+    "last_modified": "2026-02-28T15:33:24.125Z",
+    "supabase_calls": 5,
+    "imports_count": 6,
+    "complexity": "متوسط"
+  },
+  {
+    "name": "app_pages.ts",
+    "path": "src\\engine\\lib\\app_pages.ts",
+    "lines": 86,
+    "last_modified": "2026-02-28T15:43:22.444Z",
+    "supabase_calls": 0,
+    "imports_count": 1,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "sovereign.ts",
+    "path": "src\\engine\\lib\\sovereign.ts",
+    "lines": 66,
+    "last_modified": "2026-02-28T12:27:11.316Z",
+    "supabase_calls": 0,
+    "imports_count": 6,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "system_config.ts",
+    "path": "src\\engine\\lib\\system_config.ts",
+    "lines": 43,
+    "last_modified": "2026-02-28T09:31:00.209Z",
+    "supabase_calls": 0,
+    "imports_count": 1,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "DiagnosticsUtility.ts",
+    "path": "src\\engine\\utils\\DiagnosticsUtility.ts",
+    "lines": 101,
+    "last_modified": "2026-02-28T13:15:50.302Z",
+    "supabase_calls": 1,
+    "imports_count": 2,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "main.tsx",
+    "path": "src\\main.tsx",
+    "lines": 30,
+    "last_modified": "2026-02-28T06:55:58.140Z",
+    "supabase_calls": 0,
+    "imports_count": 6,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "DiagnosticsPage.tsx",
+    "path": "src\\modules\\admin\\pages\\DiagnosticsPage.tsx",
+    "lines": 291,
+    "last_modified": "2026-02-28T16:44:18.385Z",
+    "supabase_calls": 4,
+    "imports_count": 8,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "Login.tsx",
+    "path": "src\\modules\\auth\\pages\\Login.tsx",
+    "lines": 118,
+    "last_modified": "2026-02-28T03:23:18.598Z",
+    "supabase_calls": 0,
+    "imports_count": 4,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "config.ts",
+    "path": "src\\modules\\core\\config.ts",
+    "lines": 64,
+    "last_modified": "2026-02-28T13:21:40.483Z",
+    "supabase_calls": 0,
+    "imports_count": 1,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "Dashboard.tsx",
+    "path": "src\\modules\\dashboard\\pages\\Dashboard.tsx",
+    "lines": 321,
+    "last_modified": "2026-02-28T15:45:29.497Z",
+    "supabase_calls": 5,
+    "imports_count": 9,
+    "complexity": "متوسط"
+  },
+  {
+    "name": "config.ts",
+    "path": "src\\modules\\hr\\config.ts",
+    "lines": 82,
+    "last_modified": "2026-02-28T13:30:11.020Z",
+    "supabase_calls": 0,
+    "imports_count": 1,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "AttendanceDashboardPage.tsx",
+    "path": "src\\modules\\hr\\pages\\AttendanceDashboardPage.tsx",
+    "lines": 251,
+    "last_modified": "2026-02-28T15:45:06.867Z",
+    "supabase_calls": 0,
+    "imports_count": 10,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "TechnicianSalaryPage.tsx",
+    "path": "src\\modules\\hr\\pages\\TechnicianSalaryPage.tsx",
+    "lines": 188,
+    "last_modified": "2026-02-28T03:23:18.599Z",
+    "supabase_calls": 0,
+    "imports_count": 7,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "config.ts",
+    "path": "src\\modules\\inventory\\config.ts",
+    "lines": 116,
+    "last_modified": "2026-02-28T18:24:46.267Z",
+    "supabase_calls": 0,
+    "imports_count": 1,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "MasterDataPage.tsx",
+    "path": "src\\modules\\inventory\\pages\\MasterDataPage.tsx",
+    "lines": 25,
+    "last_modified": "2026-02-28T03:08:48.565Z",
+    "supabase_calls": 0,
+    "imports_count": 3,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "MaintenanceCharts.tsx",
+    "path": "src\\modules\\maintenance\\components\\MaintenanceCharts.tsx",
+    "lines": 83,
+    "last_modified": "2026-02-28T15:33:03.221Z",
+    "supabase_calls": 0,
+    "imports_count": 3,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "MaintenanceStatsCards.tsx",
+    "path": "src\\modules\\maintenance\\components\\MaintenanceStatsCards.tsx",
+    "lines": 36,
+    "last_modified": "2026-02-28T09:04:55.782Z",
+    "supabase_calls": 0,
+    "imports_count": 1,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "TicketFlow.tsx",
+    "path": "src\\modules\\maintenance\\components\\TicketFlow.tsx",
+    "lines": 655,
+    "last_modified": "2026-02-28T16:40:43.976Z",
+    "supabase_calls": 5,
+    "imports_count": 12,
+    "complexity": "معقد"
+  },
+  {
+    "name": "config.ts",
+    "path": "src\\modules\\maintenance\\config.ts",
+    "lines": 116,
+    "last_modified": "2026-02-28T15:43:30.401Z",
+    "supabase_calls": 0,
+    "imports_count": 1,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "maintenance-orchestrator.ts",
+    "path": "src\\modules\\maintenance\\lib\\maintenance-orchestrator.ts",
+    "lines": 140,
+    "last_modified": "2026-02-28T16:38:03.384Z",
+    "supabase_calls": 2,
+    "imports_count": 1,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "MaintenanceDashboardPage.tsx",
+    "path": "src\\modules\\maintenance\\pages\\MaintenanceDashboardPage.tsx",
+    "lines": 561,
+    "last_modified": "2026-02-28T16:41:40.447Z",
+    "supabase_calls": 7,
+    "imports_count": 12,
+    "complexity": "حرج"
+  },
+  {
+    "name": "ManagerTicketsPage.tsx",
+    "path": "src\\modules\\maintenance\\pages\\ManagerTicketsPage.tsx",
+    "lines": 527,
+    "last_modified": "2026-02-28T10:20:35.182Z",
+    "supabase_calls": 1,
+    "imports_count": 13,
+    "complexity": "متوسط"
+  },
+  {
+    "name": "TechnicianTicketsPage.tsx",
+    "path": "src\\modules\\maintenance\\pages\\TechnicianTicketsPage.tsx",
+    "lines": 219,
+    "last_modified": "2026-02-28T07:22:45.673Z",
+    "supabase_calls": 0,
+    "imports_count": 12,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "MapPage.tsx",
+    "path": "src\\modules\\map\\pages\\MapPage.tsx",
+    "lines": 404,
+    "last_modified": "2026-02-28T07:21:21.242Z",
+    "supabase_calls": 3,
+    "imports_count": 7,
+    "complexity": "متوسط"
+  },
+  {
+    "name": "ReportsPage.tsx",
+    "path": "src\\modules\\reporting\\pages\\ReportsPage.tsx",
+    "lines": 552,
+    "last_modified": "2026-02-28T13:30:40.557Z",
+    "supabase_calls": 10,
+    "imports_count": 8,
+    "complexity": "حرج"
+  },
+  {
+    "name": "AdminSettingsPage.tsx",
+    "path": "src\\modules\\settings\\pages\\AdminSettingsPage.tsx",
+    "lines": 167,
+    "last_modified": "2026-02-28T03:23:18.604Z",
+    "supabase_calls": 2,
+    "imports_count": 4,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "SchemaBuilderPage.tsx",
+    "path": "src\\modules\\settings\\pages\\SchemaBuilderPage.tsx",
+    "lines": 796,
+    "last_modified": "2026-02-28T15:43:53.721Z",
+    "supabase_calls": 7,
+    "imports_count": 8,
+    "complexity": "حرج"
+  },
+  {
+    "name": "DashboardLayout.tsx",
+    "path": "src\\shared\\components\\layout\\DashboardLayout.tsx",
+    "lines": 128,
+    "last_modified": "2026-02-28T06:50:55.639Z",
+    "supabase_calls": 0,
+    "imports_count": 6,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "NetworkSynchronizer.tsx",
+    "path": "src\\shared\\components\\layout\\NetworkSynchronizer.tsx",
+    "lines": 145,
+    "last_modified": "2026-02-28T06:52:15.744Z",
+    "supabase_calls": 0,
+    "imports_count": 6,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "OmniSearch.tsx",
+    "path": "src\\shared\\components\\layout\\OmniSearch.tsx",
+    "lines": 226,
+    "last_modified": "2026-02-28T15:44:44.172Z",
+    "supabase_calls": 1,
+    "imports_count": 9,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "ShiftStatus.tsx",
+    "path": "src\\shared\\components\\layout\\ShiftStatus.tsx",
+    "lines": 181,
+    "last_modified": "2026-02-28T10:22:18.548Z",
+    "supabase_calls": 0,
+    "imports_count": 7,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "Sidebar.tsx",
+    "path": "src\\shared\\components\\layout\\Sidebar.tsx",
+    "lines": 151,
+    "last_modified": "2026-02-28T15:43:09.974Z",
+    "supabase_calls": 0,
+    "imports_count": 7,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "BottomSheet.tsx",
+    "path": "src\\shared\\components\\ui\\BottomSheet.tsx",
+    "lines": 83,
+    "last_modified": "2026-02-27T20:10:17.069Z",
+    "supabase_calls": 0,
+    "imports_count": 3,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "ErrorBoundary.tsx",
+    "path": "src\\shared\\components\\ui\\ErrorBoundary.tsx",
+    "lines": 75,
+    "last_modified": "2026-02-27T14:57:52.442Z",
+    "supabase_calls": 0,
+    "imports_count": 2,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "QRScanner.tsx",
+    "path": "src\\shared\\components\\ui\\QRScanner.tsx",
+    "lines": 134,
+    "last_modified": "2026-02-27T23:09:53.236Z",
+    "supabase_calls": 0,
+    "imports_count": 3,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "Skeleton.tsx",
+    "path": "src\\shared\\components\\ui\\Skeleton.tsx",
+    "lines": 34,
+    "last_modified": "2026-02-27T20:05:17.328Z",
+    "supabase_calls": 0,
+    "imports_count": 1,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "ToastContainer.tsx",
+    "path": "src\\shared\\components\\ui\\ToastContainer.tsx",
+    "lines": 71,
+    "last_modified": "2026-02-28T00:23:59.867Z",
+    "supabase_calls": 0,
+    "imports_count": 3,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "useAuth.ts",
+    "path": "src\\shared\\hooks\\useAuth.ts",
+    "lines": 11,
+    "last_modified": "2026-02-28T03:24:28.852Z",
+    "supabase_calls": 0,
+    "imports_count": 2,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "useToast.ts",
+    "path": "src\\shared\\hooks\\useToast.ts",
+    "lines": 9,
+    "last_modified": "2026-02-28T03:24:28.854Z",
+    "supabase_calls": 0,
+    "imports_count": 2,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "constants.ts",
+    "path": "src\\shared\\lib\\constants.ts",
+    "lines": 2,
+    "last_modified": "2026-02-28T00:18:17.384Z",
+    "supabase_calls": 0,
+    "imports_count": 0,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "drive.ts",
+    "path": "src\\shared\\lib\\drive.ts",
+    "lines": 36,
+    "last_modified": "2026-02-28T10:21:54.462Z",
+    "supabase_calls": 3,
+    "imports_count": 1,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "geo.ts",
+    "path": "src\\shared\\lib\\geo.ts",
+    "lines": 71,
+    "last_modified": "2026-02-27T17:58:58.838Z",
+    "supabase_calls": 0,
+    "imports_count": 0,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "image.ts",
+    "path": "src\\shared\\lib\\image.ts",
+    "lines": 17,
+    "last_modified": "2026-02-21T16:56:38.519Z",
+    "supabase_calls": 0,
+    "imports_count": 1,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "offlineMedia.ts",
+    "path": "src\\shared\\lib\\offlineMedia.ts",
+    "lines": 74,
+    "last_modified": "2026-02-28T06:51:09.846Z",
+    "supabase_calls": 0,
+    "imports_count": 0,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "offlineQueue.ts",
+    "path": "src\\shared\\lib\\offlineQueue.ts",
+    "lines": 74,
+    "last_modified": "2026-02-26T12:51:20.747Z",
+    "supabase_calls": 0,
+    "imports_count": 0,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "power.ts",
+    "path": "src\\shared\\lib\\power.ts",
+    "lines": 47,
+    "last_modified": "2026-02-25T15:37:56.753Z",
+    "supabase_calls": 0,
+    "imports_count": 1,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "rbac.ts",
+    "path": "src\\shared\\lib\\rbac.ts",
+    "lines": 98,
+    "last_modified": "2026-02-28T15:44:25.611Z",
+    "supabase_calls": 0,
+    "imports_count": 1,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "sovereign-dictionary.ts",
+    "path": "src\\shared\\lib\\sovereign-dictionary.ts",
+    "lines": 87,
+    "last_modified": "2026-02-27T15:10:24.628Z",
+    "supabase_calls": 0,
+    "imports_count": 0,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "supabase.ts",
+    "path": "src\\shared\\lib\\supabase.ts",
+    "lines": 24,
+    "last_modified": "2026-02-28T07:56:14.507Z",
+    "supabase_calls": 0,
+    "imports_count": 1,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "database.ts",
+    "path": "src\\types\\database.ts",
+    "lines": 106,
+    "last_modified": "2026-02-28T10:19:31.489Z",
+    "supabase_calls": 0,
+    "imports_count": 0,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "schema.ts",
+    "path": "src\\types\\schema.ts",
+    "lines": 57,
+    "last_modified": "2026-02-28T18:21:39.664Z",
+    "supabase_calls": 0,
+    "imports_count": 0,
+    "complexity": "بسيط"
+  },
+  {
+    "name": "toast.ts",
+    "path": "src\\types\\toast.ts",
+    "lines": 2,
+    "last_modified": "2026-02-28T00:18:33.336Z",
+    "supabase_calls": 0,
+    "imports_count": 0,
+    "complexity": "بسيط"
+  }
+]

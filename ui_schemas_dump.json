@@ -1,0 +1,994 @@
+[
+  {
+    "id": "2040fc1e-1899-4f40-b229-10d0e75d180d",
+    "table_name": "technician_attendance",
+    "list_config": {
+      "title": "سجل الحضور والغياب",
+      "columns": [
+        {
+          "key": "profile_id",
+          "type": "text",
+          "label": "الموظف"
+        },
+        {
+          "key": "clock_in",
+          "type": "datetime",
+          "label": "وقت الحضور"
+        },
+        {
+          "key": "clock_out",
+          "type": "datetime",
+          "label": "وقت الانصراف"
+        }
+      ]
+    },
+    "form_config": {
+      "title": "تسجيل حضور يدوي",
+      "fields": [
+        {
+          "key": "profile_id",
+          "type": "select",
+          "label": "الموظف",
+          "dataSource": "profiles"
+        },
+        {
+          "key": "clock_in",
+          "type": "datetime",
+          "label": "وقت الدخول"
+        }
+      ]
+    },
+    "created_at": "2026-02-28T05:13:14.633905+00:00",
+    "page_config": null,
+    "nav_config": {
+      "icon": "Layout",
+      "roles": [
+        "admin"
+      ],
+      "is_visible": true
+    }
+  },
+  {
+    "id": "05d378c0-5111-4c3f-9b1e-0785750456bd",
+    "table_name": "technician_missions",
+    "list_config": {
+      "title": "المهام والزيارات",
+      "columns": [
+        {
+          "key": "profile_id",
+          "type": "text",
+          "label": "الفني"
+        },
+        {
+          "key": "mission_type",
+          "type": "badge",
+          "label": "نوع المهمة"
+        },
+        {
+          "key": "status",
+          "type": "status",
+          "label": "الحالة"
+        }
+      ]
+    },
+    "form_config": {
+      "title": "إسناد مهمة جديدة",
+      "fields": [
+        {
+          "key": "profile_id",
+          "type": "select",
+          "label": "الفني المكلف",
+          "dataSource": "profiles"
+        },
+        {
+          "key": "mission_type",
+          "type": "text",
+          "label": "تصنيف المهمة"
+        },
+        {
+          "key": "description",
+          "type": "textarea",
+          "label": "وصف المهمة"
+        }
+      ]
+    },
+    "created_at": "2026-02-28T05:13:14.633905+00:00",
+    "page_config": null,
+    "nav_config": {
+      "icon": "Layout",
+      "roles": [
+        "admin"
+      ],
+      "is_visible": true
+    }
+  },
+  {
+    "id": "e4d3c869-531b-4686-88ef-49a6aebcad72",
+    "table_name": "payroll_logs",
+    "list_config": {
+      "title": "سجلات الرواتب",
+      "columns": [
+        {
+          "key": "profile_id",
+          "type": "text",
+          "label": "الموظف"
+        },
+        {
+          "key": "month",
+          "type": "text",
+          "label": "الشهر"
+        },
+        {
+          "key": "total_amount",
+          "type": "number",
+          "label": "المبلغ الإجمالي"
+        }
+      ]
+    },
+    "form_config": {
+      "title": "إضافة سجل مالي",
+      "fields": [
+        {
+          "key": "profile_id",
+          "type": "select",
+          "label": "الموظف",
+          "dataSource": "profiles"
+        },
+        {
+          "key": "amount",
+          "type": "number",
+          "label": "المبلغ"
+        },
+        {
+          "key": "notes",
+          "type": "textarea",
+          "label": "ملاحظات الصرف"
+        }
+      ]
+    },
+    "created_at": "2026-02-28T05:13:14.633905+00:00",
+    "page_config": null,
+    "nav_config": {
+      "icon": "Layout",
+      "roles": [
+        "admin"
+      ],
+      "is_visible": true
+    }
+  },
+  {
+    "id": "3c229a00-1d1c-4cd9-b3d6-fbe41a1b096e",
+    "table_name": "profiles",
+    "list_config": {
+      "title": "شؤون الموظفين",
+      "columns": [
+        {
+          "key": "full_name",
+          "type": "text",
+          "label": "الاسم"
+        },
+        {
+          "key": "employee_code",
+          "type": "badge",
+          "label": "كود الموظف"
+        },
+        {
+          "key": "role",
+          "type": "text",
+          "label": "الصلاحية"
+        }
+      ]
+    },
+    "form_config": {
+      "title": "بيانات الموظف",
+      "fields": [
+        {
+          "key": "full_name",
+          "type": "text",
+          "label": "الاسم الكامل",
+          "required": true
+        },
+        {
+          "key": "employee_code",
+          "type": "text",
+          "label": "الكود الوظيفي",
+          "required": true
+        },
+        {
+          "key": "role",
+          "type": "select",
+          "label": "الدور",
+          "options": [
+            {
+              "label": "مدير فرع",
+              "value": "manager"
+            },
+            {
+              "label": "فني صيانة",
+              "value": "technician"
+            },
+            {
+              "label": "أدمن",
+              "value": "admin"
+            }
+          ]
+        }
+      ]
+    },
+    "created_at": "2026-02-28T05:13:14.633905+00:00",
+    "page_config": null,
+    "nav_config": {
+      "icon": "Layout",
+      "roles": [
+        "admin"
+      ],
+      "is_visible": true
+    }
+  },
+  {
+    "id": "ce348e1e-d5d1-41f1-ac47-c50dee3a0a46",
+    "table_name": "maintenance_assets",
+    "list_config": {
+      "columns": [
+        {
+          "key": "name",
+          "type": "text",
+          "label": "اسم الأصل",
+          "sortable": true
+        },
+        {
+          "key": "category_id",
+          "type": "select",
+          "label": "التصنيف",
+          "dataSource": "maintenance_categories"
+        },
+        {
+          "key": "branch_id",
+          "type": "select",
+          "label": "الفرع",
+          "dataSource": "branches"
+        },
+        {
+          "key": "status",
+          "type": "status",
+          "label": "الحالة التشغيلية"
+        }
+      ]
+    },
+    "form_config": {
+      "fields": [
+        {
+          "key": "name",
+          "type": "text",
+          "label": "اسم الأصل",
+          "required": true
+        },
+        {
+          "key": "category_id",
+          "type": "select",
+          "label": "التصنيف",
+          "required": true,
+          "dataSource": "maintenance_categories"
+        },
+        {
+          "key": "branch_id",
+          "type": "select",
+          "label": "الفرع",
+          "required": true,
+          "dataSource": "branches"
+        },
+        {
+          "key": "status",
+          "type": "status",
+          "label": "الحالة",
+          "required": true
+        }
+      ]
+    },
+    "created_at": "2026-02-28T05:13:14.633905+00:00",
+    "page_config": null,
+    "nav_config": {
+      "icon": "Layout",
+      "roles": [
+        "admin"
+      ],
+      "is_visible": true
+    }
+  },
+  {
+    "id": "89143996-3179-4db6-9ac9-302bc91efdb9",
+    "table_name": "inventory",
+    "list_config": {
+      "columns": [
+        {
+          "key": "item_name",
+          "type": "text",
+          "label": "اسم الصنف",
+          "sortable": true
+        },
+        {
+          "key": "quantity",
+          "type": "number",
+          "label": "الكمية المتاحة"
+        },
+        {
+          "key": "min_stock_level",
+          "type": "number",
+          "label": "حد الطلب"
+        }
+      ]
+    },
+    "form_config": {
+      "title": "بيانات الصنف",
+      "fields": [
+        {
+          "key": "name",
+          "type": "text",
+          "label": "اسم الصنف",
+          "required": true
+        },
+        {
+          "key": "part_number",
+          "type": "text",
+          "label": "رقم القطعة / الكود"
+        },
+        {
+          "key": "quantity",
+          "type": "number",
+          "label": "الكمية الحالية",
+          "required": true
+        },
+        {
+          "key": "unit",
+          "type": "text",
+          "label": "وحدة القياس",
+          "placeholder": "مثال: حبة، متر، لتر"
+        },
+        {
+          "key": "unit_cost",
+          "type": "number",
+          "label": "تكلفة الوحدة"
+        },
+        {
+          "key": "branch_id",
+          "type": "select",
+          "label": "الفرع",
+          "dataLabel": "name",
+          "dataValue": "id",
+          "dataSource": "branches"
+        }
+      ]
+    },
+    "created_at": "2026-02-28T05:13:14.633905+00:00",
+    "page_config": null,
+    "nav_config": {
+      "icon": "Layout",
+      "roles": [
+        "admin"
+      ],
+      "is_visible": true
+    }
+  },
+  {
+    "id": "114d7326-ef18-4040-96f6-4addfc0da48c",
+    "table_name": "maintenance_categories",
+    "list_config": {
+      "columns": [
+        {
+          "key": "name",
+          "type": "text",
+          "label": "اسم الفئة",
+          "sortable": true
+        },
+        {
+          "key": "description",
+          "type": "text",
+          "label": "الوصف"
+        }
+      ]
+    },
+    "form_config": {
+      "fields": [
+        {
+          "key": "name",
+          "type": "text",
+          "label": "اسم الفئة",
+          "required": true
+        },
+        {
+          "key": "description",
+          "type": "text",
+          "label": "الوصف"
+        }
+      ]
+    },
+    "created_at": "2026-02-28T05:13:14.633905+00:00",
+    "page_config": null,
+    "nav_config": {
+      "icon": "Layout",
+      "roles": [
+        "admin"
+      ],
+      "is_visible": true
+    }
+  },
+  {
+    "id": "eb631120-2874-4d1d-bdf8-cadb9c42601f",
+    "table_name": "tickets",
+    "list_config": {
+      "title": "مركز إدارة البلاغات",
+      "columns": [
+        {
+          "key": "id",
+          "type": "text",
+          "label": "رقم البلاغ"
+        },
+        {
+          "key": "title",
+          "type": "text",
+          "label": "العنوان",
+          "sortable": true
+        },
+        {
+          "key": "status",
+          "type": "status",
+          "label": "الحالة",
+          "sortable": true
+        },
+        {
+          "key": "priority",
+          "type": "badge",
+          "label": "الأولوية",
+          "sortable": true
+        },
+        {
+          "key": "reported_at",
+          "type": "date",
+          "label": "تاريخ البلاغ",
+          "sortable": true
+        }
+      ]
+    },
+    "form_config": {
+      "title": "تفاصيل البلاغ",
+      "fields": [
+        {
+          "key": "title",
+          "type": "text",
+          "label": "عنوان البلاغ",
+          "required": true,
+          "placeholder": "مثال: عطل في التكييف المركزي"
+        },
+        {
+          "key": "description",
+          "type": "textarea",
+          "label": "الوصف التفصيلي",
+          "required": true
+        },
+        {
+          "key": "status",
+          "type": "select",
+          "label": "الحالة",
+          "required": true,
+          "dataSource": "tickets_status_enum"
+        },
+        {
+          "key": "priority",
+          "type": "select",
+          "label": "الأولوية",
+          "required": true,
+          "dataSource": "tickets_priority_enum"
+        }
+      ]
+    },
+    "created_at": "2026-02-28T05:13:14.633905+00:00",
+    "page_config": null,
+    "nav_config": {
+      "icon": "Layout",
+      "roles": [
+        "admin"
+      ],
+      "is_visible": true
+    }
+  },
+  {
+    "id": "cc50ebae-f4f1-4bbc-82cd-14a0a8f55dc8",
+    "table_name": "shifts",
+    "list_config": {
+      "title": "سجل المناوبات",
+      "columns": [
+        {
+          "key": "technician_id",
+          "type": "text",
+          "label": "الفني",
+          "sortable": true
+        },
+        {
+          "key": "start_at",
+          "type": "date",
+          "label": "بداية المناوبة",
+          "sortable": true
+        },
+        {
+          "key": "end_at",
+          "type": "date",
+          "label": "نهاية المناوبة",
+          "sortable": true
+        },
+        {
+          "key": "start_lat",
+          "type": "text",
+          "label": "موقع البداية"
+        },
+        {
+          "key": "end_lat",
+          "type": "text",
+          "label": "موقع النهاية"
+        }
+      ]
+    },
+    "form_config": {
+      "title": "مناوبة الفني",
+      "fields": [
+        {
+          "key": "technician_id",
+          "type": "select",
+          "label": "الفني",
+          "required": true,
+          "dataLabel": "full_name",
+          "dataValue": "id",
+          "dataSource": "profiles"
+        },
+        {
+          "key": "start_at",
+          "type": "date",
+          "label": "وقت البدء",
+          "required": true
+        },
+        {
+          "key": "end_at",
+          "type": "date",
+          "label": "وقت الانتهاء"
+        },
+        {
+          "key": "start_lat",
+          "type": "number",
+          "label": "خط عرض البداية"
+        },
+        {
+          "key": "start_lng",
+          "type": "number",
+          "label": "خط طول البداية"
+        }
+      ]
+    },
+    "created_at": "2026-02-28T07:55:45.96386+00:00",
+    "page_config": {
+      "icon": "Clock",
+      "title": "سجل المناوبات القديم (مرجع)"
+    },
+    "nav_config": {
+      "icon": "Layout",
+      "roles": [
+        "admin"
+      ],
+      "is_visible": true
+    }
+  },
+  {
+    "id": "a1ee70ee-a7fe-4b8d-a4de-f12649ba28e5",
+    "table_name": "system_settings",
+    "list_config": {
+      "title": "إعدادات النظام السياسية",
+      "columns": [
+        {
+          "type": "text",
+          "field": "key",
+          "label": "مفتاح الإعداد"
+        },
+        {
+          "type": "text",
+          "field": "value",
+          "label": "القيمة"
+        },
+        {
+          "type": "datetime",
+          "field": "updated_at",
+          "label": "تاريخ التحديث"
+        }
+      ],
+      "subtitle": "إدارة تفضيلات النظام العامة والصلاحيات",
+      "searchable": true,
+      "searchPlaceholder": "البحث في الإعدادات..."
+    },
+    "form_config": {
+      "title": "تعديل الإعداد",
+      "fields": [
+        {
+          "key": "key",
+          "type": "text",
+          "label": "مفتاح الإعداد",
+          "readonly": true,
+          "required": true
+        },
+        {
+          "key": "value",
+          "type": "textarea",
+          "label": "القيمة",
+          "required": true
+        }
+      ]
+    },
+    "created_at": "2026-02-28T07:55:45.804669+00:00",
+    "page_config": {
+      "icon": "Shield",
+      "title": "إعدادات النظام السياسية (للمطورين)"
+    },
+    "nav_config": {
+      "icon": "Layout",
+      "roles": [
+        "admin"
+      ],
+      "is_visible": true
+    }
+  },
+  {
+    "id": "e5b615dd-97ab-4e3e-a7bb-cb14af95d9e0",
+    "table_name": "ui_schemas",
+    "list_config": {
+      "title": "إعدادات محرك الواجهات (للمطورين)",
+      "columns": [
+        {
+          "type": "text",
+          "field": "table_name",
+          "label": "اسم الجدول"
+        },
+        {
+          "type": "datetime",
+          "field": "created_at",
+          "label": "تاريخ الإنشاء"
+        }
+      ],
+      "subtitle": "إدارة الهيكل المرئي والنماذج الديناميكية للنظام ككل",
+      "searchable": true,
+      "searchPlaceholder": "ابحث عن اسم الجدول..."
+    },
+    "form_config": {
+      "fields": []
+    },
+    "created_at": "2026-02-28T07:55:45.430911+00:00",
+    "page_config": {
+      "icon": "Settings",
+      "title": "إعدادات الواجهات السيادية (للمطورين)"
+    },
+    "nav_config": {
+      "icon": "Layout",
+      "roles": [
+        "admin"
+      ],
+      "is_visible": true
+    }
+  },
+  {
+    "id": "c7fd159a-4131-4cd8-ab79-d62c3ee02828",
+    "table_name": "sectors",
+    "list_config": {
+      "columns": [
+        {
+          "key": "name",
+          "type": "text",
+          "label": "اسم القطاع",
+          "sortable": true
+        },
+        {
+          "key": "brand_id",
+          "type": "select",
+          "label": "العلامة التجارية",
+          "dataSource": "brands"
+        },
+        {
+          "key": "created_at",
+          "type": "date",
+          "label": "تاريخ الإنشاء"
+        }
+      ]
+    },
+    "form_config": {
+      "fields": [
+        {
+          "key": "name",
+          "type": "text",
+          "label": "اسم القطاع",
+          "required": true
+        },
+        {
+          "key": "brand_id",
+          "type": "select",
+          "label": "العلامة التجارية",
+          "required": true,
+          "dataSource": "brands"
+        }
+      ]
+    },
+    "created_at": "2026-02-28T05:13:14.633905+00:00",
+    "page_config": null,
+    "nav_config": {
+      "icon": "Layout",
+      "roles": [
+        "admin"
+      ],
+      "is_visible": true
+    }
+  },
+  {
+    "id": "e07942dd-7807-4d1f-955a-64933db866c3",
+    "table_name": "areas",
+    "list_config": {
+      "columns": [
+        {
+          "key": "name",
+          "type": "text",
+          "label": "اسم المنطقة",
+          "sortable": true
+        },
+        {
+          "key": "sector_id",
+          "type": "select",
+          "label": "القطاع التابع",
+          "dataSource": "sectors"
+        },
+        {
+          "key": "created_at",
+          "type": "date",
+          "label": "تاريخ الإنشاء"
+        }
+      ]
+    },
+    "form_config": {
+      "fields": [
+        {
+          "key": "name",
+          "type": "text",
+          "label": "اسم المنطقة",
+          "required": true
+        },
+        {
+          "key": "sector_id",
+          "type": "select",
+          "label": "القطاع التابع",
+          "required": true,
+          "dataSource": "sectors"
+        }
+      ]
+    },
+    "created_at": "2026-02-28T05:13:14.633905+00:00",
+    "page_config": null,
+    "nav_config": {
+      "icon": "Layout",
+      "roles": [
+        "admin"
+      ],
+      "is_visible": true
+    }
+  },
+  {
+    "id": "2e4eeb0a-6c10-4ace-8e00-c022a1f765af",
+    "table_name": "inventory_transactions",
+    "list_config": {
+      "columns": [
+        {
+          "key": "inventory_id",
+          "type": "select",
+          "label": "الصنف",
+          "dataSource": "inventory"
+        },
+        {
+          "key": "quantity_used",
+          "type": "number",
+          "label": "الكمية"
+        },
+        {
+          "key": "unit_cost_at_time",
+          "type": "number",
+          "label": "التكلفة"
+        },
+        {
+          "key": "transaction_type",
+          "type": "status",
+          "label": "النوع"
+        },
+        {
+          "key": "technician_id",
+          "type": "select",
+          "label": "الفني",
+          "dataSource": "profiles"
+        },
+        {
+          "key": "created_at",
+          "type": "date",
+          "label": "التاريخ"
+        }
+      ]
+    },
+    "form_config": {
+      "title": "تسجيل حركة مخزنية",
+      "fields": [
+        {
+          "key": "inventory_id",
+          "type": "select",
+          "label": "الصنف",
+          "required": true,
+          "dataLabel": "name",
+          "dataValue": "id",
+          "dataSource": "inventory"
+        },
+        {
+          "key": "transaction_type",
+          "type": "select",
+          "label": "نوع الحركة",
+          "options": [
+            {
+              "label": "صرف صيانة",
+              "value": "deduction"
+            },
+            {
+              "label": "توريد/إضافة",
+              "value": "addition"
+            },
+            {
+              "label": "تسوية مخزنية",
+              "value": "adjustment"
+            },
+            {
+              "label": "رتجاع عهدة",
+              "value": "return"
+            }
+          ],
+          "required": true
+        },
+        {
+          "key": "quantity_used",
+          "type": "number",
+          "label": "الكمية",
+          "required": true
+        },
+        {
+          "key": "unit_cost_at_time",
+          "type": "number",
+          "label": "التكلفة (اختياري)"
+        },
+        {
+          "key": "branch_id",
+          "type": "select",
+          "label": "الفرع",
+          "dataLabel": "name",
+          "dataValue": "id",
+          "dataSource": "branches"
+        },
+        {
+          "key": "notes",
+          "type": "textarea",
+          "label": "ملاحظات وتفاصيل"
+        }
+      ]
+    },
+    "created_at": "2026-02-28T05:13:14.633905+00:00",
+    "page_config": null,
+    "nav_config": {
+      "icon": "Repeat",
+      "roles": [
+        "admin",
+        "maint_manager",
+        "maint_supervisor",
+        "brand_ops_manager",
+        "sector_manager",
+        "area_manager"
+      ],
+      "is_visible": true
+    }
+  },
+  {
+    "id": "22676ad2-eb6d-46e0-a17d-8d689f5f1d99",
+    "table_name": "brands",
+    "list_config": {
+      "columns": [
+        {
+          "key": "name",
+          "type": "text",
+          "label": "اسم العلامة التجارية",
+          "sortable": true
+        },
+        {
+          "key": "created_at",
+          "type": "date",
+          "label": "تاريخ التسجيل"
+        }
+      ]
+    },
+    "form_config": {
+      "fields": [
+        {
+          "key": "name",
+          "type": "text",
+          "label": "اسم العلامة التجارية",
+          "required": true
+        }
+      ]
+    },
+    "created_at": "2026-02-28T14:21:36.397436+00:00",
+    "page_config": null,
+    "nav_config": {
+      "icon": "Layout",
+      "roles": [
+        "admin"
+      ],
+      "is_visible": true
+    }
+  },
+  {
+    "id": "1edf19df-5ed8-43b6-8efa-3bd1dd705e48",
+    "table_name": "branches",
+    "list_config": {
+      "columns": [
+        {
+          "key": "name",
+          "type": "text",
+          "label": "اسم الفرع",
+          "sortable": true
+        },
+        {
+          "key": "area_id",
+          "type": "select",
+          "label": "المنطقة",
+          "dataSource": "areas"
+        },
+        {
+          "key": "latitude",
+          "type": "text",
+          "label": "خط العرض"
+        },
+        {
+          "key": "longitude",
+          "type": "text",
+          "label": "خط الطول"
+        }
+      ]
+    },
+    "form_config": {
+      "fields": [
+        {
+          "key": "name",
+          "type": "text",
+          "label": "اسم الفرع",
+          "required": true
+        },
+        {
+          "key": "area_id",
+          "type": "select",
+          "label": "المنطقة",
+          "required": true,
+          "dataSource": "areas"
+        },
+        {
+          "key": "latitude",
+          "type": "text",
+          "label": "خط العرض"
+        },
+        {
+          "key": "longitude",
+          "type": "text",
+          "label": "خط الطول"
+        }
+      ]
+    },
+    "created_at": "2026-02-28T05:13:14.633905+00:00",
+    "page_config": null,
+    "nav_config": {
+      "icon": "Layout",
+      "roles": [
+        "admin"
+      ],
+      "is_visible": true
+    }
+  }
+]

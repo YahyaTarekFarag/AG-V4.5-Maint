@@ -1,0 +1,463 @@
+[
+  {
+    "type": "TABLE_OP",
+    "file": "src\\contexts\\AuthContext.tsx",
+    "line": 15,
+    "table": "profiles",
+    "context": "supabase\r\n                .from('profiles')\r\n                .select('*')\r\n                .eq('id', userId)\r\n                .single();"
+  },
+  {
+    "type": "TABLE_OP",
+    "file": "src\\engine\\components\\SovereignActionModal.tsx",
+    "line": 94,
+    "table": "system_settings",
+    "context": "supabase.from('system_settings').select('*');\n            if (data) {\n                const mapped = data.reduce((acc, s) => ({ ...acc, [s.key]: s.value }), {});\n                setSettings(mapped);"
+  },
+  {
+    "type": "TABLE_OP",
+    "file": "src\\engine\\components\\SovereignActionModal.tsx",
+    "line": 221,
+    "table": "branches",
+    "context": "supabase.from('branches').select('latitude, longitude').eq('id', branchId).single();\n                    if (branch?.latitude && branch?.longitude) {\n                        const coords = await getGeoLocation();\n                        const { calculateDistance } = await import('@shared/lib/geo');\n                        const dist = calculateDistance(coords.lat, coords.lng, branch.latitude, branch.longitude);"
+  },
+  {
+    "type": "TABLE_OP",
+    "file": "src\\engine\\hooks\\useSovereign.ts",
+    "line": 213,
+    "table": "ui_schemas",
+    "context": "supabase\n                    .from('ui_schemas')\n                    .select('*')\n                    .eq('table_name', resolvedTableName)\n                    .single();"
+  },
+  {
+    "type": "RPC_CALL",
+    "file": "src\\engine\\hooks\\useSovereign.ts",
+    "line": 287,
+    "function": "export_sovereign_data"
+  },
+  {
+    "type": "TABLE_OP",
+    "file": "src\\modules\\admin\\pages\\DiagnosticsPage.tsx",
+    "line": 124,
+    "table": "profiles",
+    "context": "supabase\r\n            .from('profiles')\r\n            .select('id', { count: 'exact', head: true })\r\n            .in('role', ['maint_manager', 'maint_supervisor']);"
+  },
+  {
+    "type": "TABLE_OP",
+    "file": "src\\modules\\admin\\pages\\DiagnosticsPage.tsx",
+    "line": 153,
+    "table": "inventory_transactions",
+    "context": "supabase\r\n                .from('inventory_transactions')\r\n                .select('id, ticket_id')\r\n                .is('ticket_id', null)\r\n                .limit(10);"
+  },
+  {
+    "type": "TABLE_OP",
+    "file": "src\\modules\\admin\\pages\\DiagnosticsPage.tsx",
+    "line": 189,
+    "table": "tickets",
+    "context": "supabase.from('tickets').select('id', { count: 'exact', head: true })\r\n                    .eq('status', 'in_progress').eq('is_deleted', false).lt('started_at', twoDaysAgo),\r\n                supabase.from('tickets').select('id', { count: 'exact', head: true })\r\n                    .eq('status', 'resolved').eq('is_deleted', false).lt('resolved_at', threeDaysAgo)\r\n            ]);"
+  },
+  {
+    "type": "TABLE_OP",
+    "file": "src\\modules\\admin\\pages\\DiagnosticsPage.tsx",
+    "line": 191,
+    "table": "tickets",
+    "context": "supabase.from('tickets').select('id', { count: 'exact', head: true })\r\n                    .eq('status', 'resolved').eq('is_deleted', false).lt('resolved_at', threeDaysAgo)\r\n            ]);\r\n\r\n            const stuckCount = (stuckInProgress.count || 0) + (stuckResolved.count || 0);"
+  },
+  {
+    "type": "RPC_CALL",
+    "file": "src\\modules\\admin\\pages\\DiagnosticsPage.tsx",
+    "line": 104,
+    "function": "get_dashboard_stats_v2"
+  },
+  {
+    "type": "TABLE_OP",
+    "file": "src\\modules\\dashboard\\pages\\Dashboard.tsx",
+    "line": 118,
+    "table": "tickets",
+    "context": "supabase.from('tickets').select('*', { count: 'exact', head: true }).eq('status', 'open').eq('is_deleted', false);\n            let assignedQ = supabase.from('tickets').select('*', { count: 'exact', head: true }).eq('status', 'assigned').eq('is_deleted', false);\n            let inProgressQ = supabase.from('tickets').select('*', { count: 'exact', head: true }).eq('status', 'in_progress').eq('is_deleted', false);\n            let resolvedQ = supabase.from('tickets').select('*', { count: 'exact', hea"
+  },
+  {
+    "type": "TABLE_OP",
+    "file": "src\\modules\\dashboard\\pages\\Dashboard.tsx",
+    "line": 119,
+    "table": "tickets",
+    "context": "supabase.from('tickets').select('*', { count: 'exact', head: true }).eq('status', 'assigned').eq('is_deleted', false);\n            let inProgressQ = supabase.from('tickets').select('*', { count: 'exact', head: true }).eq('status', 'in_progress').eq('is_deleted', false);\n            let resolvedQ = supabase.from('tickets').select('*', { count: 'exact', head: true }).eq('status', 'resolved').eq('is_deleted', false);\n\n            if (branchFilter.branch_id) {"
+  },
+  {
+    "type": "TABLE_OP",
+    "file": "src\\modules\\dashboard\\pages\\Dashboard.tsx",
+    "line": 120,
+    "table": "tickets",
+    "context": "supabase.from('tickets').select('*', { count: 'exact', head: true }).eq('status', 'in_progress').eq('is_deleted', false);\n            let resolvedQ = supabase.from('tickets').select('*', { count: 'exact', head: true }).eq('status', 'resolved').eq('is_deleted', false);\n\n            if (branchFilter.branch_id) {\n                openQ = openQ.eq('branch_id', branchFilter.branch_id);"
+  },
+  {
+    "type": "TABLE_OP",
+    "file": "src\\modules\\dashboard\\pages\\Dashboard.tsx",
+    "line": 121,
+    "table": "tickets",
+    "context": "supabase.from('tickets').select('*', { count: 'exact', head: true }).eq('status', 'resolved').eq('is_deleted', false);\n\n            if (branchFilter.branch_id) {\n                openQ = openQ.eq('branch_id', branchFilter.branch_id);\n                assignedQ = assignedQ.eq('branch_id', branchFilter.branch_id);"
+  },
+  {
+    "type": "RPC_CALL",
+    "file": "src\\modules\\dashboard\\pages\\Dashboard.tsx",
+    "line": 94,
+    "function": "get_dashboard_stats_v2"
+  },
+  {
+    "type": "TABLE_OP",
+    "file": "src\\modules\\hr\\pages\\AttendanceDashboardPage.tsx",
+    "line": 35,
+    "table": "technician_attendance",
+    "context": "supabase\r\n                .from('technician_attendance')\r\n                .select('*, profiles!inner(full_name, branch_id, area_id, sector_id, brand_id, employee_code, branches!inner(name))')\r\n                .is('clock_out', null)\r\n                .order('clock_in', { ascending: false });"
+  },
+  {
+    "type": "TABLE_OP",
+    "file": "src\\modules\\hr\\pages\\AttendanceDashboardPage.tsx",
+    "line": 42,
+    "table": "technician_attendance",
+    "context": "supabase\r\n                .from('technician_attendance')\r\n                .select('clock_in, clock_out, profiles!inner(branch_id, area_id)')\r\n                .gte('clock_in', subDays(new Date(), 7).toISOString());"
+  },
+  {
+    "type": "TABLE_OP",
+    "file": "src\\modules\\maintenance\\components\\TicketFlow.tsx",
+    "line": 72,
+    "table": "inventory",
+    "context": "supabase.from('inventory').select('*').eq('is_deleted', false).gt('quantity', 0);\r\n        if (data) setInventory(data);\r\n    };\r\n\r\n    const fetchKPIData = async () => {"
+  },
+  {
+    "type": "TABLE_OP",
+    "file": "src\\modules\\maintenance\\components\\TicketFlow.tsx",
+    "line": 77,
+    "table": "maintenance_categories",
+    "context": "supabase.from('maintenance_categories').select('*').order('name');\r\n        if (cats) setCategories(cats);\r\n\r\n        const { data: asts } = await supabase.from('maintenance_assets').select('*').eq('branch_id', ticket.branch_id).eq('is_deleted', false).order('name');\r\n        if (asts) setAssets(asts);"
+  },
+  {
+    "type": "TABLE_OP",
+    "file": "src\\modules\\maintenance\\components\\TicketFlow.tsx",
+    "line": 80,
+    "table": "maintenance_assets",
+    "context": "supabase.from('maintenance_assets').select('*').eq('branch_id', ticket.branch_id).eq('is_deleted', false).order('name');\r\n        if (asts) setAssets(asts);\r\n    };\r\n\r\n    const addPart = () => {"
+  },
+  {
+    "type": "TABLE_OP",
+    "file": "src\\modules\\maintenance\\components\\TicketFlow.tsx",
+    "line": 376,
+    "table": "system_settings",
+    "context": "supabase.from('system_settings').select('*');\r\n                const settings = rawSettings?.reduce((acc, s) => ({ ...acc, [s.key]: s.value }), {} as any) || {};\r\n\r\n                const isGeofenceEnabled = settings.geofencing_enabled === 'true';\r\n                const radius = parseInt(settings.geofencing_radius || '100');"
+  },
+  {
+    "type": "TABLE_OP",
+    "file": "src\\modules\\maintenance\\components\\TicketFlow.tsx",
+    "line": 383,
+    "table": "branches",
+    "context": "supabase.from('branches').select('latitude, longitude, name').eq('id', ticket.branch_id).single();\r\n                    if (!branch?.latitude || !branch?.longitude) {\r\n                        throw new Error(`🚫 فشل التحقق الأمني: إحداثيات الموقع (الفرع: ${branch?.name || 'مجهول'}) غير معرّفة في النظام. يرجى مراجعة الإدارة المختصة لتحديث البيانات الجغرافية قبل المباشرة.`);\r\n                    }"
+  },
+  {
+    "type": "TABLE_OP",
+    "file": "src\\modules\\maintenance\\components\\TicketFlow.tsx",
+    "line": 396,
+    "table": "technician_attendance",
+    "context": "supabase\r\n                    .from('technician_attendance')\r\n                    .select('id')\r\n                    .eq('profile_id', (profile?.id || ''))\r\n                    .is('clock_out', null)"
+  },
+  {
+    "type": "TABLE_OP",
+    "file": "src\\modules\\maintenance\\components\\TicketFlow.tsx",
+    "line": 451,
+    "table": "technician_attendance",
+    "context": "supabase\r\n                .from('technician_attendance')\r\n                .select('id')\r\n                .eq('profile_id', profile?.id || '')\r\n                .is('clock_out', null)"
+  },
+  {
+    "type": "TABLE_OP",
+    "file": "src\\modules\\maintenance\\lib\\maintenance-orchestrator.ts",
+    "line": 65,
+    "table": "tickets",
+    "context": "supabase\r\n            .from('tickets')\r\n            .update(updateData)\r\n            .eq('id', ticketId);"
+  },
+  {
+    "type": "TABLE_OP",
+    "file": "src\\modules\\maintenance\\lib\\maintenance-orchestrator.ts",
+    "line": 92,
+    "table": "tickets",
+    "context": "supabase\r\n            .from('tickets')\r\n            .update({\r\n                status: 'in_progress',\r\n                started_at: new Date().toISOString(),"
+  },
+  {
+    "type": "TABLE_OP",
+    "file": "src\\modules\\maintenance\\lib\\maintenance-orchestrator.ts",
+    "line": 111,
+    "table": "tickets",
+    "context": "supabase\r\n            .from('tickets')\r\n            .update({\r\n                status: 'closed',\r\n                rating_score: rating,"
+  },
+  {
+    "type": "RPC_CALL",
+    "file": "src\\modules\\maintenance\\lib\\maintenance-orchestrator.ts",
+    "line": 29,
+    "function": "resolve_ticket_complete"
+  },
+  {
+    "type": "RPC_CALL",
+    "file": "src\\modules\\maintenance\\lib\\maintenance-orchestrator.ts",
+    "line": 81,
+    "function": "log_technician_mission"
+  },
+  {
+    "type": "TABLE_OP",
+    "file": "src\\modules\\maintenance\\pages\\MaintenanceDashboardPage.tsx",
+    "line": 62,
+    "table": "tickets",
+    "context": "supabase\r\n            .from('tickets')\r\n            .select('*, branches(name, area_id), maintenance_categories(name)')\r\n            .eq('is_deleted', false)\r\n            .order('created_at', { ascending: false });"
+  },
+  {
+    "type": "TABLE_OP",
+    "file": "src\\modules\\maintenance\\pages\\MaintenanceDashboardPage.tsx",
+    "line": 89,
+    "table": "tickets",
+    "context": "supabase.from('tickets').select('*', { count: 'exact', head: true }).eq('is_deleted', false);\r\n            if (status) cq = cq.eq('status', status);\r\n            if (needsFiltering && profile.branch_id) cq = cq.eq('branch_id', profile.branch_id);\r\n            const { count } = await cq;\r\n            return count || 0;"
+  },
+  {
+    "type": "TABLE_OP",
+    "file": "src\\modules\\maintenance\\pages\\MaintenanceDashboardPage.tsx",
+    "line": 98,
+    "table": "tickets",
+    "context": "supabase.from('tickets').select('created_at, resolved_at').gte('created_at', sevenDaysAgo).eq('is_deleted', false);\r\n        if (needsFiltering && profile.branch_id) trendQuery = trendQuery.eq('branch_id', profile.branch_id);\r\n\r\n        const [\r\n            ticketResult,"
+  },
+  {
+    "type": "TABLE_OP",
+    "file": "src\\modules\\maintenance\\pages\\MaintenanceDashboardPage.tsx",
+    "line": 121,
+    "table": "v_technician_performance",
+    "context": "supabase.from('v_technician_performance').select('*').limit(5),\r\n            // 11. Critical assets\r\n            supabase.from('maintenance_assets')\r\n                .select('id, name, status, serial_number, branches:branch_id(name), maintenance_categories:category_id(name)')\r\n                .eq('status', 'faulty').limit(5),"
+  },
+  {
+    "type": "TABLE_OP",
+    "file": "src\\modules\\maintenance\\pages\\MaintenanceDashboardPage.tsx",
+    "line": 123,
+    "table": "maintenance_assets",
+    "context": "supabase.from('maintenance_assets')\r\n                .select('id, name, status, serial_number, branches:branch_id(name), maintenance_categories:category_id(name)')\r\n                .eq('status', 'faulty').limit(5),\r\n            // 12. Technicians list\r\n            supabase.from('profiles').select('id, full_name, employee_code')"
+  },
+  {
+    "type": "TABLE_OP",
+    "file": "src\\modules\\maintenance\\pages\\MaintenanceDashboardPage.tsx",
+    "line": 127,
+    "table": "profiles",
+    "context": "supabase.from('profiles').select('id, full_name, employee_code')\r\n                .in('role', ['technician', 'maintenance_supervisor']),\r\n            // 13. Reports dashboard data\r\n            supabase.rpc('get_reports_dashboard_data', {\r\n                p_start_date: format(subDays(new Date(), 30), 'yyyy-MM-dd'),"
+  },
+  {
+    "type": "TABLE_OP",
+    "file": "src\\modules\\maintenance\\pages\\MaintenanceDashboardPage.tsx",
+    "line": 191,
+    "table": "tickets",
+    "context": "supabase\r\n                .from('tickets')\r\n                .update({\r\n                    assigned_to: selectedTech,\r\n                    assigned_by: profile.id,"
+  },
+  {
+    "type": "TABLE_OP",
+    "file": "src\\modules\\maintenance\\pages\\MaintenanceDashboardPage.tsx",
+    "line": 215,
+    "table": "tickets",
+    "context": "supabase\r\n                .from('tickets')\r\n                .update({ priority: newPriority, updated_at: new Date().toISOString() })\r\n                .eq('id', ticketId);\r\n            if (error) throw error;"
+  },
+  {
+    "type": "RPC_CALL",
+    "file": "src\\modules\\maintenance\\pages\\MaintenanceDashboardPage.tsx",
+    "line": 117,
+    "function": "get_dashboard_stats_v2"
+  },
+  {
+    "type": "RPC_CALL",
+    "file": "src\\modules\\maintenance\\pages\\MaintenanceDashboardPage.tsx",
+    "line": 130,
+    "function": "get_reports_dashboard_data"
+  },
+  {
+    "type": "TABLE_OP",
+    "file": "src\\modules\\maintenance\\pages\\ManagerTicketsPage.tsx",
+    "line": 70,
+    "table": "maintenance_assets",
+    "context": "supabase\r\n            .from('maintenance_assets')\r\n            .select('id, name, model_number, status')\r\n            .eq('is_deleted', false)\r\n            .order('name');"
+  },
+  {
+    "type": "TABLE_OP",
+    "file": "src\\modules\\maintenance\\pages\\ManagerTicketsPage.tsx",
+    "line": 82,
+    "table": "maintenance_categories",
+    "context": "supabase\r\n            .from('maintenance_categories')\r\n            .select('id, name')\r\n            .order('name');\r\n        setCategories(catData || []);"
+  },
+  {
+    "type": "TABLE_OP",
+    "file": "src\\modules\\maintenance\\pages\\ManagerTicketsPage.tsx",
+    "line": 93,
+    "table": "tickets",
+    "context": "supabase\r\n            .from('tickets')\r\n            .select(getRBACSelect('tickets'))\r\n            .eq('is_deleted', false)\r\n            .order('created_at', { ascending: false });"
+  },
+  {
+    "type": "TABLE_OP",
+    "file": "src\\modules\\maintenance\\pages\\ManagerTicketsPage.tsx",
+    "line": 145,
+    "table": "tickets",
+    "context": "supabase.from('tickets').insert([{\r\n                asset_id: selectedAssetId || null,\r\n                asset_name: finalAssetName.trim(),\r\n                category_id: selectedCategoryId || null,\r\n                is_emergency: isEmergency,"
+  },
+  {
+    "type": "TABLE_OP",
+    "file": "src\\modules\\maintenance\\pages\\TechnicianTicketsPage.tsx",
+    "line": 31,
+    "table": "tickets",
+    "context": "supabase\r\n            .from('tickets')\r\n            .select(getRBACSelect('tickets'))\r\n            .eq('assigned_to', profile.id)\r\n            .eq('is_deleted', false)"
+  },
+  {
+    "type": "TABLE_OP",
+    "file": "src\\modules\\map\\pages\\MapPage.tsx",
+    "line": 202,
+    "table": "branches",
+    "context": "supabase.from('branches').select('id, name, latitude, longitude');\r\n            bQuery = applyRBACFilter(bQuery, 'branches', profile);\r\n\r\n            // Attendance\r\n            let aQuery = supabase.from('technician_attendance')"
+  },
+  {
+    "type": "TABLE_OP",
+    "file": "src\\modules\\map\\pages\\MapPage.tsx",
+    "line": 206,
+    "table": "technician_attendance",
+    "context": "supabase.from('technician_attendance')\r\n                .select('*, profiles:profile_id!inner(full_name), clock_in_lat, clock_in_lng')\r\n                .is('clock_out', null);\r\n            aQuery = applyRBACFilter(aQuery, 'technician_attendance', profile);"
+  },
+  {
+    "type": "TABLE_OP",
+    "file": "src\\modules\\map\\pages\\MapPage.tsx",
+    "line": 212,
+    "table": "tickets",
+    "context": "supabase.from('tickets')\r\n                .select('id, branch_id, assigned_to, status, asset_name, priority')\r\n                .in('status', ['open', 'assigned', 'in_progress'])\r\n                .eq('is_deleted', false);\r\n            tQuery = applyRBACFilter(tQuery, 'tickets', profile);"
+  },
+  {
+    "type": "TABLE_OP",
+    "file": "src\\modules\\map\\pages\\MapPage.tsx",
+    "line": 219,
+    "table": "technician_attendance",
+    "context": "supabase\r\n                .from('technician_attendance')\r\n                .select('id, created_at, profile_id, profiles:profile_id(full_name, branches:branch_id(name))')\r\n                .order('created_at', { ascending: false })\r\n                .limit(10);"
+  },
+  {
+    "type": "TABLE_OP",
+    "file": "src\\modules\\reporting\\pages\\ReportsPage.tsx",
+    "line": 66,
+    "table": "brands",
+    "context": "supabase.from('brands').select('id, name').order('name');\n        setBrands(bData || []);\n\n        const { data: sData } = await supabase.from('sectors').select('id, name, brand_id').order('name');\n        setSectors(sData || []);"
+  },
+  {
+    "type": "TABLE_OP",
+    "file": "src\\modules\\reporting\\pages\\ReportsPage.tsx",
+    "line": 69,
+    "table": "sectors",
+    "context": "supabase.from('sectors').select('id, name, brand_id').order('name');\n        setSectors(sData || []);\n\n        const { data: aData } = await supabase.from('areas').select('id, name, sector_id').order('name');\n        setAreas(aData || []);"
+  },
+  {
+    "type": "TABLE_OP",
+    "file": "src\\modules\\reporting\\pages\\ReportsPage.tsx",
+    "line": 72,
+    "table": "areas",
+    "context": "supabase.from('areas').select('id, name, sector_id').order('name');\n        setAreas(aData || []);\n\n        const { data: branchData } = await supabase.from('branches').select('id, name, area_id').order('name');\n        setBranches(branchData || []);"
+  },
+  {
+    "type": "TABLE_OP",
+    "file": "src\\modules\\reporting\\pages\\ReportsPage.tsx",
+    "line": 75,
+    "table": "branches",
+    "context": "supabase.from('branches').select('id, name, area_id').order('name');\n        setBranches(branchData || []);\n\n        const { data: cData } = await supabase.from('maintenance_categories').select('id, name');\n        setCategories(cData || []);"
+  },
+  {
+    "type": "TABLE_OP",
+    "file": "src\\modules\\reporting\\pages\\ReportsPage.tsx",
+    "line": 78,
+    "table": "maintenance_categories",
+    "context": "supabase.from('maintenance_categories').select('id, name');\n        setCategories(cData || []);\n    };\n\n    const fetchReports = async () => {"
+  },
+  {
+    "type": "TABLE_OP",
+    "file": "src\\modules\\reporting\\pages\\ReportsPage.tsx",
+    "line": 108,
+    "table": "mv_daily_ticket_stats",
+    "context": "supabase.from('mv_daily_ticket_stats').select('report_date, total_tickets, resolved_tickets')\n\n                .gte('report_date', dateRange.start)\n\n                .lte('report_date', dateRange.end)"
+  },
+  {
+    "type": "TABLE_OP",
+    "file": "src\\modules\\reporting\\pages\\ReportsPage.tsx",
+    "line": 118,
+    "table": "mv_category_distribution",
+    "context": "supabase.from('mv_category_distribution').select('category_id, ticket_count')\n\n                .gte('report_month', format(new Date(dateRange.start), 'yyyy-MM-01'));"
+  },
+  {
+    "type": "RPC_CALL",
+    "file": "src\\modules\\reporting\\pages\\ReportsPage.tsx",
+    "line": 88,
+    "function": "get_reports_dashboard_data"
+  },
+  {
+    "type": "RPC_CALL",
+    "file": "src\\modules\\reporting\\pages\\ReportsPage.tsx",
+    "line": 191,
+    "function": "get_efficiency_overview"
+  },
+  {
+    "type": "RPC_CALL",
+    "file": "src\\modules\\reporting\\pages\\ReportsPage.tsx",
+    "line": 220,
+    "function": "export_raw_tickets"
+  },
+  {
+    "type": "TABLE_OP",
+    "file": "src\\modules\\settings\\pages\\AdminSettingsPage.tsx",
+    "line": 21,
+    "table": "system_settings",
+    "context": "supabase.from('system_settings').select('*');\r\n            if (data) {\r\n                const mapped = data.reduce((acc, s) => ({ ...acc, [s.key]: s.value }), {});\r\n                setSettings(mapped);\r\n            }"
+  },
+  {
+    "type": "TABLE_OP",
+    "file": "src\\modules\\settings\\pages\\AdminSettingsPage.tsx",
+    "line": 49,
+    "table": "system_settings",
+    "context": "supabase.from('system_settings').upsert(updates);\r\n            if (error) throw error;\r\n            setSuccess(true);\r\n            setTimeout(() => setSuccess(false), 3000);\r\n        } catch (e: any) {"
+  },
+  {
+    "type": "TABLE_OP",
+    "file": "src\\modules\\settings\\pages\\SchemaBuilderPage.tsx",
+    "line": 92,
+    "table": "ui_schemas' as any).select('*",
+    "context": "supabase.from('ui_schemas' as any).select('*').order('table_name');\n        if (data) setSchemas(data as UISchema[]);\n    };\n\n    const fetchDbTables = async () => {"
+  },
+  {
+    "type": "TABLE_OP",
+    "file": "src\\modules\\settings\\pages\\SchemaBuilderPage.tsx",
+    "line": 100,
+    "table": "ui_schemas' as any).select('table_name",
+    "context": "supabase.from('ui_schemas' as any).select('table_name');\n            const registeredNames = new Set((schemaData || []).map((s: any) => s.table_name));\n            setDbTables((data as any[]).map(t => ({\n                table_name: t.table_name,\n                row_count: t.row_count,"
+  },
+  {
+    "type": "RPC_CALL",
+    "file": "src\\modules\\settings\\pages\\SchemaBuilderPage.tsx",
+    "line": 98,
+    "function": "sovereign_list_tables"
+  },
+  {
+    "type": "RPC_CALL",
+    "file": "src\\modules\\settings\\pages\\SchemaBuilderPage.tsx",
+    "line": 126,
+    "function": "get_table_columns"
+  },
+  {
+    "type": "RPC_CALL",
+    "file": "src\\modules\\settings\\pages\\SchemaBuilderPage.tsx",
+    "line": 177,
+    "function": "sovereign_add_column"
+  },
+  {
+    "type": "RPC_CALL",
+    "file": "src\\modules\\settings\\pages\\SchemaBuilderPage.tsx",
+    "line": 226,
+    "function": "sovereign_drop_column"
+  },
+  {
+    "type": "RPC_CALL",
+    "file": "src\\modules\\settings\\pages\\SchemaBuilderPage.tsx",
+    "line": 240,
+    "function": "sovereign_create_table"
+  },
+  {
+    "type": "TABLE_OP",
+    "file": "src\\shared\\lib\\drive.ts",
+    "line": 11,
+    "table": "system_settings",
+    "context": "supabase.from('system_settings').select('value').eq('key', 'gdrive_config').single();\r\n\r\n        // منطق الرفع الحالي (Supabase Storage كبديل مؤقت لضمان عمل البرنامج)\r\n        // يتم الاحتفاظ بمسار جوجل درايف في قاعدة البيانات\r\n        if (!navigator.onLine) {"
+  }
+]
