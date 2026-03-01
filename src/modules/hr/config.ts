@@ -37,6 +37,20 @@ export const HR_CONFIG: Record<string, SovereignSchema> = {
             ticket_id: 'tickets',
             from_branch_id: 'branches',
             to_branch_id: 'branches'
+        },
+        formatting: {
+            statusLabels: {
+                pending: 'معلقة',
+                in_progress: 'جاري التنفيذ',
+                completed: 'مكتملة',
+                cancelled: 'ملغية'
+            },
+            statusColors: {
+                pending: 'amber',
+                in_progress: 'blue',
+                completed: 'teal',
+                cancelled: 'zinc'
+            }
         }
     },
     payroll_logs: {

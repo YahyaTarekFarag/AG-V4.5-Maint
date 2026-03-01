@@ -103,10 +103,18 @@ export const INVENTORY_CONFIG: Record<string, SovereignSchema> = {
         },
         formatting: {
             statusLabels: {
+                usage: 'صرف / استخدام',
+                restock: 'إضافة مخزون',
+                transfer: 'تحويل بين مستودعات',
+                adjustment: 'تسوية جردية',
                 out: 'صرف (سحب)',
                 in: 'توريد (إيداع)'
             },
             statusColors: {
+                usage: 'amber',
+                restock: 'teal',
+                transfer: 'blue',
+                adjustment: 'zinc',
                 out: 'amber',
                 in: 'teal'
             }
